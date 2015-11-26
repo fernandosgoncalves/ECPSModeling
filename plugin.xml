@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            name="Embedded Cyber-Physical System Modeleing"
+            icon="icons/sample.gif"
+            class="org.eclipse.ui.navigator.CommonNavigator"
+            id="br.ufsc.ecpsm">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.navigator.viewer">
+      <viewerActionBinding
+            viewerId="br.ufsc.ecpsm">
+         <includes>
+            <actionExtension
+                  pattern="org.eclipse.ui.navigator.resources.*">
+            </actionExtension>
+         </includes>
+      </viewerActionBinding>
+      <viewerContentBinding
+            viewerId="br.ufsc.ecpsm">
+         <includes>
+            <contentExtension
+                  pattern="org.eclipse.ui.navigator.resourceContent">
+            </contentExtension>
+            <contentExtension
+                  pattern="org.eclipse.ui.navigator.resources.filters.*">
+            </contentExtension>
+            <contentExtension
+                  pattern="org.eclipse.ui.navigator.resources.linkHelper">
+            </contentExtension>
+            <contentExtension
+                  pattern="org.eclipse.ui.navigator.resources.workingSets">
+            </contentExtension>
+         </includes>
+      </viewerContentBinding>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.ui.resourcePerspective">
+         <view
+               ratio="0.5"
+               relative="org.eclipse.ui.navigator.ProjectExplorer"
+               relationship="stack"
+               id="br.ufsc.ecpsm">
+         </view>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.ui.importWizards">
+      <category
+            name="As2t"
+            id="ecpsmodeling.importWizards.sampleCategory">
+      </category>
+      <wizard
+            name="ECPSModeling"
+            icon="icons/sample.gif"
+            category="ecpsmodeling.importWizards.sampleCategory"
+            class="ecpsmodeling.parser.ECPSModeling"
+            id="ecpsmodeling.importWizards.ECPSModeling">
+         <description>
+            Import a file from the local file system into the workspace.
+         </description>
+      </wizard>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            name="Sensing and Actuation Modeling Wizard"
+            extensions="mpe"
+            icon="icons/sample.gif"
+            contributorClass="ecpsmodeling.editors.SensingActuationModelingContributor"
+            class="ecpsmodeling.editors.SensingActuationModeling"
+            id="ecpsmodeling.editors.SensingActuationModeling">
+      </editor>
+   </extension>
+
+</plugin>
