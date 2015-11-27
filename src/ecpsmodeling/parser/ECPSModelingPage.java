@@ -22,11 +22,11 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import java.io.FileNotFoundException;
-import java.io.FileInputStream;
+//import java.io.FileNotFoundException;
+//import java.io.FileInputStream;
 import java.io.InputStream;
 import org.eclipse.swt.SWT;
-import java.io.File;
+//import java.io.File;
 
 public class ECPSModelingPage extends WizardNewFileCreationPage {
 
@@ -68,7 +68,7 @@ public class ECPSModelingPage extends WizardNewFileCreationPage {
 		String[] extensions = new String[] { "*.mdl" }; // NON-NLS-1
 		editor.setFileExtensions(extensions);
 		fileSelectionArea.moveAbove(null);
-
+//		System.out.println("createADVControl");
 	}
 
 	/*
@@ -86,11 +86,13 @@ public class ECPSModelingPage extends WizardNewFileCreationPage {
 	 * org.eclipse.ui.dialogs.WizardNewFileCreationPage#getInitialContents()
 	 */
 	protected InputStream getInitialContents() {
-		try {
-			return new FileInputStream(new File(editor.getStringValue()));
-		} catch (FileNotFoundException e) {
+		System.out.println("InitialContents");
+		//try {
+			//return new FileInputStream(new File(editor.getStringValue()));
 			return null;
-		}
+		//} catch (FileNotFoundException e) {
+			//return null;
+		//}
 	}
 
 	/*
