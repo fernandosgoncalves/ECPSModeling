@@ -245,7 +245,7 @@ public class Mdl2Aadl {
 		 * subsystems.get(i).parent.get(j).value); } System.out.println("  ---"
 		 * ); } System.out.println("---");
 		 */
-		System.out.println(subsystems.size());
+		//System.out.println(subsystems.size());
 		for (int i = 0; i < subsystems.size(); i++) {
 			// se for uma constante não lista no aadl
 			if (subsystems.get(i).parent.getByName("Name").get(0).value.contains("Constant")) {
@@ -277,7 +277,7 @@ public class Mdl2Aadl {
 				// System.out.println(subsystems.get(i).parent.get(1).value);
 			}
 			if (subsystems.get(i).parent.getByName("SFBlockType", ParentArrayList.NO_CHILD).size() > 0) {
-				System.out.println(subsystems.get(i).parent.get(1).value);
+//				System.out.println(subsystems.get(i).parent.get(1).value);
 				/*
 				 * for (int j = 0; j < subsystems.get(i).parent.size(); j++) {
 				 * System.out.println(subsystems.get(i).parent.get(j).name +

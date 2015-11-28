@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-public class ECPSModelingPage2 extends WizardPage {
+public class ECPSModelingPage3 extends WizardPage {
 	private Composite container;
 		
 	public static String MARK_PROCESS_THREAD = "PROCESS/THREAD";
@@ -40,7 +40,7 @@ public class ECPSModelingPage2 extends WizardPage {
 		
 	List list;
 	
-	public ECPSModelingPage2() {
+	public ECPSModelingPage3() {
 	    super("Sensing and Actuation Modeling");
 	    setTitle("Sensing and Actuation Modeling");
 	    setDescription("Define the System Mathematical Model:");

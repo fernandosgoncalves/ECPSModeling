@@ -27,30 +27,28 @@ public class ECPSModeling extends Wizard implements IImportWizard {
 	
 	Mdl2Aadl mdl2Aadl;
 
+	protected boolean performed = false;
+	
 	public ECPSModeling() {
 		super();
 	}
-
+	
 	@Override
 	public IWizardPage getNextPage(IWizardPage page) {
-		System.out.println("NEXT PRESSED");
+		//System.out.println("NEXT PRESSED");
 		//IFile file = mainPage.createNewFile();
-		try {
-			// Construtor criação do processo de transformação e leitura do
-			// arquivo mdl
-//			System.out.println(mainPage.getFileName());
-//			System.out.println(mainPage.editor.getStringValue());
-//			mdl2Aadl = new Mdl2Aadl(file.getRawLocation().toString());
-			mdl2Aadl = new Mdl2Aadl(mainPage.editor.getStringValue());
-			// Chamada da função de marcação automatizada
-			//mdl2Aadl.autoMark();
-			// Geração do arquivo AADL de saída
-			/*mdl2Aadl.save(file.getRawLocation().removeLastSegments(1) + "/",
-					file.getRawLocation().lastSegment().substring(0, file.getRawLocation().lastSegment().length() - 4)
-							+ ".aadl");
-			ResourcesPlugin.getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());*/
-		} catch (Exception e) {
-			e.printStackTrace();
+		System.out.println(page.getName());
+		if(performed == false){
+			try {
+				mdl2Aadl = new Mdl2Aadl(mainPage.editor.getStringValue());
+				//Chamada da função de marcação automatizada
+				mdl2Aadl.autoMark();
+				//Carrega Lista
+				page2.populateList(mdl2Aadl);
+				performed = true;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}	
 		}
         return super.getNextPage(page);
     }
