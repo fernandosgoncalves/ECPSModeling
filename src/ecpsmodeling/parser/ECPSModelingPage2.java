@@ -10,84 +10,102 @@
  *******************************************************************************/
 package ecpsmodeling.parser;
 
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.preference.FileFieldEditor;
-import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.SWT;
 
 public class ECPSModelingPage2 extends WizardPage {
 	private Composite container;
-		
+
 	public static String MARK_PROCESS_THREAD = "PROCESS/THREAD";
 	public static String MARK_PROCESS = "PROCESS";
 	public static String MARK_SYSTEM = "SYSTEM";
-		
+
 	List list;
-	
+
+	Label information;
+
 	public ECPSModelingPage2() {
-	    super("Sensing and Actuation Modeling");
-	    setTitle("Sensing and Actuation Modeling");
-	    setDescription("Define the System Mathematical Model:");
-	  }
+		super("Sensing and Actuation Modeling");
+		setTitle("Sensing and Actuation Modeling");
+		setDescription("Define the System Mathematical Model:");
+	}
 
 	@Override
 	public void createControl(Composite parent) {
-		container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
+		GridData gridData = new GridData();
+
+		container = new Composite(parent, SWT.NONE);
 		container.setLayout(layout);
 		container.setSize(300, 200);
-		//Display display = new Display();
-		//Shell shell = new Shell(display);
-	    //shell.setText("List Example");
-	    //shell.setSize(300, 200);
-	    //shell.setLayout(new FillLayout(SWT.VERTICAL));
-	    list = new List(container, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL);
-	    list.setSize(300, 200);
-	    list.addSelectionListener(new SelectionListener() {
-			
+
+		information = new Label(container, SWT.NONE);
+		information.setText("Define the subsystem that represent the mathematical model:");
+
+		list = new List(container, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL);
+		gridData.widthHint = 300;
+		gridData.heightHint = 200;
+		list.setLayoutData(gridData);
+		list.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				setPageComplete(true);
 			}
-			
+
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
-		});	    
+		});
 		setControl(container);
 		setPageComplete(false);
 	}
-	
-	
-	
-	public void populateList(Mdl2Aadl mdl2Aadl){
+
+	public void populateList(Mdl2Aadl mdl2Aadl) {
+		// System.out.println("Quantidade: " +
+		// mdl2Aadl.aadl.getSubSystem().getSubSystemsCount());
 		for (int i = 0; i < mdl2Aadl.aadl.getSubSystem().getSubSystemsCount(); i++) {
-			if(mdl2Aadl.aadl.getSubSystem().getSubSystem(i).getMark().equals(MARK_PROCESS_THREAD)){
+			// System.out.println("Marca: " +
+			// mdl2Aadl.aadl.getSubSystem().getSubSystem(i).getMark());
+			// System.out.println("Nome: " +
+			// mdl2Aadl.aadl.getSubSystem().getSubSystem(i).getName());
+			if (mdl2Aadl.aadl.getSubSystem().getSubSystem(i).getMark().equals(MARK_PROCESS_THREAD)) {
 				list.add(mdl2Aadl.aadl.getSubSystem().getSubSystem(i).getName());
 			}
-			if(mdl2Aadl.aadl.getSubSystem().getSubSystem(i).getMark().equals(MARK_PROCESS)){
+			if (mdl2Aadl.aadl.getSubSystem().getSubSystem(i).getMark().equals(MARK_PROCESS)) {
 				list.add(mdl2Aadl.aadl.getSubSystem().getSubSystem(i).getName());
 			}
-			if(mdl2Aadl.aadl.getSubSystem().getSubSystem(i).getMark().equals(MARK_SYSTEM)){			
+			if (mdl2Aadl.aadl.getSubSystem().getSubSystem(i).getMark().equals(MARK_SYSTEM)) {
 				list.add(mdl2Aadl.aadl.getSubSystem().getSubSystem(i).getName());
+				exploreSystem(mdl2Aadl.aadl.getSubSystem().getSubSystem(i));
+			}
+		}
+	}
+
+	public void exploreSystem(SubSystem subsystem) {
+		// System.out.println("Quantidade: " + subsystem.getSubSystemsCount());
+		for (int i = 0; i < subsystem.getSubSystemsCount(); i++) {
+			// System.out.println("Marca: " +
+			// subsystem.getSubSystem(i).getMark());
+			// System.out.println("Nome: " +
+			// subsystem.getSubSystem(i).getName());
+			if (subsystem.getSubSystem(i).getMark().equals(MARK_PROCESS_THREAD)) {
+				list.add(subsystem.getSubSystem(i).getName());
+			}
+			if (subsystem.getSubSystem(i).getMark().equals(MARK_PROCESS)) {
+				list.add(subsystem.getSubSystem(i).getName());
+			}
+			if (subsystem.getSubSystem(i).getMark().equals(MARK_SYSTEM)) {
+				list.add(subsystem.getSubSystem(i).getName());
+				exploreSystem(subsystem.getSubSystem(i));
 			}
 		}
 	}

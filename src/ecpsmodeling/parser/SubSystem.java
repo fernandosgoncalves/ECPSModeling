@@ -194,11 +194,33 @@ public class SubSystem {
 	public ArrayList<Port> getOutPorts() {
 		return this.outPorts;
 	}
+	
+	public Port getOutPort(int position) {
+		// se for uma posição valida retorna o system
+		if (this.outPorts.size() > position)
+			return this.outPorts.get(position);
+		return null;
+	}
+	
+	public int getOutPortsCount() {
+		return this.outPorts.size();
+	}
 
 	public ArrayList<Port> getInPorts() {
 		return this.inPorts;
 	}
 
+	public int getInPortsCount() {
+		return this.inPorts.size();
+	}
+	
+	public Port getInPort(int position) {
+		// se for uma posição valida retorna o system
+		if (this.inPorts.size() > position)
+			return this.inPorts.get(position);
+		return null;
+	}
+	
 	public Port findOutPort(String system, String port) {
 		for (int i = 0; i < subSystems.size(); i++) {
 			if (system.equals(subSystems.get(i).name)) {
