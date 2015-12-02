@@ -35,9 +35,9 @@ public class ECPSModelingOutputsPage extends WizardPage {
 	protected Table table;
 
 	public ECPSModelingOutputsPage() {
-		super("Actuation Analyze");
-		setTitle("Actuation Analyze");
-		setDescription("Detail the Actuation subsystem:");
+		super("Sensing Analyze");
+		setTitle("Sensing Analyze");
+		setDescription("Detail the Sensing subsystem:");
 	}
 
 	@Override

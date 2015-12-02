@@ -17,27 +17,35 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.TableEditor;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
 
 public class ECPSModeling extends Wizard implements IImportWizard {
 
+	//Variables that represent the names of system pages
 	public static String MAIN_PAGE = "ECPSModeling Import File";
 	public static String PAGE2 = "Sensing and Actuation Modeling";
-	public static String PAGE3 = "Sensing Analyze";
-	public static String PAGE4 = "Sensors Specification";
-	public static String PAGE5 = "Actuation Analyze";
+	public static String PAGE3 = "Actuation Analyze";
+	public static String PAGE4 = "Actuator Specification";
+	public static String PAGE5 = "Sensor Analyze";
 
+	//Objects of the system pages 
 	ECPSModelingPage mainPage;
 	ECPSModelingSubsysPage page2;
 	ECPSModelingInputsPage page3;
-	ECPSModelingSensorsPage page4;
+	ECPSModelingActuatorsPage page4;
 	ECPSModelingOutputsPage page5;
 
 	Mdl2Aadl mdl2Aadl;
 
-	protected boolean performedSensorsPage = false;
+	//Validation of the population lists are performed
+	protected boolean performedActuatorsPage = false;
 	protected boolean performedOutputsPage = false;
 	protected boolean performedInputsPage = false;
 	protected boolean performedSubsysPage = false;
@@ -49,29 +57,30 @@ public class ECPSModeling extends Wizard implements IImportWizard {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#getNextPage(org.eclipse.jface.wizard.IWizardPage)
-	 * Overide the function getNextPage in order to provide the code execution when the next button is presssed
+	 * 
+	 * @see
+	 * org.eclipse.jface.wizard.Wizard#getNextPage(org.eclipse.jface.wizard.
+	 * IWizardPage) Overide the function getNextPage in order to provide the
+	 * code execution when the next button is presssed
 	 */
 	@Override
 	public IWizardPage getNextPage(IWizardPage page) {
 		// System.out.println("AQUI");
-		if (performedMainPage == false && page.isPageComplete()){
-			//System.out.println("PAGE1");
+		if (performedMainPage == false && page.isPageComplete()) {
+			// System.out.println("PAGE1");
 			performMainPage();
-		}
-		else {
-			if (page.isPageComplete() && page.getName().equals(PAGE2) && performedInputsPage == false){
-				//System.out.println("PAGE2");
+		} else {
+			if (page.isPageComplete() && page.getName().equals(PAGE2) && performedInputsPage == false) {
+				// System.out.println("PAGE2");
 				performInputsPage();
-			}
-			else {
-				if (page.isPageComplete() && page.getName().equals(PAGE3) && performedOutputsPage == false){
-					//System.out.println("PAGE3");
+			} else {
+				if (page.isPageComplete() && page.getName().equals(PAGE3) && performedOutputsPage == false) {
+					// System.out.println("PAGE3");
 					performOutputsPage();
-				}else{
-					if (page.isPageComplete() && page.getName().equals(PAGE4) && performedSensorsPage == false){
-						System.out.println("PAGE4");
-						performSensorsPage();
+				} else {
+					if (page.isPageComplete() && page.getName().equals(PAGE4) && performedActuatorsPage == false) {
+						// System.out.println("PAGE4");
+						performActuatorsPage();
 					}
 				}
 			}
@@ -103,18 +112,18 @@ public class ECPSModeling extends Wizard implements IImportWizard {
 	 */
 	public void performInputsPage() {
 		SubSystem subsys;
-		//System.out.println("INIT PERFORM PAGE2");
+		// System.out.println("INIT PERFORM PAGE2");
 		try {
 			subsys = mdl2Aadl.aadl.getSubSystem();
-			//First Level
-			if (subsys.getName().equals(page2.table.getItem(page2.table.getSelectionIndex()).getText(0))){
-				//System.out.println("GET IN");
+			// First Level
+			if (subsys.getName().equals(page2.table.getItem(page2.table.getSelectionIndex()).getText(0))) {
+				// System.out.println("GET IN");
 				page3.populateInputList(subsys);
-			}
-			else{
-				if(subsys.getSubSystemsCount() > 0){
-					//Recursive search in the subsystems of the main system  
-					page3.populateInputList(subsys.searchSubSystem(page2.table.getItem(page2.table.getSelectionIndex()).getText(0)));
+			} else {
+				if (subsys.getSubSystemsCount() > 0) {
+					// Recursive search in the subsystems of the main system
+					page3.populateInputList(
+							subsys.searchSubSystem(page2.table.getItem(page2.table.getSelectionIndex()).getText(0)));
 				}
 			}
 			performedInputsPage = true;
@@ -124,21 +133,22 @@ public class ECPSModeling extends Wizard implements IImportWizard {
 	}
 
 	/*
-	 * Perform the instruction to populate the table with the input ports of the selected subsystem 
+	 * Perform the instruction to populate the table with the input ports of the
+	 * selected subsystem
 	 */
 	public void performOutputsPage() {
 		SubSystem subsys;
 		try {
 			subsys = mdl2Aadl.aadl.getSubSystem();
-			//First Level
-			if (subsys.getName().equals(page2.table.getItem(page2.table.getSelectionIndex()).getText(0))){				
-				//System.out.println("GET IN");
+			// First Level
+			if (subsys.getName().equals(page2.table.getItem(page2.table.getSelectionIndex()).getText(0))) {
+				// System.out.println("GET IN");
 				page5.populateOutputList(subsys);
-			}
-			else{
-				if(subsys.getSubSystemsCount() > 0){
-					//Recursive search in the subsystems of the main system  
-					page5.populateOutputList(subsys.searchSubSystem(page2.table.getItem(page2.table.getSelectionIndex()).getText(0)));
+			} else {
+				if (subsys.getSubSystemsCount() > 0) {
+					// Recursive search in the subsystems of the main system
+					page5.populateOutputList(
+							subsys.searchSubSystem(page2.table.getItem(page2.table.getSelectionIndex()).getText(0)));
 				}
 			}
 			performedOutputsPage = true;
@@ -146,18 +156,21 @@ public class ECPSModeling extends Wizard implements IImportWizard {
 			e.printStackTrace();
 		}
 	}
-	
 
-	public void performSensorsPage(){
-		System.out.println("Inside Function");
-		page4.populateSensorsTable(page3.table);
-		performedSensorsPage = true;
+	/*
+	 * Populate the actuators list with input signals according the user specification
+	 */
+	public void performActuatorsPage() {
+		//System.out.println("Inside Function");
+		page4.populateSensorsTable(page3.getTable());
+		performedActuatorsPage = true;
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
-	 * Function performed when the finish button is pressed
+	 * @see org.eclipse.jface.wizard.Wizard#performFinish() Function performed
+	 * when the finish button is pressed
 	 */
 	public boolean performFinish() {
 		System.out.println("FINISH PRESSED");
@@ -194,11 +207,12 @@ public class ECPSModeling extends Wizard implements IImportWizard {
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.jface.wizard.IWizard#addPages()
+	 * Adding the wizard process pages
 	 */
 	public void addPages() {
 		page2 = new ECPSModelingSubsysPage();
 		page3 = new ECPSModelingInputsPage();
-		page4 = new ECPSModelingSensorsPage();
+		page4 = new ECPSModelingActuatorsPage();
 		page5 = new ECPSModelingOutputsPage();
 		addPage(mainPage);
 		addPage(page2);

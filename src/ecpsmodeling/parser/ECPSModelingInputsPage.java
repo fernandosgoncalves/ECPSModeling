@@ -35,9 +35,9 @@ public class ECPSModelingInputsPage extends WizardPage {
 	protected Label information;
 
 	public ECPSModelingInputsPage() {
-		super("Sensing Analyze");
-		setTitle("Sensing Analyze");
-		setDescription("Detail the Sensing subsystem:");
+		super("Actuation Analyze");
+		setTitle("Actuation Analyze");
+		setDescription("Detail the Actuation subsystem:");
 	}
 
 	@Override
@@ -78,10 +78,10 @@ public class ECPSModelingInputsPage extends WizardPage {
 
 	public void populateInputList(SubSystem subsystem) {
 		for (int i = 0; i < subsystem.getInPortsCount(); i++) {
-			TableEditor editor = new TableEditor(table);
-			
 			TableItem item = new TableItem(table, SWT.NONE);
 			
+			TableEditor editor = new TableEditor(table);
+					
 			Button check = new Button(table, SWT.CHECK);
 			
 			Label port = new Label(table, SWT.NONE);
@@ -92,6 +92,7 @@ public class ECPSModelingInputsPage extends WizardPage {
 			
 			editor.grabHorizontal = true;
 			editor.setEditor(port, item, 0);
+			item.setData("port", port);
 
 			editor = new TableEditor(table);
 			check.addSelectionListener(new SelectionListener() {				
@@ -114,6 +115,7 @@ public class ECPSModelingInputsPage extends WizardPage {
 			editor.minimumWidth = check.getSize().x;
 			editor.horizontalAlignment = SWT.LEFT;
 			editor.setEditor(check, item, 1);
+			item.setData("check", check);
 			
 			editor = new TableEditor(table);
 			size.setText("1");
@@ -135,6 +137,11 @@ public class ECPSModelingInputsPage extends WizardPage {
 			size.setEnabled(false);
 			editor.grabHorizontal = true;
 			editor.setEditor(size, item, 2);
+			item.setData("size", size);
 		}
+	}
+	
+	public Table getTable(){
+		return table;
 	}
 }
