@@ -59,6 +59,7 @@ public class ECPSModelingInputsPage extends WizardPage {
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 
 		table.setLayoutData(data);
+		table.setSize(300, 100);
 				
 		final TableColumn column = new TableColumn(table, SWT.NONE);
 		column.setText("Input");

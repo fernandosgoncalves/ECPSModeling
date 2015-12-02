@@ -17,14 +17,18 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.swt.SWT;
 
 public class ECPSModelingActuatorsPage extends WizardPage {
@@ -42,90 +46,97 @@ public class ECPSModelingActuatorsPage extends WizardPage {
 
 	@Override
 	public void createControl(Composite parent) {
-		GridLayout layout = new GridLayout();
-
+		GridLayout layout = new GridLayout();		
+		layout.numColumns = 3;
+		
 		container = new Composite(parent, SWT.NONE);
 		container.setLayout(layout);
-		container.setSize(300, 200);
-
+		container.setSize(300, 300);
+		
 		information = new Label(container, SWT.NONE);
-		information.setText("Analyze the input ports of the mathematical model:");
-
+		GridData ilayout = new GridData();
+		ilayout.horizontalSpan = 3;
+		information.setLayoutData(ilayout);
+		information.setText("Specify the system actuator that compose the application:");
+		
 		// ---------------------- Table ---------------------------
 		table = new Table(container, SWT.BORDER);
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
 
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
+		data.horizontalSpan = 3;
 
 		table.setLayoutData(data);
-		table.setSize(300, 200);
+		table.setSize(300, 100);
 
 		final TableColumn column = new TableColumn(table, SWT.NONE);
 		column.setText("Signal");
-		column.setWidth(200);
+		column.setWidth(150);
 
 		final TableColumn column2 = new TableColumn(table, SWT.NONE);
 		column2.setText("Actuator");
-		column2.setWidth(100);
+		column2.setWidth(110);
 
 		final TableColumn column3 = new TableColumn(table, SWT.NONE);
 		column3.setText("Sampling");
-		column3.setWidth(100);
+		column3.setWidth(70);
 
 		final TableColumn column4 = new TableColumn(table, SWT.NONE);
 		column4.setText("Protocol");
-		column4.setWidth(100);
+		column4.setWidth(70);
 
 		final TableColumn column5 = new TableColumn(table, SWT.NONE);
 		column5.setText("Priority");
-		column5.setWidth(100);
-
+		column5.setWidth(70);
+		
+		Button btAddActuator = new Button(container, SWT.NONE);
+		Button btEditActuator = new Button(container, SWT.NONE);
+		Button btRemoveActuator = new Button(container, SWT.NONE);
+		
+		table.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				btAddActuator.setEnabled(true);
+				btEditActuator.setEnabled(true);
+				btRemoveActuator.setEnabled(true);
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
+		//Button btAddActuator = new Button(container, SWT.NONE);
+		btAddActuator.setText("Add Actuator");
+		btAddActuator.setEnabled(false);
+		//Button btEditActuator = new Button(container, SWT.NONE);
+		btEditActuator.setText("Edit Actuator");
+		btEditActuator.setEnabled(false);
+		btEditActuator.addListener(SWT.Selection, new Listener() {
+			@Override
+			public void handleEvent(Event e) {
+				switch(e.type){
+				case SWT.Selection:
+					EditActuatorShell edit = new EditActuatorShell(table.getItem(table.getSelectionIndex()),parent.getDisplay());
+					//Display display = new Display();
+				    /*Shell dialog = new Shell(shell);
+				    dialog.setText("Dialog");
+				    dialog.setSize(200, 200);
+				    dialog.open();*/
+				}
+			}
+		});
+		
+		//Button btRemoveActuator = new Button(container, SWT.NONE);
+		btRemoveActuator.setText("Remove Actuator");
+		btRemoveActuator.setEnabled(false);
+				
 		setControl(container);
 		setPageComplete(true);
 	}
-
-	/*
-	 * public void populateInputList(SubSystem subsystem) { for (int i = 0; i <
-	 * subsystem.getInPortsCount(); i++) { TableEditor editor = new
-	 * TableEditor(table);
-	 * 
-	 * TableItem item = new TableItem(table, SWT.NONE);
-	 * 
-	 * Button check = new Button(table, SWT.CHECK);
-	 * 
-	 * Label port = new Label(table, SWT.NONE);
-	 * 
-	 * Text size = new Text(table, SWT.NONE);
-	 * 
-	 * port.setText(subsystem.getInPort(i).getName());
-	 * 
-	 * editor.grabHorizontal = true; editor.setEditor(port, item, 0);
-	 * 
-	 * editor = new TableEditor(table); check.addSelectionListener(new
-	 * SelectionListener() {
-	 * 
-	 * @Override public void widgetSelected(SelectionEvent e) { // TODO
-	 * Auto-generated method stub if (size.isEnabled()) size.setEnabled(false);
-	 * else size.setEnabled(true); }
-	 * 
-	 * @Override public void widgetDefaultSelected(SelectionEvent e) { // TODO
-	 * Auto-generated method stub
-	 * 
-	 * } }); check.pack(); editor.minimumWidth = check.getSize().x;
-	 * editor.horizontalAlignment = SWT.LEFT; editor.setEditor(check, item, 1);
-	 * 
-	 * editor = new TableEditor(table); size.setText("1");
-	 * size.addListener(SWT.Verify, new Listener() {
-	 * 
-	 * @Override public void handleEvent(Event e) { String string = e.text;
-	 * char[] chars = new char[string.length()]; string.getChars(0,
-	 * chars.length, chars, 0); for (int i = 0; i < chars.length; i++) { if
-	 * (!('0' <= chars[i] && chars[i] <= '9')) { e.doit = false; return; } }
-	 * 
-	 * } }); size.setEnabled(false); editor.grabHorizontal = true;
-	 * editor.setEditor(size, item, 2); } }
-	 */
 
 	/*
 	 * Verify the input table and according the vector amount of each input port
