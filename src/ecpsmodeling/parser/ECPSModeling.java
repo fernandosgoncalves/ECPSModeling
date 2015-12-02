@@ -17,6 +17,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
 
@@ -24,40 +25,54 @@ public class ECPSModeling extends Wizard implements IImportWizard {
 
 	public static String MAIN_PAGE = "ECPSModeling Import File";
 	public static String PAGE2 = "Sensing and Actuation Modeling";
-	public static String PAGE3 = "Sensing Specification";
-	public static String PAGE4 = "Actuation Specification";
+	public static String PAGE3 = "Sensing Analyze";
+	public static String PAGE4 = "Sensors Specification";
+	public static String PAGE5 = "Actuation Analyze";
 
 	ECPSModelingPage mainPage;
-	ECPSModelingPage2 page2;
-	ECPSModelingPage3 page3;
-	ECPSModelingPage4 page4;
+	ECPSModelingSubsysPage page2;
+	ECPSModelingInputsPage page3;
+	ECPSModelingSensorsPage page4;
+	ECPSModelingOutputsPage page5;
 
 	Mdl2Aadl mdl2Aadl;
 
-	protected boolean performedPage3 = false;
-	protected boolean performedPage2 = false;
-	protected boolean performed = false;
+	protected boolean performedSensorsPage = false;
+	protected boolean performedOutputsPage = false;
+	protected boolean performedInputsPage = false;
+	protected boolean performedSubsysPage = false;
+	protected boolean performedMainPage = false;
 
 	public ECPSModeling() {
 		super();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.Wizard#getNextPage(org.eclipse.jface.wizard.IWizardPage)
+	 * Overide the function getNextPage in order to provide the code execution when the next button is presssed
+	 */
 	@Override
 	public IWizardPage getNextPage(IWizardPage page) {
 		// System.out.println("AQUI");
-		if (performed == false && page.isPageComplete()){
+		if (performedMainPage == false && page.isPageComplete()){
 			//System.out.println("PAGE1");
 			performMainPage();
 		}
 		else {
-			if (page.isPageComplete() && page.getName().equals(PAGE2) && performedPage2 == false){
+			if (page.isPageComplete() && page.getName().equals(PAGE2) && performedInputsPage == false){
 				//System.out.println("PAGE2");
-				performPage2();
+				performInputsPage();
 			}
 			else {
-				if (page.isPageComplete() && page.getName().equals(PAGE3) && performedPage3 == false){
+				if (page.isPageComplete() && page.getName().equals(PAGE3) && performedOutputsPage == false){
 					//System.out.println("PAGE3");
-					performPage3();
+					performOutputsPage();
+				}else{
+					if (page.isPageComplete() && page.getName().equals(PAGE4) && performedSensorsPage == false){
+						System.out.println("PAGE4");
+						performSensorsPage();
+					}
 				}
 			}
 		}
@@ -76,7 +91,7 @@ public class ECPSModeling extends Wizard implements IImportWizard {
 			mdl2Aadl.autoMark();
 			// Carrega Lista
 			page2.populateList(mdl2Aadl);
-			performed = true;
+			performedMainPage = true;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -86,101 +101,68 @@ public class ECPSModeling extends Wizard implements IImportWizard {
 	 * Selected the mathematical model sybsystem, this function read their input
 	 * ports and populate a list to analyze it.
 	 */
-	public void performPage2() {
+	public void performInputsPage() {
 		SubSystem subsys;
-		SubSystem auxsubsys;
 		//System.out.println("INIT PERFORM PAGE2");
 		try {
-			//System.out.println(page2.list.getItem(page2.list.getSelectionIndex()).toString());
 			subsys = mdl2Aadl.aadl.getSubSystem();
-			//System.out.println(subsys.getName());
 			//First Level
-			if (subsys.getName().equals(page2.list.getItem(page2.list.getSelectionIndex()).toString())){
+			if (subsys.getName().equals(page2.table.getItem(page2.table.getSelectionIndex()).getText(0))){
 				//System.out.println("GET IN");
 				page3.populateInputList(subsys);
 			}
 			else{
-				if(subsys.getSubSystemsCount() > 0)
-					searchInNextLevel(subsys);
+				if(subsys.getSubSystemsCount() > 0){
+					//Recursive search in the subsystems of the main system  
+					page3.populateInputList(subsys.searchSubSystem(page2.table.getItem(page2.table.getSelectionIndex()).getText(0)));
+				}
 			}
-			performedPage2 = true;
+			performedInputsPage = true;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void performPage3() {
+	/*
+	 * Perform the instruction to populate the table with the input ports of the selected subsystem 
+	 */
+	public void performOutputsPage() {
 		SubSystem subsys;
-		SubSystem auxsubsys;
-		//System.out.println("INIT PERFORM PAGE3");
 		try {
-			//System.out.println(page2.list.getItem(page2.list.getSelectionIndex()).toString());
 			subsys = mdl2Aadl.aadl.getSubSystem();
-			//System.out.println(subsys.getName());
 			//First Level
-			if (subsys.getName().equals(page2.list.getItem(page2.list.getSelectionIndex()).toString())){
+			if (subsys.getName().equals(page2.table.getItem(page2.table.getSelectionIndex()).getText(0))){				
 				//System.out.println("GET IN");
-				page4.populateOutputList(subsys);
+				page5.populateOutputList(subsys);
 			}
 			else{
-				if(subsys.getSubSystemsCount() > 0)
-					searchOutNextLevel(subsys);
+				if(subsys.getSubSystemsCount() > 0){
+					//Recursive search in the subsystems of the main system  
+					page5.populateOutputList(subsys.searchSubSystem(page2.table.getItem(page2.table.getSelectionIndex()).getText(0)));
+				}
 			}
-			performedPage3 = true;
+			performedOutputsPage = true;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
+	
 
-	public void searchInNextLevel(SubSystem subsystem){
-		SubSystem auxSubsystem;
-		//Second Level Level
-		//System.out.println("SEARCH NEXT LEVEL");
-		for (int i = 0; i < subsystem.getSubSystemsCount(); i++) {
-			auxSubsystem = subsystem.getSubSystem(i);
-			//System.out.println(auxSubsystem.getName());
-			if (auxSubsystem.getName().equals(page2.list.getItem(page2.list.getSelectionIndex()).toString())){
-				//System.out.println("GET IN");
-				page3.populateInputList(auxSubsystem);
-			}else{
-				if(auxSubsystem.getSubSystemsCount() > 0){
-					searchInNextLevel(auxSubsystem);
-				}
-			}
-		}
+	public void performSensorsPage(){
+		System.out.println("Inside Function");
+		page4.populateSensorsTable(page3.table);
+		performedSensorsPage = true;
 	}
-	
-	public void searchOutNextLevel(SubSystem subsystem){
-		SubSystem auxSubsystem;
-		//Second Level Level
-		//System.out.println("SEARCH NEXT LEVEL");
-		for (int i = 0; i < subsystem.getSubSystemsCount(); i++) {
-			auxSubsystem = subsystem.getSubSystem(i);
-			//System.out.println(auxSubsystem.getName());
-			if (auxSubsystem.getName().equals(page2.list.getItem(page2.list.getSelectionIndex()).toString())){
-				//System.out.println("GET IN");
-				page4.populateOutputList(auxSubsystem);
-			}else{
-				if(auxSubsystem.getSubSystemsCount() > 0){
-					searchOutNextLevel(auxSubsystem);
-				}
-			}
-		}
-	}
-	
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
+	 * Function performed when the finish button is pressed
 	 */
 	public boolean performFinish() {
 		System.out.println("FINISH PRESSED");
 		IFile file = mainPage.createNewFile();
 		try {
-			// Construtor criação do processo de transformação e leitura do
-			// arquivo mdl
-			// Mdl2Aadl mdl2Aadl = new
-			// Mdl2Aadl(file.getRawLocation().toString());
 			// Chamada da função de marcação automatizada
 			mdl2Aadl.autoMark();
 			// Geração do arquivo AADL de saída
@@ -214,13 +196,15 @@ public class ECPSModeling extends Wizard implements IImportWizard {
 	 * @see org.eclipse.jface.wizard.IWizard#addPages()
 	 */
 	public void addPages() {
-		page2 = new ECPSModelingPage2();
-		page3 = new ECPSModelingPage3();
-		page4 = new ECPSModelingPage4();
+		page2 = new ECPSModelingSubsysPage();
+		page3 = new ECPSModelingInputsPage();
+		page4 = new ECPSModelingSensorsPage();
+		page5 = new ECPSModelingOutputsPage();
 		addPage(mainPage);
 		addPage(page2);
 		addPage(page3);
 		addPage(page4);
+		addPage(page5);
 		super.addPages();
 	}
 }
