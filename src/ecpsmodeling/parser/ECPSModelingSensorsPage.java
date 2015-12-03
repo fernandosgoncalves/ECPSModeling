@@ -10,36 +10,35 @@
  *******************************************************************************/
 package ecpsmodeling.parser;
 
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 
-public class ECPSModelingActuatorsPage extends WizardPage {
+public class ECPSModelingSensorsPage extends WizardPage {
 	private Composite container;
 
 	protected Table table;
 
 	protected Label information;
 
-	public ECPSModelingActuatorsPage() {
-		super("Actuator Specification");
-		setTitle("Actuator Specification");
-		setDescription("Detail the Actuation subsystem:");
+	public ECPSModelingSensorsPage() {
+		super("Sensor Specification");
+		setTitle("Sensor Specification");
+		setDescription("Detail the Sensing Subsystem:");
 	}
 
 	@Override
@@ -49,13 +48,13 @@ public class ECPSModelingActuatorsPage extends WizardPage {
 
 		container = new Composite(parent, SWT.NONE);
 		container.setLayout(layout);
-		container.setSize(300, 300);
+		container.setSize(300, 200);
 
 		information = new Label(container, SWT.NONE);
 		GridData ilayout = new GridData();
 		ilayout.horizontalSpan = 3;
 		information.setLayoutData(ilayout);
-		information.setText("Specify the system actuator that compose the application:");
+		information.setText("Specify the set of sensors that compose the system:");
 
 		// ---------------------- Table ---------------------------
 		table = new Table(container, SWT.BORDER);
@@ -69,35 +68,34 @@ public class ECPSModelingActuatorsPage extends WizardPage {
 		table.setSize(300, 100);
 
 		final TableColumn column = new TableColumn(table, SWT.NONE);
-		column.setText("Signal");
+		column.setText("Sensor");
 		column.setWidth(150);
 
 		final TableColumn column2 = new TableColumn(table, SWT.NONE);
-		column2.setText("Actuator");
-		column2.setWidth(110);
+		column2.setText("Sampling (ms)");
+		column2.setWidth(100);
 
 		final TableColumn column3 = new TableColumn(table, SWT.NONE);
-		column3.setText("Sampling");
-		column3.setWidth(70);
+		column3.setText("Priority");
+		column3.setWidth(60);
 
 		final TableColumn column4 = new TableColumn(table, SWT.NONE);
-		column4.setText("Protocol");
-		column4.setWidth(70);
+		column4.setText("Associated Signal");
+		column4.setWidth(120);
 
 		final TableColumn column5 = new TableColumn(table, SWT.NONE);
-		column5.setText("Priority");
-		column5.setWidth(70);
+		column5.setText("Protocol");
+		column5.setWidth(60);
 
-		Button btAddActuator = new Button(container, SWT.NONE);
-		Button btEditActuator = new Button(container, SWT.NONE);
-		Button btRemoveActuator = new Button(container, SWT.NONE);
+		Button btAddSensor = new Button(container, SWT.NONE);
+		Button btEditSensor = new Button(container, SWT.NONE);
+		Button btRemoveSensor = new Button(container, SWT.NONE);
 
 		table.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				btAddActuator.setEnabled(true);
-				btEditActuator.setEnabled(true);
-				btRemoveActuator.setEnabled(true);
+				btEditSensor.setEnabled(true);
+				btRemoveSensor.setEnabled(true);
 			}
 
 			@Override
@@ -106,53 +104,78 @@ public class ECPSModelingActuatorsPage extends WizardPage {
 
 			}
 		});
-		
+
 		table.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseUp(MouseEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
 			public void mouseDown(MouseEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
 			public void mouseDoubleClick(MouseEvent e) {
-				editActuatorProperties(parent.getDisplay());		
+				if(table.getSelectionIndex() > -1)
+					editSensorProperties(parent.getDisplay());
 			}
 		});
 
-		// Button btAddActuator = new Button(container, SWT.NONE);
-		btAddActuator.setText("Add Actuator");
-		btAddActuator.setEnabled(false);
-		// Button btEditActuator = new Button(container, SWT.NONE);
-		btEditActuator.setText("Edit Actuator");
-		btEditActuator.setEnabled(false);
-		btEditActuator.addListener(SWT.Selection, new Listener() {
+
+		btAddSensor.setText("Add Sensor");
+		btAddSensor.addListener(SWT.Selection, new Listener() {
+			@Override
+			public void handleEvent(Event event) {
+				addSensor(parent.getDisplay());
+			}
+		});
+
+		btEditSensor.setText("Edit Sensor");
+		btEditSensor.setEnabled(false);
+		btEditSensor.addListener(SWT.Selection, new Listener() {
 			@Override
 			public void handleEvent(Event e) {
 				switch (e.type) {
 				case SWT.Selection:
-					editActuatorProperties(parent.getDisplay());
+					editSensorProperties(parent.getDisplay());
 				}
 			}
 		});
 
-		// Button btRemoveActuator = new Button(container, SWT.NONE);
-		btRemoveActuator.setText("Remove Actuator");
-		btRemoveActuator.setEnabled(false);
-
+		btRemoveSensor.setText("Remove Sensor");
+		btRemoveSensor.setEnabled(false);
+		btRemoveSensor.addListener(SWT.Selection, new Listener() {
+			@Override
+			public void handleEvent(Event e) {
+				switch (e.type) {
+				case SWT.Selection:
+					removeSensor();
+				}
+			}
+		});
+		
 		setControl(container);
 		setPageComplete(true);
 	}
 
+	public void addSensor(Display display){
+		//AddSensorShell add = new EditSensorShell(table.getItem(table.getSelectionIndex()), display);
+//		if (add.isConfirm()) {
+//			TableItem aux = new TableItem(table, SWT.NONE);
+//			aux.setText(0, edit.getSignal());
+//			aux.setText(1, edit.getActuator());
+//			aux.setText(2, edit.getSampling());
+//			aux.setText(3, edit.getProtocol());
+//			aux.setText(4, edit.getPriority());
+//		}		
+	}
 	
-	public void editActuatorProperties(Display display){
-		EditActuatorShell edit = new EditActuatorShell(table.getItem(table.getSelectionIndex()), display);
+	public void editSensorProperties(Display display) {
+		EditSensorShell edit = new EditSensorShell(table.getItem(table.getSelectionIndex()), display);
 		if (edit.isConfirm()) {
 			TableItem aux = table.getItem(table.getSelectionIndex());
 			aux.setText(0, edit.getSignal());
@@ -162,24 +185,9 @@ public class ECPSModelingActuatorsPage extends WizardPage {
 			aux.setText(4, edit.getPriority());
 		}
 	}
-	
-	/*
-	 * Verify the input table and according the vector amount of each input port
-	 * the signals are inserted into the sensors list specification
-	 */
-	public void populateSensorsTable(Table table2) {
-		TableItem item;
-		// System.out.println("Begin Function");
-		// System.out.println(table2.getItemCount());
-		for (int i = 0; i < table2.getItemCount(); i++) {
-			Label port = (Label) table2.getItem(i).getData("port");
-			Text size = (Text) table2.getItem(i).getData("size");
-			// System.out.println(size.getText());
-			for (int z = 0; z < Integer.valueOf(size.getText()); z++) {
-				// System.out.println(port.getText() + (z + 1));
-				item = new TableItem(table, SWT.NONE);
-				item.setText(0, port.getText() + (z + 1));
-			}
-		}
+
+	public void removeSensor(){
+		if(table.getSelectionIndex() > -1)
+			table.remove(table.getSelectionIndex()); 
 	}
 }
