@@ -23,23 +23,27 @@ import org.eclipse.ui.IWorkbench;
 public class ECPSModeling extends Wizard implements IImportWizard {
 
 	// Variables that represent the names of system pages
+	public static String SAMODELING = "Sensing and Actuation Modeling";
+	public static String ACTSPECIFICATION = "Actuator Specification";
+	public static String SENSPECIFICATION = "Sensor Specification";
+	public static String PREWRITING = "Prewriting Specification";
 	public static String MAIN_PAGE = "ECPSModeling Import File";
-	public static String PAGE2 = "Sensing and Actuation Modeling";
-	public static String PAGE3 = "Actuation Analyze";
-	public static String PAGE4 = "Actuator Specification";
-	public static String PAGE5 = "Sensor Analyze";
+	public static String ACTUATION = "Actuation Analyze";
+	public static String SENSING = "Sensor Analyze";
 
 	// Objects of the system pages
-	ECPSModelingPage mainPage;
-	ECPSModelingSubsysPage page2;
-	ECPSModelingInputsPage page3;
-	ECPSModelingActuatorsPage page4;
-	ECPSModelingOutputsPage page5;
-	ECPSModelingSensorsPage page6;
-
+	MainPage mainPage;
+	SubsysPage subsysPage;
+	InputsPage inputsPage;
+	ActuatorsPage actuatorsPage;
+	OutputsPage outputsPage;
+	SensorsPage sensorsPage;
+	PreWritingPage prewritingPage;
+	
 	Mdl2Aadl mdl2Aadl;
 
 	// Validation of the population lists are performed
+	protected boolean performedPrewritingPage = false;
 	protected boolean performedActuatorsPage = false;
 	protected boolean performedOutputsPage = false;
 	protected boolean performedSensorsPage = false;
@@ -66,31 +70,32 @@ public class ECPSModeling extends Wizard implements IImportWizard {
 			// System.out.println("PAGE1");
 			performMainPage();
 		} else {
-			if (page.isPageComplete() && page.getName().equals(PAGE2) && performedInputsPage == false) {
+			if (page.isPageComplete() && page.getName().equals(SAMODELING) && performedInputsPage == false) {
 				/*
 				 * Selected the mathematical model sybsystem, this function read
 				 * their input ports and populate a list to analyze it.
 				 */
-				page3.populateInputList(mdl2Aadl.aadl.getSubSystem()
-						.searchSubSystem(page2.table.getItem(page2.table.getSelectionIndex()).getText(0)));
+				inputsPage.populateInputList(mdl2Aadl.aadl.getSubSystem()
+						.searchSubSystem(subsysPage.table.getItem(subsysPage.table.getSelectionIndex()).getText(0)));
 				performedInputsPage = true;
 			} else {
-				if (page.isPageComplete() && page.getName().equals(PAGE3) && performedOutputsPage == false) {
+				if (page.isPageComplete() && page.getName().equals(ACTUATION) && performedOutputsPage == false) {
 					/*
 					 * Perform the instruction to populate the table with the
 					 * output ports of the selected subsystem
 					 */
-					page5.populateOutputList(mdl2Aadl.aadl.getSubSystem()
-							.searchSubSystem(page2.table.getItem(page2.table.getSelectionIndex()).getText(0)));
+					outputsPage.populateOutputList(mdl2Aadl.aadl.getSubSystem()
+							.searchSubSystem(subsysPage.table.getItem(subsysPage.table.getSelectionIndex()).getText(0)));
 					performedOutputsPage = true;
 				} else {
-					if (page.isPageComplete() && page.getName().equals(PAGE4) && performedActuatorsPage == false) {
+					if (page.isPageComplete() && page.getName().equals(PREWRITING) && performedPrewritingPage == false) {
 						/*
 						 * Perform the instructions to populate the table witj
 						 * the list of system actuator
 						 */
-						page4.populateSensorsTable(page3.getTable());
-						performedActuatorsPage = true;
+						prewritingPage.populateSignals(inputsPage.getTable());
+						//actuatorsPage.populateSensorsTable(inputsPage.getTable());
+						performedPrewritingPage = true;
 					}
 				}
 			}
@@ -109,7 +114,7 @@ public class ECPSModeling extends Wizard implements IImportWizard {
 			// Chamada da função de marcação automatizada
 			mdl2Aadl.autoMark();
 			// Carrega Lista
-			page2.populateList(mdl2Aadl);
+			subsysPage.populateList(mdl2Aadl);
 			performedMainPage = true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -123,7 +128,7 @@ public class ECPSModeling extends Wizard implements IImportWizard {
 	 * when the finish button is pressed
 	 */
 	public boolean performFinish() {
-		System.out.println("FINISH PRESSED");
+		//System.out.println("FINISH PRESSED");
 		IFile file = mainPage.createNewFile();
 		try {
 			// Chamada da função de marcação automatizada
@@ -150,7 +155,7 @@ public class ECPSModeling extends Wizard implements IImportWizard {
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		setWindowTitle("File Import Wizard"); // NON-NLS-1
 		setNeedsProgressMonitor(true);
-		mainPage = new ECPSModelingPage("ECPSModeling Import File", selection); // NON-NLS-1
+		mainPage = new MainPage("ECPSModeling Import File", selection); // NON-NLS-1
 	}
 
 	/*
@@ -160,17 +165,20 @@ public class ECPSModeling extends Wizard implements IImportWizard {
 	 * process pages
 	 */
 	public void addPages() {
-		page2 = new ECPSModelingSubsysPage();
-		page3 = new ECPSModelingInputsPage();
-		page4 = new ECPSModelingActuatorsPage();
-		page5 = new ECPSModelingOutputsPage();
-		page6 = new ECPSModelingSensorsPage();
+		prewritingPage = new PreWritingPage();
+		actuatorsPage = new ActuatorsPage();
+		outputsPage = new OutputsPage();
+		sensorsPage = new SensorsPage();
+		subsysPage = new SubsysPage();
+		inputsPage = new InputsPage();
+		
 		addPage(mainPage);
-		addPage(page2);
-		addPage(page3);
-		addPage(page4);
-		addPage(page5);
-		addPage(page6);
+		addPage(subsysPage);
+		addPage(inputsPage);
+		addPage(prewritingPage);
+		addPage(actuatorsPage);
+		addPage(outputsPage);
+		addPage(sensorsPage);
 		super.addPages();
 	}
 }

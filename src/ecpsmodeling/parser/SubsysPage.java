@@ -22,18 +22,19 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.SWT;
 
-public class ECPSModelingSubsysPage extends WizardPage {
+public class SubsysPage extends WizardPage {
 	private Composite container;
 
 	public static String MARK_PROCESS_THREAD = "PROCESS/THREAD";
 	public static String MARK_PROCESS = "PROCESS";
 	public static String MARK_SYSTEM = "SYSTEM";
+	public static String MARK_DEVICE = "DEVICE";
 
 	protected Table table;
 	
 	Label information;
 
-	public ECPSModelingSubsysPage() {
+	public SubsysPage() {
 		super("Sensing and Actuation Modeling");
 		setTitle("Sensing and Actuation Modeling");
 		setDescription("Define the System Mathematical Model:");
@@ -88,6 +89,9 @@ public class ECPSModelingSubsysPage extends WizardPage {
 			if (mdl2Aadl.aadl.getSubSystem().getSubSystem(i).getMark().equals(MARK_PROCESS)) {
 				addItemTable(mdl2Aadl.aadl.getSubSystem().getSubSystem(i).getName());
 			}
+			if (mdl2Aadl.aadl.getSubSystem().getSubSystem(i).getMark().equals(MARK_DEVICE)) {
+				addItemTable(mdl2Aadl.aadl.getSubSystem().getSubSystem(i).getName());
+			}
 			if (mdl2Aadl.aadl.getSubSystem().getSubSystem(i).getMark().equals(MARK_SYSTEM)) {
 				addItemTable(mdl2Aadl.aadl.getSubSystem().getSubSystem(i).getName());
 				exploreSystem(mdl2Aadl.aadl.getSubSystem().getSubSystem(i));
@@ -108,6 +112,9 @@ public class ECPSModelingSubsysPage extends WizardPage {
 			if (subsystem.getSubSystem(i).getMark().equals(MARK_PROCESS)) {
 				addItemTable(subsystem.getSubSystem(i).getName());
 			}
+			if (subsystem.getSubSystem(i).getMark().equals(MARK_DEVICE)) {
+				addItemTable(subsystem.getSubSystem(i).getName());
+			}			
 			if (subsystem.getSubSystem(i).getMark().equals(MARK_SYSTEM)) {
 				addItemTable(subsystem.getSubSystem(i).getName());
 				exploreSystem(subsystem.getSubSystem(i));

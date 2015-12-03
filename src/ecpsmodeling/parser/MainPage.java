@@ -28,11 +28,11 @@ import java.io.InputStream;
 import org.eclipse.swt.SWT;
 import java.io.File;
 
-public class ECPSModelingPage extends WizardNewFileCreationPage {
+public class MainPage extends WizardNewFileCreationPage {
 
 	protected FileFieldEditor editor;
 
-	public ECPSModelingPage(String pageName, IStructuredSelection selection) {
+	public MainPage(String pageName, IStructuredSelection selection) {
 		super(pageName, selection);
 		setTitle(pageName); // NON-NLS-1
 		setDescription("Import a file from the local file system into the workspace"); // NON-NLS-1
@@ -61,7 +61,7 @@ public class ECPSModelingPage extends WizardNewFileCreationPage {
 																						// //NON-NLS-2
 		editor.getTextControl(fileSelectionArea).addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				IPath path = new Path(ECPSModelingPage.this.editor.getStringValue());
+				IPath path = new Path(MainPage.this.editor.getStringValue());
 				setFileName(path.lastSegment());
 			}
 		});
