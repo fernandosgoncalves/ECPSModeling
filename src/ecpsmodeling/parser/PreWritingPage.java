@@ -14,6 +14,7 @@ import java.util.ArrayList;
 
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.widgets.TreeColumn;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -178,16 +179,51 @@ public class PreWritingPage extends WizardPage {
 	public void addSubsystem(Display display) {
 		AddSubsystemShell add = new AddSubsystemShell(display, inputs);
 		if (add.isConfirm()) {
-			// TableItem aux = table.getItem(table.getSelectionIndex());
-			/*
-			 * aux.setText(0, edit.getSignal()); aux.setText(1,
-			 * edit.getActuator()); aux.setText(2, edit.getSampling());
-			 * aux.setText(3, edit.getProtocol()); aux.setText(4,
-			 * edit.getPriority());
-			 */
+			inputs = add.getInputs();
+			addSubsys(add.getName(), add.getSubsys(), add.getOutputs());
 		}
 	}
 
+	public void addSubsys(String name, ArrayList<String> inputs, ArrayList<String> outputs){
+		TreeItem treeItem = new TreeItem(table, SWT.NONE);
+		TreeItem subitem;
+		treeItem.setText(0, name);
+		treeItem.setText(1, "inputs");
+		treeItem.setText(2, "outputs");
+		System.out.println("IS: " + inputs.size() + " OS: " + outputs.size());
+		if(inputs.size() >= outputs.size()){
+			System.out.println("IS >= OS");
+			for(int i = 0; i < inputs.size(); i++){
+				subitem = new TreeItem(treeItem, SWT.NONE);
+				if(i < outputs.size()){
+					System.out.println("I: " + inputs.get(i));
+					subitem.setText(1, inputs.get(i));
+					System.out.println("O: " + outputs.get(i));
+					subitem.setText(2, outputs.get(i));
+				}else{
+					System.out.println("Else");
+					System.out.println("I: " + inputs.get(i));
+					subitem.setText(1, inputs.get(i));
+				}
+			}
+		}else{
+			System.out.println("IS < OS");
+			for(int i = 0; i < outputs.size(); i++){
+				subitem = new TreeItem(treeItem, SWT.NONE);
+				if(i < inputs.size()){
+					System.out.println("I: " + inputs.get(i));
+					subitem.setText(1, inputs.get(i));
+					System.out.println("O: " + outputs.get(i));
+					subitem.setText(2, outputs.get(i));
+				}else{
+					System.out.println("Else");
+					System.out.println("O: " + outputs.get(i));					
+					subitem.setText(2, outputs.get(i));					
+				}
+			}
+		}
+	}
+	
 	public void editSubsystemProperties(Display display) {
 		/*
 		 * EditSubsystemShell edit = new

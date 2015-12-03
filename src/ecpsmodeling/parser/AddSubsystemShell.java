@@ -24,28 +24,31 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 
 public class AddSubsystemShell {
-
-	final Shell shell;
-	TabFolder tabFolder;
-
 	protected boolean confirm = false;
 
+	protected ArrayList<String> outputs;
+	protected ArrayList<String> subsys;
 	protected ArrayList<String> inputs;
+	
+	protected TabFolder tabFolder;
+
+	protected Table tableSubsys;
+	protected Table tableOutput;
+	protected Table tableInput;
 
 	protected String txtName;
-
-	protected Text name;
-
+	
 	protected Label lsname;
 
 	protected Button cancel;
 	protected Button ok;
+	
+	protected Text tOuput;
+	protected Text name;
 
-	protected Table tableInput;
-	protected Table tableSubsys;
-	protected Table tableOutput;
+	final Shell shell;
 
-	public AddSubsystemShell(Display display, ArrayList<String> inputs) {
+	public AddSubsystemShell(Display display, ArrayList<String> iinputs) {
 		shell = new Shell(display,
 				SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL | SWT.RESIZE | SWT.BORDER | SWT.CLOSE | SWT.CENTER);
 
@@ -66,8 +69,12 @@ public class AddSubsystemShell {
 		int y = bounds.y + (bounds.height - rect.height) / 2;
 		shell.setLocation(x, y);
 
+		outputs = new ArrayList<String>();
+		subsys = new ArrayList<String>();
+		inputs = new ArrayList<String>();
+		
 		createControl();
-		init(inputs);
+		init(iinputs);
 
 		shell.open();
 
@@ -98,14 +105,14 @@ public class AddSubsystemShell {
 		tabFolder.setLayoutData(gdTabFolder);
 		tabFolder.setSize(400, 200);
 
-		TabItem inputs = new TabItem(tabFolder, SWT.NONE);
-		inputs.setText("Inputs");
-		inputs.setControl(getTabInputsControl(tabFolder));
+		TabItem tab0 = new TabItem(tabFolder, SWT.NONE);
+		tab0.setText("Inputs");
+		tab0.setControl(getTabInputsControl(tabFolder));
 
-		TabItem outputs = new TabItem(tabFolder, SWT.NONE);
-		outputs.setText("Outputs");
-		outputs.setToolTipText("This is tab two");
-		outputs.setControl(getTabOutputsControl(tabFolder));
+		TabItem tab1 = new TabItem(tabFolder, SWT.NONE);
+		tab1.setText("Outputs");
+		tab1.setToolTipText("This is tab two");
+		tab1.setControl(getTabOutputsControl(tabFolder));
 
 		GridData blayout = new GridData();
 		blayout.widthHint = 80;
@@ -116,10 +123,24 @@ public class AddSubsystemShell {
 		ok.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				int i;
 				confirm = true;
-
+			
 				txtName = name.getText();
-
+				inputs.clear();
+				
+				for(i = 0; i < tableInput.getItemCount(); i++){
+					inputs.add(tableInput.getItem(i).getText(0));
+				}
+				
+				for(i = 0; i < tableOutput.getItemCount(); i++){
+					outputs.add(tableOutput.getItem(i).getText(0));
+				}
+				
+				for(i = 0; i < tableSubsys.getItemCount(); i++){
+					subsys.add(tableSubsys.getItem(i).getText(0));
+				}
+				
 				shell.close();
 			}
 
@@ -170,14 +191,14 @@ public class AddSubsystemShell {
 		column.setWidth(150);
 
 		// ---------------------- Table ---------------------------
-		tableOutput = new Table(composite, SWT.BORDER);
-		tableOutput.setLinesVisible(true);
-		tableOutput.setHeaderVisible(true);
+		tableSubsys = new Table(composite, SWT.BORDER);
+		tableSubsys.setLinesVisible(true);
+		tableSubsys.setHeaderVisible(true);
 
-		tableOutput.setLayoutData(data);
+		tableSubsys.setLayoutData(data);
 		// table.setSize(290, 100);
 
-		final TableColumn columnOut = new TableColumn(tableOutput, SWT.NONE);
+		final TableColumn columnOut = new TableColumn(tableSubsys, SWT.NONE);
 		columnOut.setText("Subsystem Inputs");
 		columnOut.setWidth(150);
 
@@ -187,9 +208,41 @@ public class AddSubsystemShell {
 		GridData bt = new GridData();
 		bt.horizontalAlignment = SWT.RIGHT;
 		remove.setLayoutData(bt);
+		remove.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if(tableSubsys.getSelectionIndex() > -1){
+					TableItem item = new TableItem(tableInput, SWT.NONE);
+					item.setText(0, tableSubsys.getItem(tableSubsys.getSelectionIndex()).getText(0));
+					tableSubsys.remove(tableSubsys.getSelectionIndex());
+				}
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 
 		Button add = new Button(composite, SWT.PUSH);
 		add.setText(">>");
+		add.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if(tableInput.getSelectionIndex() > -1){
+					TableItem itemADD = new TableItem(tableSubsys, SWT.NONE);
+					itemADD.setText(0, tableInput.getItem(tableInput.getSelectionIndex()).getText(0));
+					tableInput.remove(tableInput.getSelectionIndex());
+				}
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 
 		return composite;
 	}
@@ -198,16 +251,49 @@ public class AddSubsystemShell {
 		// Create a composite and add four buttons to it
 		Composite composite = new Composite(tabFolder, SWT.NONE);
 		GridLayout folder = new GridLayout();
-		folder.numColumns = 2;
+		folder.numColumns = 3;
 		composite.setLayout(folder);
 
+		Label output = new Label(composite, SWT.NONE);
+		output.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+		output.setText("Output:");
+		
+		GridData text = new GridData();
+		text.widthHint = 200;
+		tOuput = new Text(composite, SWT.BORDER);
+		tOuput.setLayoutData(text);
+
+		GridData bt = new GridData();
+		bt.widthHint = 70;
+		
+		Button addOutput = new Button(composite, SWT.PUSH);
+		addOutput.setText("Add");
+		addOutput.setLayoutData(bt);
+		addOutput.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if(!tOuput.getText().isEmpty()){
+					TableItem item = new TableItem(tableOutput, SWT.NONE);
+					item.setText(0, tOuput.getText());
+					tOuput.setText("");
+				}
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
 		// ---------------------- Table ---------------------------
 		tableOutput = new Table(composite, SWT.BORDER);
 		tableOutput.setLinesVisible(true);
 		tableOutput.setHeaderVisible(true);
 
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
-		data.verticalSpan = 3;
+		data.horizontalSpan = 2;
+		data.verticalSpan = 2;
 
 		tableOutput.setLayoutData(data);
 		// table.setSize(290, 100);
@@ -217,20 +303,33 @@ public class AddSubsystemShell {
 		column.setWidth(150);
 
 		// ------------Buttons------------
-		GridData bt = new GridData();
-		bt.widthHint = 70;
 		bt.verticalAlignment = SWT.TOP;
-		Button addOutput = new Button(composite, SWT.PUSH);
-		addOutput.setText("Add");
-		addOutput.setLayoutData(bt);
+		//Button addOutput = new Button(composite, SWT.PUSH);
+		//addOutput.setText("Add");
+		//addOutput.setLayoutData(bt);
 		
-		Button editOutput = new Button(composite, SWT.PUSH);
+		/*Button editOutput = new Button(composite, SWT.PUSH);
 		editOutput.setText("Edit");
-		editOutput.setLayoutData(bt);
+		editOutput.setLayoutData(bt);*/
 		
 		Button removeOutput = new Button(composite, SWT.PUSH);
 		removeOutput.setText("Remove");
 		removeOutput.setLayoutData(bt);
+		
+		removeOutput.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if(tableOutput.getSelectionIndex() > -1)
+					tableOutput.remove(tableOutput.getSelectionIndex());
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
 		/*GridData bt = new GridData();
 		bt.horizontalAlignment = SWT.RIGHT;
 		remove.setLayoutData(bt);*/
@@ -252,4 +351,19 @@ public class AddSubsystemShell {
 	public boolean isConfirm() {
 		return confirm;
 	}
+	
+	public ArrayList<String> getInputs() {
+		return inputs;
+	}
+
+	
+	public ArrayList<String> getOutputs() {
+		return outputs;
+	}
+
+	
+	public ArrayList<String> getSubsys() {
+		return subsys;
+	}
+
 }
