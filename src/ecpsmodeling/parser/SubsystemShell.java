@@ -23,8 +23,9 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 
-public class AddSubsystemShell {
+public class SubsystemShell {
 	protected boolean confirm = false;
+	protected boolean edit = false;
 
 	protected ArrayList<String> outputs;
 	protected ArrayList<String> subsys;
@@ -48,7 +49,7 @@ public class AddSubsystemShell {
 
 	final Shell shell;
 
-	public AddSubsystemShell(Display display, ArrayList<String> iinputs) {
+	public SubsystemShell(Display display, ArrayList<String> iinputs) {
 		shell = new Shell(display,
 				SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL | SWT.RESIZE | SWT.BORDER | SWT.CLOSE | SWT.CENTER);
 
@@ -87,6 +88,45 @@ public class AddSubsystemShell {
 		}
 	}
 
+	public SubsystemShell(Display display, ArrayList<String> iinputs, Actuation actuation) {
+		shell = new Shell(display,
+				SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL | SWT.RESIZE | SWT.BORDER | SWT.CLOSE | SWT.CENTER);
+
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.marginLeft = 10;
+		layout.marginTop = 8;
+
+		shell.setLayout(layout);
+		shell.setSize(450, 450);
+		shell.setText("Subsystem Specification");
+
+		Monitor primary = display.getPrimaryMonitor();
+		Rectangle bounds = primary.getBounds();
+		Rectangle rect = shell.getBounds();
+
+		int x = bounds.x + (bounds.width - rect.width) / 2;
+		int y = bounds.y + (bounds.height - rect.height) / 2;
+		shell.setLocation(x, y);
+
+		outputs = new ArrayList<String>();
+		subsys = new ArrayList<String>();
+		inputs = new ArrayList<String>();
+		
+		createControl();
+		init(iinputs, actuation);
+
+		shell.open();
+
+		// Set up the event loop.
+		while (!shell.isDisposed()) {
+			if (!display.readAndDispatch()) {
+				// If no more entries in event queue
+				display.sleep();
+			}
+		}
+	}
+	
 	private void createControl() {
 		GridData ilayout = new GridData();
 		ilayout.widthHint = 300;
@@ -125,7 +165,7 @@ public class AddSubsystemShell {
 			public void widgetSelected(SelectionEvent e) {
 				int i;
 				confirm = true;
-			
+							
 				txtName = name.getText();
 				inputs.clear();
 				
@@ -344,12 +384,30 @@ public class AddSubsystemShell {
 		}
 	}
 
+	private void init(ArrayList<String> inputs, Actuation actuation) {
+		init(inputs);
+		name.setText(actuation.getName());
+		for(int i = 0; i < actuation.getInputs().size(); i++){
+			TableItem item = new TableItem(tableSubsys, SWT.NONE);
+			item.setText(0, actuation.getInputs().get(i));
+		}
+		for (int i = 0; i < actuation.getOutputs().size(); i++) {
+			TableItem item = new TableItem(tableOutput, SWT.NONE);
+			item.setText(actuation.getOutputs().get(i));
+		}		
+		edit = true;
+	}
+	
 	public String getName() {
 		return txtName;
 	}
 
 	public boolean isConfirm() {
 		return confirm;
+	}
+	
+	public boolean isEdit() {
+		return edit;
 	}
 	
 	public ArrayList<String> getInputs() {

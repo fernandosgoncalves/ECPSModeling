@@ -79,22 +79,21 @@ public class ECPSModeling extends Wizard implements IImportWizard {
 						.searchSubSystem(subsysPage.table.getItem(subsysPage.table.getSelectionIndex()).getText(0)));
 				performedInputsPage = true;
 			} else {
-				if (page.isPageComplete() && page.getName().equals(ACTUATION) && performedOutputsPage == false) {
+				if (page.isPageComplete() && page.getName().equals(ACTUATION)) {
 					/*
 					 * Perform the instruction to populate the table with the
 					 * output ports of the selected subsystem
 					 */
-					outputsPage.populateOutputList(mdl2Aadl.aadl.getSubSystem()
-							.searchSubSystem(subsysPage.table.getItem(subsysPage.table.getSelectionIndex()).getText(0)));
-					performedOutputsPage = true;
+					prewritingPage.populateSignals(inputsPage.getTable());
+					//outputsPage.populateOutputList(mdl2Aadl.aadl.getSubSystem().searchSubSystem(subsysPage.table.getItem(subsysPage.table.getSelectionIndex()).getText(0)));
+					//performedOutputsPage = true;
 				} else {
 					if (page.isPageComplete() && page.getName().equals(PREWRITING) && performedPrewritingPage == false) {
 						/*
 						 * Perform the instructions to populate the table witj
 						 * the list of system actuator
 						 */
-						prewritingPage.populateSignals(inputsPage.getTable());
-						//actuatorsPage.populateSensorsTable(inputsPage.getTable());
+						actuatorsPage.populateSensorsTable(inputsPage.getTable(), prewritingPage.getActSubsystems());
 						performedPrewritingPage = true;
 					}
 				}

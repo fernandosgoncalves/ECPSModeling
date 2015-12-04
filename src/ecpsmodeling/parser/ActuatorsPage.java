@@ -14,6 +14,9 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.widgets.TableColumn;
+
+import java.util.ArrayList;
+
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.widgets.TableItem;
@@ -147,7 +150,7 @@ public class ActuatorsPage extends WizardPage {
 //		btRemoveActuator.setEnabled(false);
 
 		setControl(container);
-		setPageComplete(true);
+		setPageComplete(false);
 	}
 
 	
@@ -160,6 +163,7 @@ public class ActuatorsPage extends WizardPage {
 			aux.setText(2, edit.getSampling());
 			aux.setText(3, edit.getProtocol());
 			aux.setText(4, edit.getPriority());
+			checkSpecified();
 		}
 	}
 	
@@ -167,15 +171,37 @@ public class ActuatorsPage extends WizardPage {
 	 * Verify the input table and according the vector amount of each input port
 	 * the signals are inserted into the sensors list specification
 	 */
-	public void populateSensorsTable(Table table2) {
+	public void populateSensorsTable(Table table2, ArrayList<Actuation> subsystems) {
 		TableItem item;
 		for (int i = 0; i < table2.getItemCount(); i++) {
-			Label port = (Label) table2.getItem(i).getData("port");
-			Text size = (Text) table2.getItem(i).getData("size");
-			for (int z = 0; z < Integer.valueOf(size.getText()); z++) {
-				item = new TableItem(table, SWT.NONE);
-				item.setText(0, port.getText() + (z + 1));
+			Button preWriting = (Button)table2.getItem(i).getData("PreWcheck"); 
+			if(!preWriting.getSelection()){
+				Label port = (Label) table2.getItem(i).getData("port");
+				Text size = (Text) table2.getItem(i).getData("size");
+				for (int z = 0; z < Integer.valueOf(size.getText()); z++) {
+					item = new TableItem(table, SWT.NONE);
+					item.setText(0, port.getText() + (z + 1));
+				}
 			}
 		}
+		
+		for (int i = 0; i < subsystems.size(); i++) {
+			for(int z = 0; z < subsystems.get(i).getOutputs().size(); z++){
+				item = new TableItem(table, SWT.NONE);
+				item.setText(0, subsystems.get(i).getOutputs().get(z));
+			}
+		}
+	}
+	
+	public void checkSpecified(){
+		Boolean check = true;
+		for(int i = 0; i < table.getItemCount(); i++){
+			for(int z = 0; z < table.getColumnCount(); z++){
+				if(table.getItem(i).getText(z).isEmpty())
+					check = false;
+			}
+		}
+		if(check)
+			setPageComplete(true);
 	}
 }
