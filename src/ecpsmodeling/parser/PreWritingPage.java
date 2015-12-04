@@ -80,7 +80,7 @@ public class PreWritingPage extends WizardPage {
 		table.setSize(300, 100);
 
 		final TreeColumn column = new TreeColumn(table, SWT.LEFT);
-		column.setText("Process");
+		column.setText("Subsystem");
 		column.setWidth(150);
 
 		final TreeColumn column2 = new TreeColumn(table, SWT.NONE);
@@ -88,7 +88,7 @@ public class PreWritingPage extends WizardPage {
 		column2.setWidth(150);
 
 		final TreeColumn column3 = new TreeColumn(table, SWT.NONE);
-		column3.setText("Actuators");
+		column3.setText("Outputs");
 		column3.setWidth(150);
 
 		btAddSubsystem = new Button(container, SWT.NONE);
@@ -178,7 +178,7 @@ public class PreWritingPage extends WizardPage {
 	}
 
 	public void addSubsystem(Display display) {
-		SubsystemShell add = new SubsystemShell(display, inputs);
+		ActSubsystemShell add = new ActSubsystemShell(display, inputs);
 		if (add.isConfirm()) {
 			inputs = add.getInputs();
 			addSubsys(add.getName(), add.getSubsys(), add.getOutputs());
@@ -314,7 +314,7 @@ public class PreWritingPage extends WizardPage {
 	
 	public void editSubsystemProperties(Display display) {
 		Actuation aux = getItemByName(table.getSelection()[0].getText(0));
-		SubsystemShell edit = new SubsystemShell(display, inputs, aux);
+		ActSubsystemShell edit = new ActSubsystemShell(display, inputs, aux);
 		if (edit.isConfirm()) {
 			inputs = edit.getInputs();
 			editSubsys(edit.getName(), edit.getSubsys(), edit.getOutputs(), aux);

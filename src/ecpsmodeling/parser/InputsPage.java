@@ -74,7 +74,7 @@ public class InputsPage extends WizardPage {
 		column3.setWidth(100);
 
 		final TableColumn column4 = new TableColumn(table, SWT.NONE);
-		column4.setText("Prewriting");
+		column4.setText("Pre-writing");
 		column4.setWidth(65);
 
 		
@@ -105,7 +105,6 @@ public class InputsPage extends WizardPage {
 			check.addSelectionListener(new SelectionListener() {				
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					// TODO Auto-generated method stub
 					if(size.isEnabled())
 						size.setEnabled(false);
 					else

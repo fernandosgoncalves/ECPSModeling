@@ -23,7 +23,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 
-public class SubsystemShell {
+public class ActSubsystemShell {
 	protected boolean confirm = false;
 	protected boolean edit = false;
 
@@ -49,7 +49,7 @@ public class SubsystemShell {
 
 	final Shell shell;
 
-	public SubsystemShell(Display display, ArrayList<String> iinputs) {
+	public ActSubsystemShell(Display display, ArrayList<String> iinputs) {
 		shell = new Shell(display,
 				SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL | SWT.RESIZE | SWT.BORDER | SWT.CLOSE | SWT.CENTER);
 
@@ -88,7 +88,7 @@ public class SubsystemShell {
 		}
 	}
 
-	public SubsystemShell(Display display, ArrayList<String> iinputs, Actuation actuation) {
+	public ActSubsystemShell(Display display, ArrayList<String> iinputs, Actuation actuation) {
 		shell = new Shell(display,
 				SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL | SWT.RESIZE | SWT.BORDER | SWT.CLOSE | SWT.CENTER);
 

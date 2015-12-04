@@ -14,9 +14,6 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.widgets.TableColumn;
-
-import java.util.ArrayList;
-
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.widgets.TableItem;
@@ -30,6 +27,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
+import java.util.ArrayList;
 import org.eclipse.swt.SWT;
 
 public class ActuatorsPage extends WizardPage {
@@ -77,7 +75,7 @@ public class ActuatorsPage extends WizardPage {
 
 		final TableColumn column2 = new TableColumn(table, SWT.NONE);
 		column2.setText("Actuator");
-		column2.setWidth(100);
+		column2.setWidth(130);
 
 		final TableColumn column3 = new TableColumn(table, SWT.NONE);
 		column3.setText("Sampling");
@@ -85,22 +83,22 @@ public class ActuatorsPage extends WizardPage {
 
 		final TableColumn column4 = new TableColumn(table, SWT.NONE);
 		column4.setText("Protocol");
-		column4.setWidth(60);
+		column4.setWidth(70);
 
 		final TableColumn column5 = new TableColumn(table, SWT.NONE);
 		column5.setText("Priority");
-		column5.setWidth(55);
-		
-		//Button btAddActuator = new Button(container, SWT.NONE);
+		column5.setWidth(70);
+
+		// Button btAddActuator = new Button(container, SWT.NONE);
 		Button btEditActuator = new Button(container, SWT.NONE);
-		//Button btRemoveActuator = new Button(container, SWT.NONE);
+		// Button btRemoveActuator = new Button(container, SWT.NONE);
 
 		table.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				//btAddActuator.setEnabled(true);
+				// btAddActuator.setEnabled(true);
 				btEditActuator.setEnabled(true);
-				//btRemoveActuator.setEnabled(true);
+				// btRemoveActuator.setEnabled(true);
 			}
 
 			@Override
@@ -109,29 +107,29 @@ public class ActuatorsPage extends WizardPage {
 
 			}
 		});
-		
+
 		table.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseUp(MouseEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
 			public void mouseDown(MouseEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
 			public void mouseDoubleClick(MouseEvent e) {
-				editActuatorProperties(parent.getDisplay());		
+				editActuatorProperties(parent.getDisplay());
 			}
 		});
 
 		// Button btAddActuator = new Button(container, SWT.NONE);
-//		btAddActuator.setText("Add Actuator");
-//		btAddActuator.setEnabled(false);
+		// btAddActuator.setText("Add Actuator");
+		// btAddActuator.setEnabled(false);
 		// Button btEditActuator = new Button(container, SWT.NONE);
 		btEditActuator.setText("Edit Actuator");
 		btEditActuator.setEnabled(false);
@@ -146,15 +144,14 @@ public class ActuatorsPage extends WizardPage {
 		});
 
 		// Button btRemoveActuator = new Button(container, SWT.NONE);
-//		btRemoveActuator.setText("Remove Actuator");
-//		btRemoveActuator.setEnabled(false);
+		// btRemoveActuator.setText("Remove Actuator");
+		// btRemoveActuator.setEnabled(false);
 
 		setControl(container);
 		setPageComplete(false);
 	}
 
-	
-	public void editActuatorProperties(Display display){
+	public void editActuatorProperties(Display display) {
 		EditActuatorShell edit = new EditActuatorShell(table.getItem(table.getSelectionIndex()), display);
 		if (edit.isConfirm()) {
 			TableItem aux = table.getItem(table.getSelectionIndex());
@@ -166,16 +163,16 @@ public class ActuatorsPage extends WizardPage {
 			checkSpecified();
 		}
 	}
-	
+
 	/*
 	 * Verify the input table and according the vector amount of each input port
 	 * the signals are inserted into the sensors list specification
 	 */
-	public void populateSensorsTable(Table table2, ArrayList<Actuation> subsystems) {
+	public void populateActuatorsTable(Table table2, ArrayList<Actuation> subsystems) {
 		TableItem item;
 		for (int i = 0; i < table2.getItemCount(); i++) {
-			Button preWriting = (Button)table2.getItem(i).getData("PreWcheck"); 
-			if(!preWriting.getSelection()){
+			Button preWriting = (Button) table2.getItem(i).getData("PreWcheck");
+			if (!preWriting.getSelection()) {
 				Label port = (Label) table2.getItem(i).getData("port");
 				Text size = (Text) table2.getItem(i).getData("size");
 				for (int z = 0; z < Integer.valueOf(size.getText()); z++) {
@@ -184,24 +181,24 @@ public class ActuatorsPage extends WizardPage {
 				}
 			}
 		}
-		
+
 		for (int i = 0; i < subsystems.size(); i++) {
-			for(int z = 0; z < subsystems.get(i).getOutputs().size(); z++){
+			for (int z = 0; z < subsystems.get(i).getOutputs().size(); z++) {
 				item = new TableItem(table, SWT.NONE);
 				item.setText(0, subsystems.get(i).getOutputs().get(z));
 			}
 		}
 	}
-	
-	public void checkSpecified(){
+
+	public void checkSpecified() {
 		Boolean check = true;
-		for(int i = 0; i < table.getItemCount(); i++){
-			for(int z = 0; z < table.getColumnCount(); z++){
-				if(table.getItem(i).getText(z).isEmpty())
+		for (int i = 0; i < table.getItemCount(); i++) {
+			for (int z = 0; z < table.getColumnCount(); z++) {
+				if (table.getItem(i).getText(z).isEmpty())
 					check = false;
 			}
 		}
-		if(check)
+		if (check)
 			setPageComplete(true);
 	}
 }

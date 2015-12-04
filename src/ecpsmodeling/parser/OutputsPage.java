@@ -74,6 +74,10 @@ public class OutputsPage extends WizardPage {
 		column3.setText("Inputs Size");
 		column3.setWidth(100);
 
+		final TableColumn column4 = new TableColumn(table, SWT.NONE);
+		column4.setText("Post-reading");
+		column4.setWidth(100);
+		
 		setControl(container);
 		setPageComplete(true);
 	}
@@ -85,11 +89,12 @@ public class OutputsPage extends WizardPage {
 			TableEditor editor = new TableEditor(table);
 			Label port = new Label(table, SWT.NONE);
 			Text size = new Text(table, SWT.NONE);
+			Button postReading = new Button(table, SWT.CHECK);
 
 			port.setText(subsystem.getOutPort(i).getName());
-
 			editor.grabHorizontal = true;
 			editor.setEditor(port, item, 0);
+			item.setData("port", port);
 
 			editor = new TableEditor(table);
 			check.addSelectionListener(new SelectionListener() {
@@ -112,6 +117,7 @@ public class OutputsPage extends WizardPage {
 			editor.minimumWidth = check.getSize().x;
 			editor.horizontalAlignment = SWT.LEFT;
 			editor.setEditor(check, item, 1);
+			item.setData("check", check);
 
 			editor = new TableEditor(table);
 			size.setText("1");
@@ -133,6 +139,18 @@ public class OutputsPage extends WizardPage {
 			size.setEnabled(false);
 			editor.grabHorizontal = true;
 			editor.setEditor(size, item, 2);
+			item.setData("size", size);
+			
+			editor = new TableEditor(table);
+			postReading.pack();
+			editor.minimumWidth = postReading.getSize().x;
+			editor.horizontalAlignment = SWT.LEFT;
+			editor.setEditor(postReading, item, 3);
+			item.setData("postReading", postReading);
 		}
+	}
+	
+	public Table getTable(){
+		return table;
 	}
 }

@@ -10,30 +10,35 @@
  *******************************************************************************/
 package ecpsmodeling.parser;
 
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.MouseListener;
+
+import java.util.ArrayList;
+
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
+
 
 public class SensorsPage extends WizardPage {
 	private Composite container;
 
-	protected Table table;
-
 	protected Label information;
+	
+	protected Table table;
 
 	public SensorsPage() {
 		super("Sensor Specification");
@@ -189,5 +194,43 @@ public class SensorsPage extends WizardPage {
 	public void removeSensor(){
 		if(table.getSelectionIndex() > -1)
 			table.remove(table.getSelectionIndex()); 
+	}
+	
+	/*
+	 * Verify the input table and according the vector amount of each input port
+	 * the signals are inserted into the sensors list specification
+	 */
+	public void populateSensorsTable(Table table2, ArrayList<Sensing> subsystems) {
+		TableItem item;
+		for (int i = 0; i < table2.getItemCount(); i++) {
+			Button postReading = (Button) table2.getItem(i).getData("postReading");
+			if (!postReading.getSelection()) {
+				Label port = (Label) table2.getItem(i).getData("port");
+				Text size = (Text) table2.getItem(i).getData("size");
+				for (int z = 0; z < Integer.valueOf(size.getText()); z++) {
+					item = new TableItem(table, SWT.NONE);
+					item.setText(0, port.getText() + (z + 1));
+				}
+			}
+		}
+
+		for (int i = 0; i < subsystems.size(); i++) {
+			for (int z = 0; z < subsystems.get(i).getInputs().size(); z++) {
+				item = new TableItem(table, SWT.NONE);
+				item.setText(0, subsystems.get(i).getInputs().get(z));
+			}
+		}
+	}
+
+	public void checkSpecified() {
+		Boolean check = true;
+		for (int i = 0; i < table.getItemCount(); i++) {
+			for (int z = 0; z < table.getColumnCount(); z++) {
+				if (table.getItem(i).getText(z).isEmpty())
+					check = false;
+			}
+		}
+		if (check)
+			setPageComplete(true);
 	}
 }
