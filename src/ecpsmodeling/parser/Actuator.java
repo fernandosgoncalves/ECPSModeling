@@ -2,18 +2,18 @@ package ecpsmodeling.parser;
 
 import java.util.ArrayList;
 
-public class Actuation {
+public class Actuator {
 	protected ArrayList<String> inputs;
-	protected ArrayList<String> outputs;
 	
 	protected int sampling;
+	protected int priority;
 	protected int index;
 	
+	protected String protocol;
 	protected String name;
-
-	Actuation(){
+	
+	Actuator(){
 		inputs = new ArrayList<>();
-		outputs = new ArrayList<>();
 	}
 	
 	public ArrayList<String> getInputs() {
@@ -22,14 +22,6 @@ public class Actuation {
 
 	public void setInputs(ArrayList<String> inputs) {
 		this.inputs = inputs;
-	}
-
-	public ArrayList<String> getOutputs() {
-		return outputs;
-	}
-
-	public void setOutputs(ArrayList<String> outputs) {
-		this.outputs = outputs;
 	}
 
 	public int getSampling() {
@@ -56,4 +48,20 @@ public class Actuation {
 		this.name = name;
 	}
 	
+	public int getPriority() {
+		return priority;
+	}
+
+	public void setPriority(int priority) {
+		this.priority = priority;
+	}
+
+	public String getProtocol() {
+		return protocol;
+	}
+
+	public void setProtocol(String protocol) {
+		this.protocol = protocol;
+	}
+
 }

@@ -77,7 +77,7 @@ public class SensorsPage extends WizardPage {
 		column.setWidth(150);
 
 		final TableColumn column2 = new TableColumn(table, SWT.NONE);
-		column2.setText("Sampling (ms)");
+		column2.setText("Sampling");
 		column2.setWidth(100);
 
 		final TableColumn column3 = new TableColumn(table, SWT.NONE);
@@ -85,12 +85,8 @@ public class SensorsPage extends WizardPage {
 		column3.setWidth(60);
 
 		final TableColumn column4 = new TableColumn(table, SWT.NONE);
-		column4.setText("Associated Signal");
-		column4.setWidth(120);
-
-		final TableColumn column5 = new TableColumn(table, SWT.NONE);
-		column5.setText("Protocol");
-		column5.setWidth(60);
+		column4.setText("Protocol");
+		column4.setWidth(60);
 
 		Button btAddSensor = new Button(container, SWT.NONE);
 		Button btEditSensor = new Button(container, SWT.NONE);
@@ -216,6 +212,7 @@ public class SensorsPage extends WizardPage {
 
 		for (int i = 0; i < subsystems.size(); i++) {
 			for (int z = 0; z < subsystems.get(i).getInputs().size(); z++) {
+				
 				item = new TableItem(table, SWT.NONE);
 				item.setText(0, subsystems.get(i).getInputs().get(z));
 			}

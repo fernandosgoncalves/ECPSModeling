@@ -2,16 +2,18 @@ package ecpsmodeling.parser;
 
 import java.util.ArrayList;
 
-public class Actuation {
+public class Sensor {
 	protected ArrayList<String> inputs;
 	protected ArrayList<String> outputs;
 	
 	protected int sampling;
+	protected int priority;
 	protected int index;
-	
+		
+	protected String protocol;
 	protected String name;
 
-	Actuation(){
+	Sensor(){
 		inputs = new ArrayList<>();
 		outputs = new ArrayList<>();
 	}

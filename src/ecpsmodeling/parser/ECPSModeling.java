@@ -106,7 +106,7 @@ public class ECPSModeling extends Wizard implements IImportWizard {
 									postReadingPage.populateSignals(outputsPage.getTable());
 								} else {
 									if (page.getName().equals(POSTREADING) && !performedOutputsPage) {
-										sensorsPage
+										sensorsPage.populateSensorsTable(outputsPage.getTable(), postReadingPage.getSenSubsystems());
 										performedOutputsPage = true;
 									}
 								}

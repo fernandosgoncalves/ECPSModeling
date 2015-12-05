@@ -2,7 +2,7 @@ package ecpsmodeling.parser;
 
 import java.util.ArrayList;
 
-public class Actuation {
+public class Sensing {
 	protected ArrayList<String> inputs;
 	protected ArrayList<String> outputs;
 	
@@ -11,7 +11,7 @@ public class Actuation {
 	
 	protected String name;
 
-	Actuation(){
+	Sensing(){
 		inputs = new ArrayList<>();
 		outputs = new ArrayList<>();
 	}
