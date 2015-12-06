@@ -31,7 +31,7 @@ public class SubsysPage extends WizardPage {
 	public static String MARK_DEVICE = "DEVICE";
 
 	protected Table table;
-	
+
 	Label information;
 
 	public SubsysPage() {
@@ -69,11 +69,11 @@ public class SubsysPage extends WizardPage {
 			public void widgetSelected(SelectionEvent e) {
 				setPageComplete(true);
 			}
-			
+
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
 		});
 
@@ -82,6 +82,11 @@ public class SubsysPage extends WizardPage {
 	}
 
 	public void populateList(Mdl2Aadl mdl2Aadl) {
+		if (table.getItemCount() > 0) {
+			//System.out.println("Clear");
+			clearTable();
+		}
+
 		for (int i = 0; i < mdl2Aadl.aadl.getSubSystem().getSubSystemsCount(); i++) {
 			if (mdl2Aadl.aadl.getSubSystem().getSubSystem(i).getMark().equals(MARK_PROCESS_THREAD)) {
 				addItemTable(mdl2Aadl.aadl.getSubSystem().getSubSystem(i).getName());
@@ -99,11 +104,15 @@ public class SubsysPage extends WizardPage {
 		}
 	}
 
-	public void addItemTable(String name){
+	public void addItemTable(String name) {
 		TableItem item = new TableItem(table, SWT.NONE);
 		item.setText(name);
 	}
-	
+
+	public void clearTable() {
+		table.removeAll();
+	}
+
 	public void exploreSystem(SubSystem subsystem) {
 		for (int i = 0; i < subsystem.getSubSystemsCount(); i++) {
 			if (subsystem.getSubSystem(i).getMark().equals(MARK_PROCESS_THREAD)) {
@@ -114,7 +123,7 @@ public class SubsysPage extends WizardPage {
 			}
 			if (subsystem.getSubSystem(i).getMark().equals(MARK_DEVICE)) {
 				addItemTable(subsystem.getSubSystem(i).getName());
-			}			
+			}
 			if (subsystem.getSubSystem(i).getMark().equals(MARK_SYSTEM)) {
 				addItemTable(subsystem.getSubSystem(i).getName());
 				exploreSystem(subsystem.getSubSystem(i));

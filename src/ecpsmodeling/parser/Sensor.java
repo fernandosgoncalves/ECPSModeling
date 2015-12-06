@@ -11,6 +11,7 @@ public class Sensor {
 	protected int index;
 		
 	protected String protocol;
+	protected String signal;
 	protected String name;
 
 	Sensor(){
@@ -57,5 +58,28 @@ public class Sensor {
 	public void setName(String name) {
 		this.name = name;
 	}
+
+	public int getPriority() {
+		return priority;
+	}
+
+	public void setPriority(int priority) {
+		this.priority = priority;
+	}
+
+	public String getProtocol() {
+		return protocol;
+	}
+
+	public void setProtocol(String protocol) {
+		this.protocol = protocol;
+	}
 	
+	public String getSignal() {
+		return signal;
+	}
+
+	public void setSignal(String signal) {
+		this.signal = signal;
+	}
 }

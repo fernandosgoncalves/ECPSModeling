@@ -84,7 +84,7 @@ public class PostReadingPage extends WizardPage {
 		column.setWidth(150);
 
 		final TreeColumn column2 = new TreeColumn(table, SWT.NONE);
-		column2.setText("Inputs");
+		column2.setText("Sensors");
 		column2.setWidth(150);
 
 		final TreeColumn column3 = new TreeColumn(table, SWT.NONE);
@@ -157,6 +157,8 @@ public class PostReadingPage extends WizardPage {
 	}
 
 	public void populateSignals(Table table) {
+		if(table.getItemCount() > 0)
+			clearData();
 		// System.out.println("Begin");
 		outputs.clear();
 		for (int i = 0; i < table.getItemCount(); i++) {
@@ -177,6 +179,11 @@ public class PostReadingPage extends WizardPage {
 		checkConditions();
 	}
 
+	public void clearData(){
+		table.removeAll();
+		senSubsystems.clear();		
+	}
+	
 	public void addSubsystem(Display display) {
 		SenSubsystemShell add = new SenSubsystemShell(display, outputs);
 		if (add.isConfirm()) {
@@ -196,7 +203,7 @@ public class PostReadingPage extends WizardPage {
 		senSubsystems.add(aux);
 
 		treeItem.setText(0, name);
-		treeItem.setText(1, "inputs");
+		treeItem.setText(1, "sensors");
 		treeItem.setText(2, "outputs");
 
 		// System.out.println("IS: " + inputs.size() + " OS: " +
@@ -273,7 +280,7 @@ public class PostReadingPage extends WizardPage {
 		senSubsystems.set(item.index, item);
 
 		newTreeItem.setText(0, name);
-		newTreeItem.setText(1, "inputs");
+		newTreeItem.setText(1, "sensors");
 		newTreeItem.setText(2, "outputs");
 
 		// System.out.println("IS: " + inputs.size() + " OS: " +

@@ -144,7 +144,7 @@ public class SenSubsystemShell {
 		tabFolder.setSize(400, 200);
 
 		TabItem tab0 = new TabItem(tabFolder, SWT.NONE);
-		tab0.setText("Inputs");
+		tab0.setText("Sensors");
 		tab0.setControl(getTabInputsControl(tabFolder));
 
 		TabItem tab1 = new TabItem(tabFolder, SWT.NONE);
@@ -293,7 +293,7 @@ public class SenSubsystemShell {
 
 		Label input = new Label(composite, SWT.NONE);
 		input.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
-		input.setText("Input:");
+		input.setText("Sensor:");
 
 		GridData text = new GridData();
 		text.widthHint = 200;
@@ -336,7 +336,7 @@ public class SenSubsystemShell {
 		// table.setSize(290, 100);
 
 		final TableColumn column = new TableColumn(tableInputs, SWT.NONE);
-		column.setText("Inputs");
+		column.setText("Sensors");
 		column.setWidth(150);
 
 		// ------------Buttons------------

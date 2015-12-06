@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.swt.SWT;
 
 public class InputsPage extends WizardPage {
@@ -76,13 +77,15 @@ public class InputsPage extends WizardPage {
 		final TableColumn column4 = new TableColumn(table, SWT.NONE);
 		column4.setText("Pre-writing");
 		column4.setWidth(65);
-
 		
 		setControl(container);
 		setPageComplete(true);
 	}
 
 	public void populateInputList(SubSystem subsystem) {
+		if(table.getItemCount() > 0)
+			clearTable();
+		
 		for (int i = 0; i < subsystem.getInPortsCount(); i++) {
 			TableItem item = new TableItem(table, SWT.NONE);
 			
@@ -102,6 +105,7 @@ public class InputsPage extends WizardPage {
 			item.setData("port", port);
 
 			editor = new TableEditor(table);
+			
 			check.addSelectionListener(new SelectionListener() {				
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -124,6 +128,7 @@ public class InputsPage extends WizardPage {
 			item.setData("check", check);
 			
 			editor = new TableEditor(table);
+			
 			size.setText("1");
 			size.addListener(SWT.Verify, new Listener() {	
 				@Override
@@ -155,8 +160,24 @@ public class InputsPage extends WizardPage {
 			editor.horizontalAlignment = SWT.LEFT;
 			editor.setEditor(PreWcheck, item, 3);
 			item.setData("PreWcheck", PreWcheck);
-			
 		}
+	}
+	
+	public void clearTable(){
+		//System.out.println("Clearing");
+		for(int i = 0; i < table.getItemCount(); i++){
+			//System.out.println("Size " + table.getItemCount());
+//			System.out.println("Clear " + i);
+			Button check = (Button) table.getItem(i).getData("check");
+			Label port = (Label) table.getItem(i).getData("port");
+			Text size = (Text) table.getItem(i).getData("size");
+			Button prewriting = (Button) table.getItem(i).getData("PreWcheck");
+			check.dispose();
+			port.dispose();
+			size.dispose();
+			prewriting.dispose();			
+		}
+		table.removeAll();
 	}
 	
 	public Table getTable(){

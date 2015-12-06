@@ -157,6 +157,8 @@ public class PreWritingPage extends WizardPage {
 	}
 
 	public void populateSignals(Table table) {
+		if(table.getItemCount() > 0)
+			clearData();
 		//System.out.println("Begin");
 		inputs.clear();
 		for (int i = 0; i < table.getItemCount(); i++) {
@@ -177,6 +179,11 @@ public class PreWritingPage extends WizardPage {
 		checkConditions();
 	}
 
+	public void clearData(){
+		table.removeAll();
+		actSubsystems.clear();		
+	}
+	
 	public void addSubsystem(Display display) {
 		ActSubsystemShell add = new ActSubsystemShell(display, inputs);
 		if (add.isConfirm()) {

@@ -83,20 +83,28 @@ public class OutputsPage extends WizardPage {
 	}
 
 	public void populateOutputList(SubSystem subsystem) {
+		if(table.getItemCount() > 0)
+			clearTable();
+		
 		for (int i = 0; i < subsystem.getOutPortsCount(); i++) {
 			TableItem item = new TableItem(table, SWT.NONE);
-			Button check = new Button(table, SWT.CHECK);
+		
 			TableEditor editor = new TableEditor(table);
-			Label port = new Label(table, SWT.NONE);
-			Text size = new Text(table, SWT.NONE);
+			
 			Button postReading = new Button(table, SWT.CHECK);
-
+			Button check = new Button(table, SWT.CHECK);
+			
+			Label port = new Label(table, SWT.NONE);
+			
+			Text size = new Text(table, SWT.NONE);
+			
 			port.setText(subsystem.getOutPort(i).getName());
 			editor.grabHorizontal = true;
 			editor.setEditor(port, item, 0);
 			item.setData("port", port);
 
 			editor = new TableEditor(table);
+			
 			check.addSelectionListener(new SelectionListener() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -120,6 +128,7 @@ public class OutputsPage extends WizardPage {
 			item.setData("check", check);
 
 			editor = new TableEditor(table);
+			
 			size.setText("1");
 			size.addListener(SWT.Verify, new Listener() {
 				@Override
@@ -142,6 +151,7 @@ public class OutputsPage extends WizardPage {
 			item.setData("size", size);
 			
 			editor = new TableEditor(table);
+			
 			postReading.pack();
 			editor.minimumWidth = postReading.getSize().x;
 			editor.horizontalAlignment = SWT.LEFT;
@@ -149,6 +159,22 @@ public class OutputsPage extends WizardPage {
 			item.setData("postReading", postReading);
 		}
 	}
+
+	//clear all elements of the table
+	public void clearTable(){
+		for(int i = 0; i < table.getItemCount(); i++){
+			Button check = (Button) table.getItem(i).getData("check");
+			Label port = (Label) table.getItem(i).getData("port");
+			Text size = (Text) table.getItem(i).getData("size");
+			Button postReading = (Button) table.getItem(i).getData("postReading");
+			check.dispose();
+			port.dispose();
+			size.dispose();
+			postReading.dispose();			
+		}
+		table.removeAll();
+	}
+	
 	
 	public Table getTable(){
 		return table;

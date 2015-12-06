@@ -4,16 +4,19 @@ import java.util.ArrayList;
 
 public class Actuator {
 	protected ArrayList<String> inputs;
+	protected ArrayList<String> outputs;
 	
 	protected int sampling;
 	protected int priority;
 	protected int index;
 	
 	protected String protocol;
+	protected String signal;
 	protected String name;
 	
 	Actuator(){
 		inputs = new ArrayList<>();
+		outputs = new ArrayList<>();
 	}
 	
 	public ArrayList<String> getInputs() {
@@ -24,6 +27,14 @@ public class Actuator {
 		this.inputs = inputs;
 	}
 
+	public ArrayList<String> getOutputs() {
+		return outputs;
+	}
+
+	public void setOutputs(ArrayList<String> outputs) {
+		this.outputs = outputs;
+	}
+	
 	public int getSampling() {
 		return sampling;
 	}
@@ -64,4 +75,11 @@ public class Actuator {
 		this.protocol = protocol;
 	}
 
+	public String getSignal() {
+		return signal;
+	}
+
+	public void setSignal(String signal) {
+		this.signal = signal;
+	}
 }

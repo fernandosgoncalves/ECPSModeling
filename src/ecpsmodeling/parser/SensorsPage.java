@@ -13,15 +13,11 @@ package ecpsmodeling.parser;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.MouseListener;
-
-import java.util.ArrayList;
-
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Display;
@@ -30,14 +26,17 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.Text;
+import java.util.ArrayList;
 import org.eclipse.swt.SWT;
 
-
 public class SensorsPage extends WizardPage {
+	protected ArrayList<Sensor> sensors;
+
 	private Composite container;
 
 	protected Label information;
-	
+
 	protected Table table;
 
 	public SensorsPage() {
@@ -88,21 +87,18 @@ public class SensorsPage extends WizardPage {
 		column4.setText("Protocol");
 		column4.setWidth(60);
 
-		Button btAddSensor = new Button(container, SWT.NONE);
 		Button btEditSensor = new Button(container, SWT.NONE);
-		Button btRemoveSensor = new Button(container, SWT.NONE);
 
 		table.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				btEditSensor.setEnabled(true);
-				btRemoveSensor.setEnabled(true);
+				// btRemoveSensor.setEnabled(true);
 			}
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// TODO Auto-generated method stub
-
 			}
 		});
 
@@ -110,28 +106,17 @@ public class SensorsPage extends WizardPage {
 			@Override
 			public void mouseUp(MouseEvent e) {
 				// TODO Auto-generated method stub
-
 			}
 
 			@Override
 			public void mouseDown(MouseEvent e) {
 				// TODO Auto-generated method stub
-
 			}
 
 			@Override
 			public void mouseDoubleClick(MouseEvent e) {
-				if(table.getSelectionIndex() > -1)
+				if (table.getSelectionIndex() > -1)
 					editSensorProperties(parent.getDisplay());
-			}
-		});
-
-
-		btAddSensor.setText("Add Sensor");
-		btAddSensor.addListener(SWT.Selection, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				addSensor(parent.getDisplay());
 			}
 		});
 
@@ -147,57 +132,49 @@ public class SensorsPage extends WizardPage {
 			}
 		});
 
-		btRemoveSensor.setText("Remove Sensor");
-		btRemoveSensor.setEnabled(false);
-		btRemoveSensor.addListener(SWT.Selection, new Listener() {
-			@Override
-			public void handleEvent(Event e) {
-				switch (e.type) {
-				case SWT.Selection:
-					removeSensor();
-				}
-			}
-		});
-		
+		sensors = new ArrayList<>();
+
 		setControl(container);
-		setPageComplete(true);
+		setPageComplete(false);
 	}
 
-	public void addSensor(Display display){
-		//AddSensorShell add = new EditSensorShell(table.getItem(table.getSelectionIndex()), display);
-//		if (add.isConfirm()) {
-//			TableItem aux = new TableItem(table, SWT.NONE);
-//			aux.setText(0, edit.getSignal());
-//			aux.setText(1, edit.getActuator());
-//			aux.setText(2, edit.getSampling());
-//			aux.setText(3, edit.getProtocol());
-//			aux.setText(4, edit.getPriority());
-//		}		
-	}
-	
+	// Edit the properties of the specified sensor
 	public void editSensorProperties(Display display) {
 		EditSensorShell edit = new EditSensorShell(table.getItem(table.getSelectionIndex()), display);
+
 		if (edit.isConfirm()) {
+			Sensor auxSensor = sensors.get(table.getSelectionIndex());
+
 			TableItem aux = table.getItem(table.getSelectionIndex());
-			aux.setText(0, edit.getSignal());
-			aux.setText(1, edit.getActuator());
-			aux.setText(2, edit.getSampling());
+			aux.setText(0, edit.getSensor());
+			aux.setText(1, edit.getSampling());
 			aux.setText(3, edit.getProtocol());
-			aux.setText(4, edit.getPriority());
+			aux.setText(2, edit.getPriority());
+
+			auxSensor.setName(edit.getSensor());
+			auxSensor.setSampling(Integer.valueOf(edit.getSampling()));
+			auxSensor.setProtocol(edit.getProtocol());
+			auxSensor.setPriority(Integer.valueOf(edit.getPriority()));
+
+			sensors.set(table.getSelectionIndex(), auxSensor);
+
+			checkSpecified();
 		}
 	}
 
-	public void removeSensor(){
-		if(table.getSelectionIndex() > -1)
-			table.remove(table.getSelectionIndex()); 
-	}
-	
 	/*
 	 * Verify the input table and according the vector amount of each input port
 	 * the signals are inserted into the sensors list specification
 	 */
 	public void populateSensorsTable(Table table2, ArrayList<Sensing> subsystems) {
+		// If table have data clear it
+		if (table.getItemCount() > 0)
+			clearData();
+
 		TableItem item;
+		Sensor sensor;
+
+		// Insert the outputs that not need of post-reading
 		for (int i = 0; i < table2.getItemCount(); i++) {
 			Button postReading = (Button) table2.getItem(i).getData("postReading");
 			if (!postReading.getSelection()) {
@@ -210,13 +187,29 @@ public class SensorsPage extends WizardPage {
 			}
 		}
 
+		// insert the outputs that are specified in the post-reading process
 		for (int i = 0; i < subsystems.size(); i++) {
 			for (int z = 0; z < subsystems.get(i).getInputs().size(); z++) {
-				
 				item = new TableItem(table, SWT.NONE);
 				item.setText(0, subsystems.get(i).getInputs().get(z));
 			}
 		}
+
+		// populate Array of sensors
+		for (int i = 0; i < table.getItemCount(); i++) {
+			sensor = new Sensor();
+			sensor.setIndex(i);
+			sensor.setSignal(table.getItem(i).getText(0));
+			sensors.add(sensor);
+		}
+
+		checkSpecified();
+	}
+
+	// clear all data of actuators
+	private void clearData() {
+		table.removeAll();
+		sensors.clear();
 	}
 
 	public void checkSpecified() {

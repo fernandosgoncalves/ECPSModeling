@@ -31,8 +31,10 @@ import java.util.ArrayList;
 import org.eclipse.swt.SWT;
 
 public class ActuatorsPage extends WizardPage {
+	protected ArrayList<Actuator> actuators;	
+	
 	private Composite container;
-
+	
 	protected Table table;
 
 	protected Label information;
@@ -89,22 +91,17 @@ public class ActuatorsPage extends WizardPage {
 		column5.setText("Priority");
 		column5.setWidth(70);
 
-		// Button btAddActuator = new Button(container, SWT.NONE);
 		Button btEditActuator = new Button(container, SWT.NONE);
-		// Button btRemoveActuator = new Button(container, SWT.NONE);
 
 		table.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				// btAddActuator.setEnabled(true);
 				btEditActuator.setEnabled(true);
-				// btRemoveActuator.setEnabled(true);
 			}
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// TODO Auto-generated method stub
-
 			}
 		});
 
@@ -112,13 +109,11 @@ public class ActuatorsPage extends WizardPage {
 			@Override
 			public void mouseUp(MouseEvent e) {
 				// TODO Auto-generated method stub
-
 			}
 
 			@Override
 			public void mouseDown(MouseEvent e) {
 				// TODO Auto-generated method stub
-
 			}
 
 			@Override
@@ -127,10 +122,6 @@ public class ActuatorsPage extends WizardPage {
 			}
 		});
 
-		// Button btAddActuator = new Button(container, SWT.NONE);
-		// btAddActuator.setText("Add Actuator");
-		// btAddActuator.setEnabled(false);
-		// Button btEditActuator = new Button(container, SWT.NONE);
 		btEditActuator.setText("Edit Actuator");
 		btEditActuator.setEnabled(false);
 		btEditActuator.addListener(SWT.Selection, new Listener() {
@@ -143,23 +134,34 @@ public class ActuatorsPage extends WizardPage {
 			}
 		});
 
-		// Button btRemoveActuator = new Button(container, SWT.NONE);
-		// btRemoveActuator.setText("Remove Actuator");
-		// btRemoveActuator.setEnabled(false);
-
+		actuators = new ArrayList<>();
+		
 		setControl(container);
 		setPageComplete(false);
 	}
 
+	//Edit the properties of the specified actuator
 	public void editActuatorProperties(Display display) {
 		EditActuatorShell edit = new EditActuatorShell(table.getItem(table.getSelectionIndex()), display);
+		
 		if (edit.isConfirm()) {
+			Actuator auxActuator = actuators.get(table.getSelectionIndex());
+			
 			TableItem aux = table.getItem(table.getSelectionIndex());
 			aux.setText(0, edit.getSignal());
 			aux.setText(1, edit.getActuator());
 			aux.setText(2, edit.getSampling());
 			aux.setText(3, edit.getProtocol());
 			aux.setText(4, edit.getPriority());
+			
+			auxActuator.setSignal(edit.getSignal());
+			auxActuator.setName(edit.getActuator());
+			auxActuator.setSampling(Integer.valueOf(edit.getSampling()));
+			auxActuator.setProtocol(edit.getProtocol());
+			auxActuator.setPriority(Integer.valueOf(edit.getPriority()));
+			
+			actuators.set(table.getSelectionIndex(), auxActuator);
+			
 			checkSpecified();
 		}
 	}
@@ -169,7 +171,14 @@ public class ActuatorsPage extends WizardPage {
 	 * the signals are inserted into the sensors list specification
 	 */
 	public void populateActuatorsTable(Table table2, ArrayList<Actuation> subsystems) {
+		//If table have data clear it
+		if(table.getItemCount() > 0)
+			clearData();
+		
+		Actuator actuator;
 		TableItem item;
+		
+		//Insert the inputs that not need of pre-writing
 		for (int i = 0; i < table2.getItemCount(); i++) {
 			Button preWriting = (Button) table2.getItem(i).getData("PreWcheck");
 			if (!preWriting.getSelection()) {
@@ -182,14 +191,32 @@ public class ActuatorsPage extends WizardPage {
 			}
 		}
 
+		//insert the inputs that are specified in the pre-writing process
 		for (int i = 0; i < subsystems.size(); i++) {
 			for (int z = 0; z < subsystems.get(i).getOutputs().size(); z++) {
 				item = new TableItem(table, SWT.NONE);
 				item.setText(0, subsystems.get(i).getOutputs().get(z));
 			}
 		}
+		
+		//populate Array of actuators
+		for(int i = 0; i < table.getItemCount(); i++){
+			actuator = new Actuator();
+			actuator.setIndex(i);
+			actuator.setSignal(table.getItem(i).getText(0));
+			actuators.add(actuator);
+		}
+		
+		checkSpecified();
 	}
 
+	//clear all data of actuators
+	private void clearData(){
+		table.removeAll();
+		actuators.clear();
+	}
+	
+	//Verify that the all conditions are satisfied to enable the next button 	
 	public void checkSpecified() {
 		Boolean check = true;
 		for (int i = 0; i < table.getItemCount(); i++) {

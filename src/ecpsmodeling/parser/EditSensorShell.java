@@ -22,8 +22,7 @@ public class EditSensorShell {
 	
 	protected boolean confirm = false;
 	
-	protected String txtSignal;
-	protected String txtActuator;
+	protected String txtSensor;
 	protected String txtSampling;
 	protected String txtProtocol;
 	protected String txtPriority;
@@ -31,41 +30,18 @@ public class EditSensorShell {
 	protected Spinner priority;
 	protected Spinner sampling;
 	
-	protected Text actuator;
-	protected Text signal;
-	
+	protected Text sensor;
+		
 	protected Combo protocol;
 	
-	protected Label lactuator;
+	protected Label lsensor;
 	protected Label lsampling;
 	protected Label lpriority;
-	protected Label lsignal;
 	protected Label lprotocol;
 
 	protected Button cancel;
 	protected Button ok;
 		
-	/*
-	 * public EditActuatorShell(TableItem item){ shell = new
-	 * Shell(Display.getCurrent()); shell.setText("Shell"); shell.setSize(200,
-	 * 200);
-	 * 
-	 * display = Display.getCurrent();
-	 * 
-	 * Monitor primary = display.getPrimaryMonitor(); Rectangle bounds =
-	 * primary.getBounds(); Rectangle rect = shell.getBounds();
-	 * 
-	 * int x = bounds.x + (bounds.width - rect.width) / 2; int y = bounds.y +
-	 * (bounds.height - rect.height) / 2;
-	 * 
-	 * shell.setLocation(x, y); shell.open(); shell.addListener(SWT.CLOSE, new
-	 * Listener() {
-	 * 
-	 * @Override public void handleEvent(Event e) { System.out.println(
-	 * "Event Executed"); switch(e.type){ case SWT.CLOSE: //shell.close();
-	 * shell.setVisible(false); } } }); }
-	 */
-
 	public EditSensorShell(TableItem item, Display display) {
 		shell = new Shell(display, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL | SWT.RESIZE | SWT.BORDER | SWT.CLOSE);
 
@@ -75,7 +51,7 @@ public class EditSensorShell {
 		layout.marginTop = 8;
 		
 		shell.setLayout(layout);
-		shell.setSize(295, 240);
+		shell.setSize(295, 210);
 		shell.setText("Sensor Specification");
 		
 		Monitor primary = display.getPrimaryMonitor();
@@ -104,17 +80,11 @@ public class EditSensorShell {
 		GridData ilayout = new GridData();
 		ilayout.widthHint = 150;
 		
-		lsignal = new Label(shell, SWT.NONE);
-		lsignal.setText("Signal:");
+		lsensor = new Label(shell, SWT.NONE);
+		lsensor.setText("Sensor:");
 		
-		signal = new Text(shell, SWT.SINGLE | SWT.BORDER);
-		signal.setLayoutData(ilayout);
-		
-		lactuator = new Label(shell, SWT.NONE);
-		lactuator.setText("Actuator:");
-		
-		actuator = new Text(shell, SWT.SINGLE | SWT.BORDER);
-		actuator.setLayoutData(ilayout);		
+		sensor = new Text(shell, SWT.SINGLE | SWT.BORDER);
+		sensor.setLayoutData(ilayout);		
 		
 		lsampling = new Label(shell, SWT.NONE);
 		lsampling.setText("Sampling (ms):");
@@ -147,8 +117,7 @@ public class EditSensorShell {
 			public void widgetSelected(SelectionEvent e) {
 				confirm = true;
 				
-				txtSignal = signal.getText();
-				txtActuator = actuator.getText();
+				txtSensor = sensor.getText();
 				txtSampling = sampling.getText();
 				txtProtocol = protocol.getText();
 				txtPriority = priority.getText();
@@ -181,19 +150,17 @@ public class EditSensorShell {
 	}
 	
 	private void init(TableItem item) {
-		signal.setText(item.getText(0));
+		sensor.setText(item.getText(0));
 		if(!item.getText(1).isEmpty())
-			actuator.setText(item.getText(1));
+			sampling.setSelection(Integer.valueOf(item.getText(1)));
 		if(!item.getText(2).isEmpty())
-			sampling.setSelection(Integer.valueOf(item.getText(2)));
-		if(!item.getText(3).isEmpty())
+			priority.setSelection(Integer.valueOf(item.getText(2)));			
+		if(!item.getText(3).isEmpty()){
 			for(int i=0; i< protocol.getItemCount(); i++){
 				if(protocol.getItem(i).equals(item.getText(3)))
 					protocol.select(i);
 			}
-		if(!item.getText(4).isEmpty())
-			priority.setSelection(Integer.valueOf(item.getText(4)));
-		
+		}
 	}
 
 	public String getPriority() {
@@ -204,12 +171,8 @@ public class EditSensorShell {
 		return txtSampling;
 	}
 
-	public String getActuator() {
-		return txtActuator;
-	}
-
-	public String getSignal() {
-		return txtSignal;
+	public String getSensor() {
+		return txtSensor;
 	}
 
 	public String getProtocol() {
