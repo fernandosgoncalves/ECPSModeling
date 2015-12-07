@@ -152,6 +152,7 @@ public class SensorsPage extends WizardPage {
 			aux.setText(2, edit.getPriority());
 
 			auxSensor.setName(edit.getSensor());
+			auxSensor.outputs.add(edit.getSensor()+"data");
 			auxSensor.setSampling(Integer.valueOf(edit.getSampling()));
 			auxSensor.setProtocol(edit.getProtocol());
 			auxSensor.setPriority(Integer.valueOf(edit.getPriority()));
@@ -222,5 +223,9 @@ public class SensorsPage extends WizardPage {
 		}
 		if (check)
 			setPageComplete(true);
+	}
+	
+	protected ArrayList<Sensor> getSensors(){
+		return sensors;
 	}
 }

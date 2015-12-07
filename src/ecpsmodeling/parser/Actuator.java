@@ -11,7 +11,7 @@ public class Actuator {
 	protected int index;
 	
 	protected String protocol;
-	protected String signal;
+	//protected String signal;
 	protected String name;
 	
 	Actuator(){
@@ -75,11 +75,11 @@ public class Actuator {
 		this.protocol = protocol;
 	}
 
-	public String getSignal() {
+	/*public String getSignal() {
 		return signal;
 	}
 
 	public void setSignal(String signal) {
 		this.signal = signal;
-	}
+	}*/
 }

@@ -128,8 +128,13 @@ public class ECPSModeling extends Wizard implements IImportWizard {
 		// System.out.println("FINISH PRESSED");
 		IFile file = mainPage.createNewFile();
 		try {
+			//Construtor criação do processo de transformação e leitura do arquivo mdl
+			//Mdl2Aadl mdl2Aadl = new Mdl2Aadl(file.getRawLocation().toString());
 			// Chamada da função de marcação automatizada
-			mdl2Aadl.autoMark();
+			//mdl2Aadl.autoMark();
+			// Chamada da função de transformação de sensores e atuadores
+			mdl2Aadl.sensingActuationTransformation(prewritingPage.getActSubsystems(), actuatorsPage.getActuators(), postReadingPage.getSenSubsystems(), sensorsPage.getSensors(), mdl2Aadl.aadl.getSubSystem().searchSubSystem(
+					subsysPage.table.getItem(subsysPage.table.getSelectionIndex()).getText(0)));
 			// Geração do arquivo AADL de saída
 			mdl2Aadl.save(file.getRawLocation().removeLastSegments(1) + "/",
 					file.getRawLocation().lastSegment().substring(0, file.getRawLocation().lastSegment().length() - 4)

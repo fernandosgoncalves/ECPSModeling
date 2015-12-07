@@ -81,7 +81,7 @@ public class SubsysPage extends WizardPage {
 		setPageComplete(false);
 	}
 
-	public void populateList(Mdl2Aadl mdl2Aadl) {
+	protected void populateList(Mdl2Aadl mdl2Aadl) {
 		if (table.getItemCount() > 0) {
 			//System.out.println("Clear");
 			clearTable();
@@ -104,16 +104,16 @@ public class SubsysPage extends WizardPage {
 		}
 	}
 
-	public void addItemTable(String name) {
+	private void addItemTable(String name) {
 		TableItem item = new TableItem(table, SWT.NONE);
 		item.setText(name);
 	}
 
-	public void clearTable() {
+	private void clearTable() {
 		table.removeAll();
 	}
 
-	public void exploreSystem(SubSystem subsystem) {
+	private void exploreSystem(SubSystem subsystem) {
 		for (int i = 0; i < subsystem.getSubSystemsCount(); i++) {
 			if (subsystem.getSubSystem(i).getMark().equals(MARK_PROCESS_THREAD)) {
 				addItemTable(subsystem.getSubSystem(i).getName());

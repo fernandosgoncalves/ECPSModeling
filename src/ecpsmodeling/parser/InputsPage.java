@@ -10,8 +10,8 @@
  *******************************************************************************/
 package ecpsmodeling.parser;
 
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.custom.TableEditor;
@@ -25,7 +25,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.swt.SWT;
 
 public class InputsPage extends WizardPage {

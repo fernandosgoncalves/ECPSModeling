@@ -154,11 +154,12 @@ public class ActuatorsPage extends WizardPage {
 			aux.setText(3, edit.getProtocol());
 			aux.setText(4, edit.getPriority());
 			
-			auxActuator.setSignal(edit.getSignal());
+			//auxActuator.setSignal(edit.getSignal());
 			auxActuator.setName(edit.getActuator());
 			auxActuator.setSampling(Integer.valueOf(edit.getSampling()));
 			auxActuator.setProtocol(edit.getProtocol());
 			auxActuator.setPriority(Integer.valueOf(edit.getPriority()));
+			auxActuator.inputs.set(0, edit.getSignal());
 			
 			actuators.set(table.getSelectionIndex(), auxActuator);
 			
@@ -203,7 +204,8 @@ public class ActuatorsPage extends WizardPage {
 		for(int i = 0; i < table.getItemCount(); i++){
 			actuator = new Actuator();
 			actuator.setIndex(i);
-			actuator.setSignal(table.getItem(i).getText(0));
+			//actuator.setSignal(table.getItem(i).getText(0));
+			actuator.inputs.add(table.getItem(i).getText(0));
 			actuators.add(actuator);
 		}
 		
@@ -227,5 +229,9 @@ public class ActuatorsPage extends WizardPage {
 		}
 		if (check)
 			setPageComplete(true);
+	}
+	
+	protected ArrayList<Actuator> getActuators(){
+		return actuators;
 	}
 }
