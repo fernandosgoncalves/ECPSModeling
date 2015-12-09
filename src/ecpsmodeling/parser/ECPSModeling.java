@@ -75,7 +75,7 @@ public class ECPSModeling extends Wizard implements IImportWizard {
 						if (page.getName().equals(PREWRITING)) {
 							// Perform the instructions to populate the table with the list of system actuator
 							actuatorsPage.populateActuatorsTable(inputsPage.getTable(),
-									prewritingPage.getActSubsystems());
+									prewritingPage.getActFunction());
 						} else {
 							if (page.getName().equals(ACTSPECIFICATION)) {
 								// This function reads the output ports and populate the list to analyze this information
@@ -133,7 +133,7 @@ public class ECPSModeling extends Wizard implements IImportWizard {
 			// Chamada da função de marcação automatizada
 			//mdl2Aadl.autoMark();
 			// Chamada da função de transformação de sensores e atuadores
-			mdl2Aadl.sensingActuationTransformation(prewritingPage.getActSubsystems(), actuatorsPage.getActuators(), postReadingPage.getSenSubsystems(), sensorsPage.getSensors(), mdl2Aadl.aadl.getSubSystem().searchSubSystem(
+			mdl2Aadl.sensingActuationTransformation(prewritingPage.getActFunction(), actuatorsPage.getActuators(), postReadingPage.getSenSubsystems(), sensorsPage.getSensors(), mdl2Aadl.aadl.getSubSystem().searchSubSystem(
 					subsysPage.table.getItem(subsysPage.table.getSelectionIndex()).getText(0)));
 			// Geração do arquivo AADL de saída
 			mdl2Aadl.save(file.getRawLocation().removeLastSegments(1) + "/",

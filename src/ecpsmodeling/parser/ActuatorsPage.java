@@ -23,26 +23,28 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import java.util.ArrayList;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.TableEditor;
 
 public class ActuatorsPage extends WizardPage {
 	protected ArrayList<Actuator> actuators;	
 	
 	private Composite container;
 	
-	protected Table table;
-
 	protected Label information;
 
+	protected Table table;
+	
 	public ActuatorsPage() {
 		super("Actuator Specification");
 		setTitle("Actuator Specification");
-		setDescription("Detail the Actuation subsystem:");
+		setDescription("Detail the system Actuators:");
 	}
 
 	@Override
@@ -77,22 +79,26 @@ public class ActuatorsPage extends WizardPage {
 
 		final TableColumn column2 = new TableColumn(table, SWT.NONE);
 		column2.setText("Actuator");
-		column2.setWidth(130);
+		column2.setWidth(100);
 
 		final TableColumn column3 = new TableColumn(table, SWT.NONE);
-		column3.setText("Sampling");
+		column3.setText("Protocol");
 		column3.setWidth(70);
 
 		final TableColumn column4 = new TableColumn(table, SWT.NONE);
-		column4.setText("Protocol");
+		column4.setText("Priority");
 		column4.setWidth(70);
 
 		final TableColumn column5 = new TableColumn(table, SWT.NONE);
-		column5.setText("Priority");
+		column5.setText("Periodic");
 		column5.setWidth(70);
 
+		final TableColumn column6 = new TableColumn(table, SWT.NONE);
+		column6.setText("Period");
+		column6.setWidth(70);
+		
 		Button btEditActuator = new Button(container, SWT.NONE);
-
+		
 		table.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -148,17 +154,22 @@ public class ActuatorsPage extends WizardPage {
 			Actuator auxActuator = actuators.get(table.getSelectionIndex());
 			
 			TableItem aux = table.getItem(table.getSelectionIndex());
-			aux.setText(0, edit.getSignal());
+			//aux.setText(0, edit.getSignal());
 			aux.setText(1, edit.getActuator());
-			aux.setText(2, edit.getSampling());
-			aux.setText(3, edit.getProtocol());
-			aux.setText(4, edit.getPriority());
+			aux.setText(2, edit.getProtocol());
+			aux.setText(3, edit.getPriority());
+			Button bt = (Button) aux.getData("periodic");
+			bt.setSelection(edit.getPeriodic());
+			//aux.setText(4, edit.getPriority());
+			aux.setText(5, edit.getPeriod());
+			
 			
 			//auxActuator.setSignal(edit.getSignal());
 			auxActuator.setName(edit.getActuator());
-			auxActuator.setSampling(Integer.valueOf(edit.getSampling()));
 			auxActuator.setProtocol(edit.getProtocol());
 			auxActuator.setPriority(Integer.valueOf(edit.getPriority()));
+			auxActuator.setPeriodic(edit.getPeriodic());
+			auxActuator.setPeriod(Integer.valueOf(edit.getPeriod()));
 			auxActuator.inputs.set(0, edit.getSignal());
 			
 			actuators.set(table.getSelectionIndex(), auxActuator);
@@ -171,7 +182,7 @@ public class ActuatorsPage extends WizardPage {
 	 * Verify the input table and according the vector amount of each input port
 	 * the signals are inserted into the sensors list specification
 	 */
-	public void populateActuatorsTable(Table table2, ArrayList<Actuation> subsystems) {
+	public void populateActuatorsTable(Table inputTable, ArrayList<Actuation> functions) {
 		//If table have data clear it
 		if(table.getItemCount() > 0)
 			clearData();
@@ -179,24 +190,44 @@ public class ActuatorsPage extends WizardPage {
 		Actuator actuator;
 		TableItem item;
 		
+		TableEditor teEditor;
+		
+		Button preWriting;
+		Button bperiodic;
+
+		Combo cActuator;
+		
 		//Insert the inputs that not need of pre-writing
-		for (int i = 0; i < table2.getItemCount(); i++) {
-			Button preWriting = (Button) table2.getItem(i).getData("PreWcheck");
+		for (int i = 0; i < inputTable.getItemCount(); i++) {
+			preWriting = (Button) inputTable.getItem(i).getData("PreWcheck");
+			cActuator = (Combo) inputTable.getItem(i).getData("actuator");
 			if (!preWriting.getSelection()) {
-				Label port = (Label) table2.getItem(i).getData("port");
-				Text size = (Text) table2.getItem(i).getData("size");
+				Label port = (Label) inputTable.getItem(i).getData("port");
+				Text size = (Text) inputTable.getItem(i).getData("size");
 				for (int z = 0; z < Integer.valueOf(size.getText()); z++) {
 					item = new TableItem(table, SWT.NONE);
 					item.setText(0, port.getText() + (z + 1));
+				
+					if(!cActuator.getText().isEmpty())
+						item.setText(1, cActuator.getText());
+					//insert item components
+					teEditor = new TableEditor(table);
+					bperiodic = new Button(table, SWT.CHECK);
+					bperiodic.setEnabled(false);
+					bperiodic.pack();
+					teEditor.minimumWidth = bperiodic.getSize().x;
+					teEditor.horizontalAlignment = SWT.LEFT;
+					teEditor.setEditor(bperiodic, item, 4);
+					item.setData("periodic", bperiodic);
 				}
 			}
 		}
 
 		//insert the inputs that are specified in the pre-writing process
-		for (int i = 0; i < subsystems.size(); i++) {
-			for (int z = 0; z < subsystems.get(i).getOutputs().size(); z++) {
+		for (int i = 0; i < functions.size(); i++) {
+			for (int z = 0; z < functions.get(i).getOutputs().size(); z++) {
 				item = new TableItem(table, SWT.NONE);
-				item.setText(0, subsystems.get(i).getOutputs().get(z));
+				item.setText(0, functions.get(i).getOutputs().get(z));
 			}
 		}
 		
@@ -223,7 +254,7 @@ public class ActuatorsPage extends WizardPage {
 		Boolean check = true;
 		for (int i = 0; i < table.getItemCount(); i++) {
 			for (int z = 0; z < table.getColumnCount(); z++) {
-				if (table.getItem(i).getText(z).isEmpty())
+				if (table.getItem(i).getText(z).isEmpty() && z != 4)
 					check = false;
 			}
 		}

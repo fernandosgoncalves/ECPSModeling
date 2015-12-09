@@ -6,12 +6,13 @@ public class Actuator {
 	protected ArrayList<String> inputs;
 	protected ArrayList<String> outputs;
 	
+	protected boolean periodic;
 	protected int sampling;
 	protected int priority;
+	protected int period;
 	protected int index;
 	
 	protected String protocol;
-	//protected String signal;
 	protected String name;
 	
 	Actuator(){
@@ -75,6 +76,24 @@ public class Actuator {
 		this.protocol = protocol;
 	}
 
+	public boolean getPeriodic() {
+		return periodic;
+	}
+
+	public void setPeriodic(boolean periodic) {
+		this.periodic = periodic;
+	}
+
+	public int getPeriod() {
+		return period;
+	}
+
+	public void setPeriod(int period) {
+		this.period = period;
+	}
+
+	
+	
 	/*public String getSignal() {
 		return signal;
 	}

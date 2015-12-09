@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
@@ -63,19 +64,23 @@ public class InputsPage extends WizardPage {
 				
 		final TableColumn column = new TableColumn(table, SWT.NONE);
 		column.setText("Input");
-		column.setWidth(200);
+		column.setWidth(150);
 
 		final TableColumn column2 = new TableColumn(table, SWT.NONE);
 		column2.setText("Vector");
-		column2.setWidth(100);
+		column2.setWidth(60);
 
 		final TableColumn column3 = new TableColumn(table, SWT.NONE);
 		column3.setText("Inputs Size");
-		column3.setWidth(100);
+		column3.setWidth(80);
 
 		final TableColumn column4 = new TableColumn(table, SWT.NONE);
 		column4.setText("Pre-writing");
-		column4.setWidth(65);
+		column4.setWidth(80);
+		
+		final TableColumn column5 = new TableColumn(table, SWT.NONE);
+		column5.setText("Actuator");
+		column5.setWidth(65);
 		
 		setControl(container);
 		setPageComplete(true);
@@ -89,7 +94,9 @@ public class InputsPage extends WizardPage {
 			TableItem item = new TableItem(table, SWT.NONE);
 			
 			TableEditor editor = new TableEditor(table);
-					
+
+			final Combo cActuator = new Combo(table, SWT.NONE);
+			
 			Button PreWcheck = new Button(table, SWT.CHECK);
 			Button check = new Button(table, SWT.CHECK);
 					
@@ -150,15 +157,42 @@ public class InputsPage extends WizardPage {
 			item.setData("size", size);
 			
 			PreWcheck = new Button(table, SWT.CHECK);
-			//PreWcheck.setEnabled(false);
 			
 			editor = new TableEditor(table);
 			
 			PreWcheck.pack();
+			PreWcheck.addSelectionListener(new SelectionListener() {
+
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					if(cActuator.isEnabled())
+						cActuator.setEnabled(false);
+					else
+						cActuator.setEnabled(true);
+					
+				}
+				
+				@Override
+				public void widgetDefaultSelected(SelectionEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+			});
 			editor.minimumWidth = PreWcheck.getSize().x;
 			editor.horizontalAlignment = SWT.LEFT;
 			editor.setEditor(PreWcheck, item, 3);
 			item.setData("PreWcheck", PreWcheck);
+			
+			editor = new TableEditor(table);
+			
+			cActuator.setText("");
+			cActuator.add("ESC");
+			cActuator.add("Servo");
+			cActuator.add("Motor");
+			editor.grabHorizontal = true;
+			editor.setEditor(cActuator, item, 4);
+			item.setData("actuator", cActuator);
+			
 		}
 	}
 	
@@ -171,10 +205,14 @@ public class InputsPage extends WizardPage {
 			Label port = (Label) table.getItem(i).getData("port");
 			Text size = (Text) table.getItem(i).getData("size");
 			Button prewriting = (Button) table.getItem(i).getData("PreWcheck");
+			Combo act = (Combo) table.getItem(i).getData("actuator");
+			//Text size2 = (Text) table.getItem(i).getData("size2");
 			check.dispose();
 			port.dispose();
 			size.dispose();
-			prewriting.dispose();			
+			prewriting.dispose();
+			act.dispose();
+			//size2.dispose();
 		}
 		table.removeAll();
 	}

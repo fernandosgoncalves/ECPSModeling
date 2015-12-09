@@ -1,55 +1,61 @@
 package ecpsmodeling.parser;
 
-import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
-
 import java.util.ArrayList;
-
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 
-public class ActSubsystemShell {
+public class ActuationFunctionShell {
+	public static Integer WIDTH = 440;
+	public static Integer HEIGHT = 480;
+	
 	protected boolean confirm = false;
 	protected boolean edit = false;
 
 	protected ArrayList<String> outputs;
-	protected ArrayList<String> subsys;
+	protected ArrayList<String> functionIn;
 	protected ArrayList<String> inputs;
 	
 	protected TabFolder tabFolder;
 
-	protected Table tableSubsys;
+	protected Table tableFunction;
 	protected Table tableOutput;
 	protected Table tableInput;
 
+	protected String txtTemplate;
 	protected String txtName;
-	
-	protected Label lsname;
-
+		
+	protected Label lsTemplate;
+	protected Label lsName;
+		
 	protected Button cancel;
 	protected Button ok;
+	
+	protected Combo cTemplate;
 	
 	protected Text tOuput;
 	protected Text name;
 
 	final Shell shell;
 
-	public ActSubsystemShell(Display display, ArrayList<String> iinputs) {
+	public ActuationFunctionShell(Display display, ArrayList<String> iinputs) {
 		shell = new Shell(display,
 				SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL | SWT.RESIZE | SWT.BORDER | SWT.CLOSE | SWT.CENTER);
 
@@ -59,8 +65,8 @@ public class ActSubsystemShell {
 		layout.marginTop = 8;
 
 		shell.setLayout(layout);
-		shell.setSize(450, 450);
-		shell.setText("Subsystem Specification");
+		shell.setSize(WIDTH, HEIGHT);
+		shell.setText("Pre-wiriting Funtion Specification");
 
 		Monitor primary = display.getPrimaryMonitor();
 		Rectangle bounds = primary.getBounds();
@@ -71,7 +77,7 @@ public class ActSubsystemShell {
 		shell.setLocation(x, y);
 
 		outputs = new ArrayList<String>();
-		subsys = new ArrayList<String>();
+		functionIn = new ArrayList<String>();
 		inputs = new ArrayList<String>();
 		
 		createControl();
@@ -88,7 +94,7 @@ public class ActSubsystemShell {
 		}
 	}
 
-	public ActSubsystemShell(Display display, ArrayList<String> iinputs, Actuation actuation) {
+	public ActuationFunctionShell(Display display, ArrayList<String> iinputs, Actuation actuation) {
 		shell = new Shell(display,
 				SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL | SWT.RESIZE | SWT.BORDER | SWT.CLOSE | SWT.CENTER);
 
@@ -98,8 +104,8 @@ public class ActSubsystemShell {
 		layout.marginTop = 8;
 
 		shell.setLayout(layout);
-		shell.setSize(450, 450);
-		shell.setText("Subsystem Specification");
+		shell.setSize(WIDTH, HEIGHT);
+		shell.setText("Pre-wiriting Funtion Specification");
 
 		Monitor primary = display.getPrimaryMonitor();
 		Rectangle bounds = primary.getBounds();
@@ -110,7 +116,7 @@ public class ActSubsystemShell {
 		shell.setLocation(x, y);
 
 		outputs = new ArrayList<String>();
-		subsys = new ArrayList<String>();
+		functionIn = new ArrayList<String>();
 		inputs = new ArrayList<String>();
 		
 		createControl();
@@ -131,12 +137,21 @@ public class ActSubsystemShell {
 		GridData ilayout = new GridData();
 		ilayout.widthHint = 300;
 
-		lsname = new Label(shell, SWT.NONE);
-		lsname.setText("Name:");
+		lsName = new Label(shell, SWT.NONE);
+		lsName.setText("Name:");
 
 		name = new Text(shell, SWT.SINGLE | SWT.BORDER);
 		name.setLayoutData(ilayout);
 
+		lsTemplate = new Label(shell, SWT.NONE);
+		lsTemplate.setText("Template:");
+
+		cTemplate = new Combo(shell, SWT.SINGLE | SWT.BORDER);
+		cTemplate.add("ServosActuation");
+		cTemplate.add("EscsActuation");
+		cTemplate.add("DCMotorsActuation");
+		cTemplate.setLayoutData(ilayout);
+		
 		GridData gdTabFolder = new GridData();
 		gdTabFolder.horizontalSpan = 2;
 		gdTabFolder.widthHint = 400;
@@ -177,8 +192,8 @@ public class ActSubsystemShell {
 					outputs.add(tableOutput.getItem(i).getText(0));
 				}
 				
-				for(i = 0; i < tableSubsys.getItemCount(); i++){
-					subsys.add(tableSubsys.getItem(i).getText(0));
+				for(i = 0; i < tableFunction.getItemCount(); i++){
+					functionIn.add(tableFunction.getItem(i).getText(0));
 				}
 				
 				shell.close();
@@ -227,19 +242,19 @@ public class ActSubsystemShell {
 		// table.setSize(290, 100);
 
 		final TableColumn column = new TableColumn(tableInput, SWT.NONE);
-		column.setText("Input");
+		column.setText("Inputs");
 		column.setWidth(150);
 
 		// ---------------------- Table ---------------------------
-		tableSubsys = new Table(composite, SWT.BORDER);
-		tableSubsys.setLinesVisible(true);
-		tableSubsys.setHeaderVisible(true);
+		tableFunction = new Table(composite, SWT.BORDER);
+		tableFunction.setLinesVisible(true);
+		tableFunction.setHeaderVisible(true);
 
-		tableSubsys.setLayoutData(data);
+		tableFunction.setLayoutData(data);
 		// table.setSize(290, 100);
 
-		final TableColumn columnOut = new TableColumn(tableSubsys, SWT.NONE);
-		columnOut.setText("Subsystem Inputs");
+		final TableColumn columnOut = new TableColumn(tableFunction, SWT.NONE);
+		columnOut.setText("Function Inputs");
 		columnOut.setWidth(150);
 
 		// ------------Buttons------------
@@ -251,10 +266,10 @@ public class ActSubsystemShell {
 		remove.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if(tableSubsys.getSelectionIndex() > -1){
+				if(tableFunction.getSelectionIndex() > -1){
 					TableItem item = new TableItem(tableInput, SWT.NONE);
-					item.setText(0, tableSubsys.getItem(tableSubsys.getSelectionIndex()).getText(0));
-					tableSubsys.remove(tableSubsys.getSelectionIndex());
+					item.setText(0, tableFunction.getItem(tableFunction.getSelectionIndex()).getText(0));
+					tableFunction.remove(tableFunction.getSelectionIndex());
 				}
 			}
 			
@@ -271,7 +286,7 @@ public class ActSubsystemShell {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if(tableInput.getSelectionIndex() > -1){
-					TableItem itemADD = new TableItem(tableSubsys, SWT.NONE);
+					TableItem itemADD = new TableItem(tableFunction, SWT.NONE);
 					itemADD.setText(0, tableInput.getItem(tableInput.getSelectionIndex()).getText(0));
 					tableInput.remove(tableInput.getSelectionIndex());
 				}
@@ -370,10 +385,6 @@ public class ActSubsystemShell {
 			}
 		});
 		
-		/*GridData bt = new GridData();
-		bt.horizontalAlignment = SWT.RIGHT;
-		remove.setLayoutData(bt);*/
-
 		return composite;
 	}
 
@@ -388,7 +399,7 @@ public class ActSubsystemShell {
 		init(inputs);
 		name.setText(actuation.getName());
 		for(int i = 0; i < actuation.getInputs().size(); i++){
-			TableItem item = new TableItem(tableSubsys, SWT.NONE);
+			TableItem item = new TableItem(tableFunction, SWT.NONE);
 			item.setText(0, actuation.getInputs().get(i));
 		}
 		for (int i = 0; i < actuation.getOutputs().size(); i++) {
@@ -420,8 +431,8 @@ public class ActSubsystemShell {
 	}
 
 	
-	public ArrayList<String> getSubsys() {
-		return subsys;
+	public ArrayList<String> getFuntion() {
+		return functionIn;
 	}
 
 }

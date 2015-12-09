@@ -1,71 +1,53 @@
 package ecpsmodeling.parser;
 
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Monitor;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Spinner;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Monitor;
+import org.eclipse.swt.widgets.Spinner;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 
 public class EditActuatorShell {
-
-	final Shell shell;
-	
 	protected boolean confirm = false;
 	
-	protected String txtSignal;
+	final Shell shell;
+	
 	protected String txtActuator;
-	protected String txtSampling;
 	protected String txtProtocol;
 	protected String txtPriority;
+	protected String txtPeriod;
+	protected String txtSignal;
+	
+	protected Boolean periodic;
 	
 	protected Spinner priority;
-	protected Spinner sampling;
+	protected Spinner period;
 	
-	protected Text actuator;
 	protected Text signal;
 	
 	protected Combo protocol;
+	protected Combo actuator;
 	
 	protected Label lactuator;
-	protected Label lsampling;
+	protected Label lperiodic;
 	protected Label lpriority;
-	protected Label lsignal;
 	protected Label lprotocol;
+	protected Label lperiod;
+	protected Label lsignal;
 
+	protected Button bperiodic;
 	protected Button cancel;
 	protected Button ok;
 		
-	/*
-	 * public EditActuatorShell(TableItem item){ shell = new
-	 * Shell(Display.getCurrent()); shell.setText("Shell"); shell.setSize(200,
-	 * 200);
-	 * 
-	 * display = Display.getCurrent();
-	 * 
-	 * Monitor primary = display.getPrimaryMonitor(); Rectangle bounds =
-	 * primary.getBounds(); Rectangle rect = shell.getBounds();
-	 * 
-	 * int x = bounds.x + (bounds.width - rect.width) / 2; int y = bounds.y +
-	 * (bounds.height - rect.height) / 2;
-	 * 
-	 * shell.setLocation(x, y); shell.open(); shell.addListener(SWT.CLOSE, new
-	 * Listener() {
-	 * 
-	 * @Override public void handleEvent(Event e) { System.out.println(
-	 * "Event Executed"); switch(e.type){ case SWT.CLOSE: //shell.close();
-	 * shell.setVisible(false); } } }); }
-	 */
-
 	public EditActuatorShell(TableItem item, Display display) {
 		shell = new Shell(display, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL | SWT.RESIZE | SWT.BORDER | SWT.CLOSE | SWT.CENTER);
 
@@ -75,7 +57,7 @@ public class EditActuatorShell {
 		layout.marginTop = 8;
 		
 		shell.setLayout(layout);
-		shell.setSize(295, 240);
+		shell.setSize(290, 270);
 		shell.setText("Actuator Specification");
 		
 		Monitor primary = display.getPrimaryMonitor();
@@ -109,19 +91,15 @@ public class EditActuatorShell {
 		
 		signal = new Text(shell, SWT.SINGLE | SWT.BORDER);
 		signal.setLayoutData(ilayout);
+		signal.setEnabled(false);
 		
 		lactuator = new Label(shell, SWT.NONE);
 		lactuator.setText("Actuator:");
 		
-		actuator = new Text(shell, SWT.SINGLE | SWT.BORDER);
+		actuator = new Combo(shell, SWT.SINGLE | SWT.BORDER);
+		actuator.setItems(new String[] {"ESC", "Servo", "Motor"});
 		actuator.setLayoutData(ilayout);		
-		
-		lsampling = new Label(shell, SWT.NONE);
-		lsampling.setText("Sampling (ms):");
-				
-		sampling = new Spinner(shell, SWT.BORDER);
-		sampling.setLayoutData(ilayout);
-		
+						
 		lprotocol = new Label(shell, SWT.NONE);
 		lprotocol.setText("Protocol:");
 		
@@ -136,6 +114,33 @@ public class EditActuatorShell {
 		priority = new Spinner(shell, SWT.BORDER);
 		priority.setLayoutData(ilayout);
 		
+		lperiodic = new Label(shell, SWT.NONE);
+		lperiodic.setText("Periodic:");
+
+		bperiodic = new Button(shell, SWT.CHECK);
+		bperiodic.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if(period.isEnabled())
+					period.setEnabled(false);
+				else
+					period.setEnabled(true);
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+
+		lperiod = new Label(shell, SWT.NONE);
+		lperiod.setText("Period:");
+
+		period = new Spinner(shell, SWT.BORDER);
+		period.setLayoutData(ilayout);
+		period.setEnabled(false);
+		
 		GridData blayout = new GridData();
 		blayout.widthHint = 80;
 		
@@ -149,9 +154,10 @@ public class EditActuatorShell {
 				
 				txtSignal = signal.getText();
 				txtActuator = actuator.getText();
-				txtSampling = sampling.getText();
 				txtProtocol = protocol.getText();
 				txtPriority = priority.getText();
+				periodic = bperiodic.getSelection();
+				txtPeriod = period.getText();
 				
 				shell.close();
 			}
@@ -182,26 +188,38 @@ public class EditActuatorShell {
 	
 	private void init(TableItem item) {
 		signal.setText(item.getText(0));
-		if(!item.getText(1).isEmpty())
-			actuator.setText(item.getText(1));
-		if(!item.getText(2).isEmpty())
-			sampling.setSelection(Integer.valueOf(item.getText(2)));
-		if(!item.getText(3).isEmpty())
+		
+		if(!item.getText(1).isEmpty()){
+			for(int i = 0; i < actuator.getItemCount(); i++){
+				if(actuator.getItem(i).equals(item.getText(1)))
+					actuator.select(i);
+			}
+		}
+
+		if(!item.getText(2).isEmpty()){
 			for(int i=0; i< protocol.getItemCount(); i++){
-				if(protocol.getItem(i).equals(item.getText(3)))
+				if(protocol.getItem(i).equals(item.getText(2)))
 					protocol.select(i);
 			}
-		if(!item.getText(4).isEmpty())
-			priority.setSelection(Integer.valueOf(item.getText(4)));
+		}
+	
+		if(!item.getText(3).isEmpty())
+			priority.setSelection(Integer.valueOf(item.getText(3)));
+		
+		
+		Button bt = (Button)item.getData("periodic");
+		if(bt.getSelection()){
+			bperiodic.setSelection(true);
+			period.setEnabled(true);
+		}
+		
+		if(!item.getText(5).isEmpty())
+			period.setSelection(Integer.valueOf(item.getText(5)));
 		
 	}
 
 	public String getPriority() {
 		return txtPriority;
-	}
-
-	public String getSampling() {
-		return txtSampling;
 	}
 
 	public String getActuator() {
@@ -216,6 +234,14 @@ public class EditActuatorShell {
 		return txtProtocol;
 	}
 
+	public Boolean getPeriodic(){
+		return periodic;
+	}
+	
+	public String getPeriod(){
+		return txtPeriod;
+	}
+	
 	public boolean isConfirm() {
 		return confirm;
 	}	

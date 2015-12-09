@@ -10,44 +10,43 @@
  *******************************************************************************/
 package ecpsmodeling.parser;
 
-import java.util.ArrayList;
-
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.widgets.TreeColumn;
-import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
+import java.util.ArrayList;
 
 public class PreWritingPage extends WizardPage {
 	private Composite container;
 
 	protected Tree table;
 
-	protected ArrayList<Actuation> actSubsystems;
+	protected ArrayList<Actuation> actFunctions;
 	protected ArrayList<String> inputs;
 
 	protected Label information;
 
-	protected Button btRemoveSubsystem;
-	protected Button btEditSubsystem;
-	protected Button btAddSubsystem;
+	protected Button btRemoveFunction;
+	protected Button btEditFunction;
+	protected Button btAddFunction;
 
 	public PreWritingPage() {
 		super("Prewriting Specification");
 		setTitle("Prewriting Specification");
-		setDescription("Detail the subsystems:");
+		setDescription("Detail the system functions:");
 	}
 
 	@Override
@@ -55,7 +54,7 @@ public class PreWritingPage extends WizardPage {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
 
-		actSubsystems = new ArrayList<>();
+		actFunctions = new ArrayList<>();
 		inputs = new ArrayList<String>();
 		
 		container = new Composite(parent, SWT.NONE);
@@ -80,28 +79,28 @@ public class PreWritingPage extends WizardPage {
 		table.setSize(300, 100);
 
 		final TreeColumn column = new TreeColumn(table, SWT.LEFT);
-		column.setText("Subsystem");
-		column.setWidth(150);
+		column.setText("Function");
+		column.setWidth(160);
 
 		final TreeColumn column2 = new TreeColumn(table, SWT.NONE);
 		column2.setText("Inputs");
-		column2.setWidth(150);
+		column2.setWidth(160);
 
 		final TreeColumn column3 = new TreeColumn(table, SWT.NONE);
 		column3.setText("Outputs");
-		column3.setWidth(150);
+		column3.setWidth(160);
 
-		btAddSubsystem = new Button(container, SWT.NONE);
-		btEditSubsystem = new Button(container, SWT.NONE);
-		btRemoveSubsystem = new Button(container, SWT.NONE);
+		btAddFunction = new Button(container, SWT.NONE);
+		btEditFunction = new Button(container, SWT.NONE);
+		btRemoveFunction = new Button(container, SWT.NONE);
 
 		table.addListener(SWT.Selection, new Listener() {
 			@Override
 			public void handleEvent(Event e) {
 				switch (e.type) {
 				case SWT.Selection:
-					btEditSubsystem.setEnabled(true);
-					btRemoveSubsystem.setEnabled(true);
+					btEditFunction.setEnabled(true);
+					btRemoveFunction.setEnabled(true);
 				}				
 			}
 		});
@@ -121,36 +120,36 @@ public class PreWritingPage extends WizardPage {
 
 			@Override
 			public void mouseDoubleClick(MouseEvent e) {
-				editSubsystemProperties(parent.getDisplay());
+				editFunctionProperties(parent.getDisplay());
 			}
 		});
 
-		btAddSubsystem.setText("Add Subsystem");
-		btAddSubsystem.addListener(SWT.Selection, new Listener() {
+		btAddFunction.setText("Add Function");
+		btAddFunction.addListener(SWT.Selection, new Listener() {
 			@Override
 			public void handleEvent(Event e) {
 				switch (e.type) {
 				case SWT.Selection:
-					addSubsystem(parent.getDisplay());
+					addFunction(parent.getDisplay());
 				}
 			}
 		});
 		// btAddSubsystem.setEnabled(false);
 
-		btEditSubsystem.setText("Edit Subsystem");
-		btEditSubsystem.setEnabled(false);
-		btEditSubsystem.addListener(SWT.Selection, new Listener() {
+		btEditFunction.setText("Edit Function");
+		btEditFunction.setEnabled(false);
+		btEditFunction.addListener(SWT.Selection, new Listener() {
 			@Override
 			public void handleEvent(Event e) {
 				switch (e.type) {
 				case SWT.Selection:
-					editSubsystemProperties(parent.getDisplay());
+					editFunctionProperties(parent.getDisplay());
 				}
 			}
 		});
 
-		btRemoveSubsystem.setText("Remove Subsystem");
-		btRemoveSubsystem.setEnabled(false);
+		btRemoveFunction.setText("Remove Function");
+		btRemoveFunction.setEnabled(false);
 
 		setControl(container);
 		setPageComplete(false);
@@ -181,18 +180,18 @@ public class PreWritingPage extends WizardPage {
 
 	public void clearData(){
 		table.removeAll();
-		actSubsystems.clear();		
+		actFunctions.clear();		
 	}
 	
-	public void addSubsystem(Display display) {
-		ActSubsystemShell add = new ActSubsystemShell(display, inputs);
+	public void addFunction(Display display) {
+		ActuationFunctionShell add = new ActuationFunctionShell(display, inputs);
 		if (add.isConfirm()) {
 			inputs = add.getInputs();
-			addSubsys(add.getName(), add.getSubsys(), add.getOutputs());
+			addFunction(add.getName(), add.getFuntion(), add.getOutputs());
 		}
 	}
 
-	public void addSubsys(String name, ArrayList<String> inputs, ArrayList<String> outputs) {
+	public void addFunction(String name, ArrayList<String> inputs, ArrayList<String> outputs) {
 		Actuation aux = new Actuation();
 		TreeItem treeItem = new TreeItem(table, SWT.NONE);
 		TreeItem subitem;
@@ -200,41 +199,29 @@ public class PreWritingPage extends WizardPage {
 		aux.setInputs(inputs);
 		aux.setOutputs(outputs);
 		aux.setIndex(table.getItemCount() - 1);
-		actSubsystems.add(aux);
+		actFunctions.add(aux);
 
 		treeItem.setText(0, name);
-		treeItem.setText(1, "inputs");
-		treeItem.setText(2, "outputs");
+		treeItem.setText(1, "");
+		treeItem.setText(2, "");
 
-		// System.out.println("IS: " + inputs.size() + " OS: " +
-		// outputs.size());
 		if (inputs.size() >= outputs.size()) {
-			// System.out.println("IS >= OS");
 			for (int i = 0; i < inputs.size(); i++) {
 				subitem = new TreeItem(treeItem, SWT.NONE);
 				if (i < outputs.size()) {
-					// System.out.println("I: " + inputs.get(i));
 					subitem.setText(1, inputs.get(i));
-					// System.out.println("O: " + outputs.get(i));
 					subitem.setText(2, outputs.get(i));
 				} else {
-					// System.out.println("Else");
-					// System.out.println("I: " + inputs.get(i));
 					subitem.setText(1, inputs.get(i));
 				}
 			}
 		} else {
-			// System.out.println("IS < OS");
 			for (int i = 0; i < outputs.size(); i++) {
 				subitem = new TreeItem(treeItem, SWT.NONE);
 				if (i < inputs.size()) {
-					// System.out.println("I: " + inputs.get(i));
 					subitem.setText(1, inputs.get(i));
-					// System.out.println("O: " + outputs.get(i));
 					subitem.setText(2, outputs.get(i));
 				} else {
-					// System.out.println("Else");
-					// System.out.println("O: " + outputs.get(i));
 					subitem.setText(2, outputs.get(i));
 				}
 			}
@@ -245,24 +232,24 @@ public class PreWritingPage extends WizardPage {
 	public void checkConditions() {
 		if (inputs.isEmpty()) {
 			setPageComplete(true);
-			btAddSubsystem.setEnabled(false);
+			btAddFunction.setEnabled(false);
 		} else {
 			setPageComplete(false);
-			btAddSubsystem.setEnabled(true);
+			btAddFunction.setEnabled(true);
 		}
 	}
 
 	public Actuation getItemByName(String name){
-		if(!actSubsystems.isEmpty()){
-			for(int i=0; i < actSubsystems.size(); i++){
-				if(actSubsystems.get(i).getName().equals(name))
-					return actSubsystems.get(i);
+		if(!actFunctions.isEmpty()){
+			for(int i=0; i < actFunctions.size(); i++){
+				if(actFunctions.get(i).getName().equals(name))
+					return actFunctions.get(i);
 			}
 		}
 		return null;
 	}
 	
-	public void editSubsys(String name, ArrayList<String> inputs, ArrayList<String> outputs, Actuation item) {
+	public void editFunction(String name, ArrayList<String> inputs, ArrayList<String> outputs, Actuation item) {
 		TreeItem[] treeItem = table.getSelection();
 		for(int i = 0; i < treeItem.length; i++){
 			treeItem[i].dispose();
@@ -277,41 +264,29 @@ public class PreWritingPage extends WizardPage {
 		item.setName(name);
 		item.setInputs(inputs);
 		item.setOutputs(outputs);
-		actSubsystems.set(item.index, item);
+		actFunctions.set(item.index, item);
 
 		newTreeItem.setText(0, name);
-		newTreeItem.setText(1, "inputs");
-		newTreeItem.setText(2, "outputs");
+		newTreeItem.setText(1, "");
+		newTreeItem.setText(2, "");
 
-		// System.out.println("IS: " + inputs.size() + " OS: " +
-		// outputs.size());
 		if (inputs.size() >= outputs.size()) {
-			// System.out.println("IS >= OS");
 			for (int i = 0; i < inputs.size(); i++) {
 				newSubItem = new TreeItem(newTreeItem, SWT.NONE);
 				if (i < outputs.size()) {
-					// System.out.println("I: " + inputs.get(i));
 					newSubItem.setText(1, inputs.get(i));
-					// System.out.println("O: " + outputs.get(i));
 					newSubItem.setText(2, outputs.get(i));
 				} else {
-					// System.out.println("Else");
-					// System.out.println("I: " + inputs.get(i));
 					newSubItem.setText(1, inputs.get(i));
 				}
 			}
 		} else {
-			// System.out.println("IS < OS");
 			for (int i = 0; i < outputs.size(); i++) {
 				newSubItem = new TreeItem(newTreeItem, SWT.NONE);
 				if (i < inputs.size()) {
-					// System.out.println("I: " + inputs.get(i));
 					newSubItem.setText(1, inputs.get(i));
-					// System.out.println("O: " + outputs.get(i));
 					newSubItem.setText(2, outputs.get(i));
 				} else {
-					// System.out.println("Else");
-					// System.out.println("O: " + outputs.get(i));
 					newSubItem.setText(2, outputs.get(i));
 				}
 			}
@@ -319,16 +294,16 @@ public class PreWritingPage extends WizardPage {
 		checkConditions();
 	}
 	
-	public void editSubsystemProperties(Display display) {
+	public void editFunctionProperties(Display display) {
 		Actuation aux = getItemByName(table.getSelection()[0].getText(0));
-		ActSubsystemShell edit = new ActSubsystemShell(display, inputs, aux);
+		ActuationFunctionShell edit = new ActuationFunctionShell(display, inputs, aux);
 		if (edit.isConfirm()) {
 			inputs = edit.getInputs();
-			editSubsys(edit.getName(), edit.getSubsys(), edit.getOutputs(), aux);
+			editFunction(edit.getName(), edit.getFuntion(), edit.getOutputs(), aux);
 		}
 	}
 	
-	public ArrayList<Actuation> getActSubsystems (){
-		return actSubsystems;
+	public ArrayList<Actuation> getActFunction (){
+		return actFunctions;
 	}
 }
