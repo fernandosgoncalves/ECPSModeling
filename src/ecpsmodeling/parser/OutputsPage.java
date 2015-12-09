@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
@@ -64,19 +65,23 @@ public class OutputsPage extends WizardPage {
 
 		final TableColumn column = new TableColumn(table, SWT.NONE);
 		column.setText("Input");
-		column.setWidth(200);
+		column.setWidth(170);
 
 		final TableColumn column2 = new TableColumn(table, SWT.NONE);
 		column2.setText("Vector");
-		column2.setWidth(100);
+		column2.setWidth(65);
 
 		final TableColumn column3 = new TableColumn(table, SWT.NONE);
 		column3.setText("Inputs Size");
-		column3.setWidth(100);
+		column3.setWidth(85);
 
 		final TableColumn column4 = new TableColumn(table, SWT.NONE);
 		column4.setText("Post-reading");
-		column4.setWidth(100);
+		column4.setWidth(85);
+		
+		final TableColumn column5 = new TableColumn(table, SWT.NONE);
+		column5.setText("Sensor");
+		column5.setWidth(65);
 		
 		setControl(container);
 		setPageComplete(true);
@@ -90,6 +95,8 @@ public class OutputsPage extends WizardPage {
 			TableItem item = new TableItem(table, SWT.NONE);
 		
 			TableEditor editor = new TableEditor(table);
+			
+			final Combo cSensor = new Combo(table, SWT.NONE);
 			
 			Button postReading = new Button(table, SWT.CHECK);
 			Button check = new Button(table, SWT.CHECK);
@@ -153,10 +160,34 @@ public class OutputsPage extends WizardPage {
 			editor = new TableEditor(table);
 			
 			postReading.pack();
+			postReading.addSelectionListener(new SelectionListener() {
+
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					if(cSensor.isEnabled())
+						cSensor.setEnabled(false);
+					else
+						cSensor.setEnabled(true);
+				}
+				
+				@Override
+				public void widgetDefaultSelected(SelectionEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+			});
 			editor.minimumWidth = postReading.getSize().x;
 			editor.horizontalAlignment = SWT.LEFT;
 			editor.setEditor(postReading, item, 3);
 			item.setData("postReading", postReading);
+			
+			editor = new TableEditor(table);
+			
+			cSensor.setText("");
+			cSensor.setItems(new String[] {"IMU", "GPS", "Sonar", "Barometer", "Encoder", });
+			editor.grabHorizontal = true;
+			editor.setEditor(cSensor, item, 4);
+			item.setData("sensor", cSensor);
 		}
 	}
 
@@ -167,10 +198,12 @@ public class OutputsPage extends WizardPage {
 			Label port = (Label) table.getItem(i).getData("port");
 			Text size = (Text) table.getItem(i).getData("size");
 			Button postReading = (Button) table.getItem(i).getData("postReading");
+			Combo sen = (Combo)  table.getItem(i).getData("sensor");
 			check.dispose();
 			port.dispose();
 			size.dispose();
-			postReading.dispose();			
+			postReading.dispose();
+			sen.dispose();
 		}
 		table.removeAll();
 	}

@@ -6,6 +6,8 @@ public class Actuation {
 	protected ArrayList<String> inputs;
 	protected ArrayList<String> outputs;
 	
+	protected String template; 
+	
 	protected int sampling;
 	protected int index;
 	
@@ -56,4 +58,11 @@ public class Actuation {
 		this.name = name;
 	}
 	
+	public String getTemplate() {
+		return template;
+	}
+
+	public void setTemplate(String template) {
+		this.template = template;
+	}
 }

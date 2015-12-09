@@ -120,7 +120,7 @@ public class ActuationFunctionShell {
 		inputs = new ArrayList<String>();
 		
 		createControl();
-		init(iinputs, actuation);
+		init(iinputs, actuation, actuation.getTemplate());
 
 		shell.open();
 
@@ -195,6 +195,8 @@ public class ActuationFunctionShell {
 				for(i = 0; i < tableFunction.getItemCount(); i++){
 					functionIn.add(tableFunction.getItem(i).getText(0));
 				}
+				
+				txtTemplate = cTemplate.getText();
 				
 				shell.close();
 			}
@@ -395,7 +397,7 @@ public class ActuationFunctionShell {
 		}
 	}
 
-	private void init(ArrayList<String> inputs, Actuation actuation) {
+	private void init(ArrayList<String> inputs, Actuation actuation, String template) {
 		init(inputs);
 		name.setText(actuation.getName());
 		for(int i = 0; i < actuation.getInputs().size(); i++){
@@ -405,7 +407,11 @@ public class ActuationFunctionShell {
 		for (int i = 0; i < actuation.getOutputs().size(); i++) {
 			TableItem item = new TableItem(tableOutput, SWT.NONE);
 			item.setText(actuation.getOutputs().get(i));
-		}		
+		}
+		for(int i = 0; i < cTemplate.getItemCount(); i++){
+			if(cTemplate.getItem(i).equals(template))
+				cTemplate.select(i);
+		}
 		edit = true;
 	}
 	
@@ -424,15 +430,16 @@ public class ActuationFunctionShell {
 	public ArrayList<String> getInputs() {
 		return inputs;
 	}
-
 	
 	public ArrayList<String> getOutputs() {
 		return outputs;
 	}
-
 	
 	public ArrayList<String> getFuntion() {
 		return functionIn;
 	}
 
+	public String geTemplate() {
+		return txtTemplate;
+	}
 }

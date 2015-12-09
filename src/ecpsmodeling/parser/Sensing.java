@@ -6,6 +6,8 @@ public class Sensing {
 	protected ArrayList<String> inputs;
 	protected ArrayList<String> outputs;
 	
+	protected String template; 
+	
 	protected int sampling;
 	protected int index;
 	
@@ -54,6 +56,14 @@ public class Sensing {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getTemplate() {
+		return template;
+	}
+
+	public void setTemplate(String template) {
+		this.template = template;
 	}
 	
 }

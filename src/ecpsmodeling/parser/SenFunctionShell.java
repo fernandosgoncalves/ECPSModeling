@@ -14,6 +14,7 @@ import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
@@ -21,33 +22,40 @@ import org.eclipse.swt.widgets.Text;
 import java.util.ArrayList;
 import org.eclipse.swt.SWT;
 
-public class SenSubsystemShell {
+public class SenFunctionShell {
+	public static Integer WIDTH = 440;
+	public static Integer HEIGHT = 480;
+	
 	protected boolean confirm = false;
 	protected boolean edit = false;
 
 	protected ArrayList<String> inputs;
-	protected ArrayList<String> subsysOutputs;
+	protected ArrayList<String> functionOut;
 	protected ArrayList<String> outputs;
 
 	protected TabFolder tabFolder;
 
-	protected Table tableSubsysOut;
+	protected Table tableFunctionOut;
 	protected Table tableOutputs;
 	protected Table tableInputs;
 	
+	protected String txtTemplate;
 	protected String txtName;
 
+	protected Label lsTemplate;
 	protected Label lsname;
 
 	protected Button cancel;
 	protected Button ok;
 
+	protected Combo cTemplate;
+	
 	protected Text tInput;
 	protected Text name;
 
 	final Shell shell;
 
-	public SenSubsystemShell(Display display, ArrayList<String> iinputs) {
+	public SenFunctionShell(Display display, ArrayList<String> iinputs) {
 		shell = new Shell(display,
 				SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL | SWT.RESIZE | SWT.BORDER | SWT.CLOSE | SWT.CENTER);
 
@@ -57,8 +65,8 @@ public class SenSubsystemShell {
 		layout.marginTop = 8;
 
 		shell.setLayout(layout);
-		shell.setSize(450, 450);
-		shell.setText("Subsystem Specification");
+		shell.setSize(WIDTH, HEIGHT);
+		shell.setText("Post-reading Function Specification");
 
 		Monitor primary = display.getPrimaryMonitor();
 		Rectangle bounds = primary.getBounds();
@@ -69,7 +77,7 @@ public class SenSubsystemShell {
 		shell.setLocation(x, y);
 
 		inputs = new ArrayList<String>();
-		subsysOutputs = new ArrayList<String>();
+		functionOut = new ArrayList<String>();
 		outputs = new ArrayList<String>();
 
 		createControl();
@@ -86,7 +94,7 @@ public class SenSubsystemShell {
 		}
 	}
 
-	public SenSubsystemShell(Display display, ArrayList<String> iinputs, Sensing sensing) {
+	public SenFunctionShell(Display display, ArrayList<String> iinputs, Sensing sensing, String template) {
 		shell = new Shell(display,
 				SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL | SWT.RESIZE | SWT.BORDER | SWT.CLOSE | SWT.CENTER);
 
@@ -96,8 +104,8 @@ public class SenSubsystemShell {
 		layout.marginTop = 8;
 
 		shell.setLayout(layout);
-		shell.setSize(450, 450);
-		shell.setText("Subsystem Specification");
+		shell.setSize(WIDTH, HEIGHT);
+		shell.setText("Pre-writing Function Specification");
 
 		Monitor primary = display.getPrimaryMonitor();
 		Rectangle bounds = primary.getBounds();
@@ -108,11 +116,11 @@ public class SenSubsystemShell {
 		shell.setLocation(x, y);
 
 		inputs = new ArrayList<String>();
-		subsysOutputs = new ArrayList<String>();
+		functionOut = new ArrayList<String>();
 		outputs = new ArrayList<String>();
 
 		createControl();
-		init(iinputs, sensing);
+		init(iinputs, sensing, template);
 
 		shell.open();
 
@@ -135,6 +143,15 @@ public class SenSubsystemShell {
 		name = new Text(shell, SWT.SINGLE | SWT.BORDER);
 		name.setLayoutData(ilayout);
 
+		lsTemplate = new Label(shell, SWT.NONE);
+		lsTemplate.setText("Template:");
+
+		cTemplate = new Combo(shell, SWT.SINGLE | SWT.BORDER);
+		cTemplate.add("KalmanFilter");
+		cTemplate.add("ComplementaryFilter");
+		//cTemplate.add("DCMotorsActuation");
+		cTemplate.setLayoutData(ilayout);
+		
 		GridData gdTabFolder = new GridData();
 		gdTabFolder.horizontalSpan = 2;
 		gdTabFolder.widthHint = 400;
@@ -144,7 +161,7 @@ public class SenSubsystemShell {
 		tabFolder.setSize(400, 200);
 
 		TabItem tab0 = new TabItem(tabFolder, SWT.NONE);
-		tab0.setText("Sensors");
+		tab0.setText("Inputs");
 		tab0.setControl(getTabInputsControl(tabFolder));
 
 		TabItem tab1 = new TabItem(tabFolder, SWT.NONE);
@@ -174,10 +191,12 @@ public class SenSubsystemShell {
 					inputs.add(tableInputs.getItem(i).getText(0));
 				}
 
-				for (i = 0; i < tableSubsysOut.getItemCount(); i++) {
-					subsysOutputs.add(tableSubsysOut.getItem(i).getText(0));
+				for (i = 0; i < tableFunctionOut.getItemCount(); i++) {
+					functionOut.add(tableFunctionOut.getItem(i).getText(0));
 				}
 
+				txtTemplate = cTemplate.getText();
+				
 				shell.close();
 			}
 
@@ -228,15 +247,15 @@ public class SenSubsystemShell {
 		column.setWidth(150);
 
 		// ---------------------- Table ---------------------------
-		tableSubsysOut = new Table(composite, SWT.BORDER);
-		tableSubsysOut.setLinesVisible(true);
-		tableSubsysOut.setHeaderVisible(true);
+		tableFunctionOut = new Table(composite, SWT.BORDER);
+		tableFunctionOut.setLinesVisible(true);
+		tableFunctionOut.setHeaderVisible(true);
 
-		tableSubsysOut.setLayoutData(data);
+		tableFunctionOut.setLayoutData(data);
 		// table.setSize(290, 100);
 
-		final TableColumn columnOut = new TableColumn(tableSubsysOut, SWT.NONE);
-		columnOut.setText("Subsystem Outputs");
+		final TableColumn columnOut = new TableColumn(tableFunctionOut, SWT.NONE);
+		columnOut.setText("Function Outputs");
 		columnOut.setWidth(150);
 
 		// ------------Buttons------------
@@ -248,10 +267,10 @@ public class SenSubsystemShell {
 		remove.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (tableSubsysOut.getSelectionIndex() > -1) {
+				if (tableFunctionOut.getSelectionIndex() > -1) {
 					TableItem item = new TableItem(tableOutputs, SWT.NONE);
-					item.setText(0, tableSubsysOut.getItem(tableSubsysOut.getSelectionIndex()).getText(0));
-					tableSubsysOut.remove(tableSubsysOut.getSelectionIndex());
+					item.setText(0, tableFunctionOut.getItem(tableFunctionOut.getSelectionIndex()).getText(0));
+					tableFunctionOut.remove(tableFunctionOut.getSelectionIndex());
 				}
 			}
 
@@ -268,7 +287,7 @@ public class SenSubsystemShell {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (tableOutputs.getSelectionIndex() > -1) {
-					TableItem itemADD = new TableItem(tableSubsysOut, SWT.NONE);
+					TableItem itemADD = new TableItem(tableFunctionOut, SWT.NONE);
 					itemADD.setText(0, tableOutputs.getItem(tableOutputs.getSelectionIndex()).getText(0));
 					tableOutputs.remove(tableOutputs.getSelectionIndex());
 				}
@@ -293,7 +312,7 @@ public class SenSubsystemShell {
 
 		Label input = new Label(composite, SWT.NONE);
 		input.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
-		input.setText("Sensor:");
+		input.setText("Input:");
 
 		GridData text = new GridData();
 		text.widthHint = 200;
@@ -336,7 +355,7 @@ public class SenSubsystemShell {
 		// table.setSize(290, 100);
 
 		final TableColumn column = new TableColumn(tableInputs, SWT.NONE);
-		column.setText("Sensors");
+		column.setText("Inputs");
 		column.setWidth(150);
 
 		// ------------Buttons------------
@@ -370,16 +389,20 @@ public class SenSubsystemShell {
 		}
 	}
 
-	private void init(ArrayList<String> inputs, Sensing sensing) {
+	private void init(ArrayList<String> inputs, Sensing sensing, String template) {
 		init(inputs);
 		name.setText(sensing.getName());
 		for (int i = 0; i < sensing.getOutputs().size(); i++) {
-			TableItem item = new TableItem(tableSubsysOut, SWT.NONE);
+			TableItem item = new TableItem(tableFunctionOut, SWT.NONE);
 			item.setText(0, sensing.getOutputs().get(i));
 		}
 		for (int i = 0; i < sensing.getInputs().size(); i++) {
 			TableItem item = new TableItem(tableInputs, SWT.NONE);
 			item.setText(sensing.getInputs().get(i));
+		}
+		for(int i = 0; i < cTemplate.getItemCount(); i++){
+			if(cTemplate.getItem(i).equals(template))
+				cTemplate.select(i);
 		}
 		edit = true;
 	}
@@ -404,8 +427,12 @@ public class SenSubsystemShell {
 		return inputs;
 	}
 
-	public ArrayList<String> getSubsys() {
-		return subsysOutputs;
+	public ArrayList<String> getFunction() {
+		return functionOut;
+	}
+	
+	public String geTemplate() {
+		return txtTemplate;
 	}
 
 }

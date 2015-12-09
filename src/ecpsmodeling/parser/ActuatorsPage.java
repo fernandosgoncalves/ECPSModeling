@@ -15,6 +15,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.layout.GridLayout;
@@ -30,7 +31,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import java.util.ArrayList;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.TableEditor;
 
 public class ActuatorsPage extends WizardPage {
 	protected ArrayList<Actuator> actuators;	
@@ -154,17 +154,13 @@ public class ActuatorsPage extends WizardPage {
 			Actuator auxActuator = actuators.get(table.getSelectionIndex());
 			
 			TableItem aux = table.getItem(table.getSelectionIndex());
-			//aux.setText(0, edit.getSignal());
 			aux.setText(1, edit.getActuator());
 			aux.setText(2, edit.getProtocol());
 			aux.setText(3, edit.getPriority());
 			Button bt = (Button) aux.getData("periodic");
 			bt.setSelection(edit.getPeriodic());
-			//aux.setText(4, edit.getPriority());
 			aux.setText(5, edit.getPeriod());
 			
-			
-			//auxActuator.setSignal(edit.getSignal());
 			auxActuator.setName(edit.getActuator());
 			auxActuator.setProtocol(edit.getProtocol());
 			auxActuator.setPriority(Integer.valueOf(edit.getPriority()));
@@ -193,7 +189,7 @@ public class ActuatorsPage extends WizardPage {
 		TableEditor teEditor;
 		
 		Button preWriting;
-		Button bperiodic;
+		//Button bperiodic;
 
 		Combo cActuator;
 		
@@ -212,7 +208,7 @@ public class ActuatorsPage extends WizardPage {
 						item.setText(1, cActuator.getText());
 					//insert item components
 					teEditor = new TableEditor(table);
-					bperiodic = new Button(table, SWT.CHECK);
+					Button bperiodic = new Button(table, SWT.CHECK);
 					bperiodic.setEnabled(false);
 					bperiodic.pack();
 					teEditor.minimumWidth = bperiodic.getSize().x;
@@ -228,6 +224,15 @@ public class ActuatorsPage extends WizardPage {
 			for (int z = 0; z < functions.get(i).getOutputs().size(); z++) {
 				item = new TableItem(table, SWT.NONE);
 				item.setText(0, functions.get(i).getOutputs().get(z));
+				
+				teEditor = new TableEditor(table);
+				Button bperiodic = new Button(table, SWT.CHECK);
+				bperiodic.setEnabled(false);
+				bperiodic.pack();
+				teEditor.minimumWidth = bperiodic.getSize().x;
+				teEditor.horizontalAlignment = SWT.LEFT;
+				teEditor.setEditor(bperiodic, item, 4);
+				item.setData("periodic", bperiodic);
 			}
 		}
 		
@@ -235,8 +240,9 @@ public class ActuatorsPage extends WizardPage {
 		for(int i = 0; i < table.getItemCount(); i++){
 			actuator = new Actuator();
 			actuator.setIndex(i);
-			//actuator.setSignal(table.getItem(i).getText(0));
 			actuator.inputs.add(table.getItem(i).getText(0));
+			if(table.getItem(i).getText(1).isEmpty())
+				actuator.setName(table.getItem(i).getText(1));
 			actuators.add(actuator);
 		}
 		
@@ -245,6 +251,10 @@ public class ActuatorsPage extends WizardPage {
 
 	//clear all data of actuators
 	private void clearData(){
+		for(int i = 0; i < table.getItemCount(); i++){
+			Button check = (Button) table.getItem(i).getData("periodic");
+			check.dispose();
+		}
 		table.removeAll();
 		actuators.clear();
 	}
@@ -260,6 +270,8 @@ public class ActuatorsPage extends WizardPage {
 		}
 		if (check)
 			setPageComplete(true);
+		else
+			setPageComplete(false);
 	}
 	
 	protected ArrayList<Actuator> getActuators(){

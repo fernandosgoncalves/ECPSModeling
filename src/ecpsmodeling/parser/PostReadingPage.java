@@ -10,8 +10,6 @@
  *******************************************************************************/
 package ecpsmodeling.parser;
 
-import java.util.ArrayList;
-
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.widgets.TreeColumn;
@@ -28,6 +26,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
+import java.util.ArrayList;
 import org.eclipse.swt.SWT;
 
 public class PostReadingPage extends WizardPage {
@@ -35,19 +34,19 @@ public class PostReadingPage extends WizardPage {
 
 	protected Tree table;
 
-	protected ArrayList<Sensing> senSubsystems;
+	protected ArrayList<Sensing> senFunctions;
 	protected ArrayList<String> outputs;
 
 	protected Label information;
 
-	protected Button btRemoveSubsystem;
-	protected Button btEditSubsystem;
-	protected Button btAddSubsystem;
+	protected Button btRemoveFunction;
+	protected Button btEditFunction;
+	protected Button btAddFunction;
 
 	public PostReadingPage() {
 		super("Post-reading Specification");
 		setTitle("Post-reading Specification");
-		setDescription("Detail the subsystems:");
+		setDescription("Detail the system funtions:");
 	}
 
 	@Override
@@ -55,7 +54,7 @@ public class PostReadingPage extends WizardPage {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
 
-		senSubsystems = new ArrayList<>();
+		senFunctions = new ArrayList<>();
 		outputs = new ArrayList<String>();
 
 		container = new Composite(parent, SWT.NONE);
@@ -66,7 +65,7 @@ public class PostReadingPage extends WizardPage {
 		GridData ilayout = new GridData();
 		ilayout.horizontalSpan = 3;
 		information.setLayoutData(ilayout);
-		information.setText("Analyze the input ports of the mathematical model:");
+		information.setText("Analyze the output ports of the mathematical model:");
 
 		// ---------------------- Table ---------------------------
 		table = new Tree(container, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
@@ -80,28 +79,28 @@ public class PostReadingPage extends WizardPage {
 		table.setSize(300, 100);
 
 		final TreeColumn column = new TreeColumn(table, SWT.LEFT);
-		column.setText("Subsystem");
-		column.setWidth(150);
+		column.setText("Function");
+		column.setWidth(160);
 
 		final TreeColumn column2 = new TreeColumn(table, SWT.NONE);
-		column2.setText("Sensors");
-		column2.setWidth(150);
+		column2.setText("Inputs");
+		column2.setWidth(160);
 
 		final TreeColumn column3 = new TreeColumn(table, SWT.NONE);
 		column3.setText("Outputs");
-		column3.setWidth(150);
+		column3.setWidth(160);
 
-		btAddSubsystem = new Button(container, SWT.NONE);
-		btEditSubsystem = new Button(container, SWT.NONE);
-		btRemoveSubsystem = new Button(container, SWT.NONE);
+		btAddFunction = new Button(container, SWT.NONE);
+		btEditFunction = new Button(container, SWT.NONE);
+		btRemoveFunction = new Button(container, SWT.NONE);
 
 		table.addListener(SWT.Selection, new Listener() {
 			@Override
 			public void handleEvent(Event e) {
 				switch (e.type) {
 				case SWT.Selection:
-					btEditSubsystem.setEnabled(true);
-					btRemoveSubsystem.setEnabled(true);
+					btEditFunction.setEnabled(true);
+					btRemoveFunction.setEnabled(true);
 				}
 			}
 		});
@@ -121,57 +120,51 @@ public class PostReadingPage extends WizardPage {
 
 			@Override
 			public void mouseDoubleClick(MouseEvent e) {
-				editSubsystemProperties(parent.getDisplay());
+				editFunctionProperties(parent.getDisplay());
 			}
 		});
 
-		btAddSubsystem.setText("Add Subsystem");
-		btAddSubsystem.addListener(SWT.Selection, new Listener() {
+		btAddFunction.setText("Add Function");
+		btAddFunction.addListener(SWT.Selection, new Listener() {
 			@Override
 			public void handleEvent(Event e) {
 				switch (e.type) {
 				case SWT.Selection:
-					addSubsystem(parent.getDisplay());
+					addFunction(parent.getDisplay());
 				}
 			}
 		});
 		// btAddSubsystem.setEnabled(false);
 
-		btEditSubsystem.setText("Edit Subsystem");
-		btEditSubsystem.setEnabled(false);
-		btEditSubsystem.addListener(SWT.Selection, new Listener() {
+		btEditFunction.setText("Edit Function");
+		btEditFunction.setEnabled(false);
+		btEditFunction.addListener(SWT.Selection, new Listener() {
 			@Override
 			public void handleEvent(Event e) {
 				switch (e.type) {
 				case SWT.Selection:
-					editSubsystemProperties(parent.getDisplay());
+					editFunctionProperties(parent.getDisplay());
 				}
 			}
 		});
 
-		btRemoveSubsystem.setText("Remove Subsystem");
-		btRemoveSubsystem.setEnabled(false);
+		btRemoveFunction.setText("Remove Function");
+		btRemoveFunction.setEnabled(false);
 
 		setControl(container);
 		setPageComplete(false);
 	}
 
 	public void populateSignals(Table table) {
-		if(table.getItemCount() > 0)
+		if (table.getItemCount() > 0)
 			clearData();
-		// System.out.println("Begin");
 		outputs.clear();
 		for (int i = 0; i < table.getItemCount(); i++) {
-			// System.out.println("Item "+i);
 			Label port = (Label) table.getItem(i).getData("port");
 			Text size = (Text) table.getItem(i).getData("size");
 			Button postReading = (Button) table.getItem(i).getData("postReading");
-			// System.out.println("Pre IF");
 			if (postReading.getSelection()) {
-				// System.out.println("IF");
-				// System.out.println("Size "+size.getText());
 				for (int z = 0; z < Integer.valueOf(size.getText()); z++) {
-					// System.out.println(port.getText() + (z + 1));
 					outputs.add(port.getText() + (z + 1));
 				}
 			}
@@ -179,20 +172,20 @@ public class PostReadingPage extends WizardPage {
 		checkConditions();
 	}
 
-	public void clearData(){
+	public void clearData() {
 		table.removeAll();
-		senSubsystems.clear();		
+		senFunctions.clear();
 	}
-	
-	public void addSubsystem(Display display) {
-		SenSubsystemShell add = new SenSubsystemShell(display, outputs);
+
+	public void addFunction(Display display) {
+		SenFunctionShell add = new SenFunctionShell(display, outputs);
 		if (add.isConfirm()) {
 			outputs = add.getOutputs();
-			addSubsys(add.getName(), add.getInputs(), add.getSubsys());
+			addFunction(add.getName(), add.getInputs(), add.getFunction(), add.geTemplate());
 		}
 	}
 
-	public void addSubsys(String name, ArrayList<String> inputs, ArrayList<String> outputs) {
+	public void addFunction(String name, ArrayList<String> inputs, ArrayList<String> outputs, String template) {
 		Sensing aux = new Sensing();
 		TreeItem treeItem = new TreeItem(table, SWT.NONE);
 		TreeItem subitem;
@@ -200,41 +193,30 @@ public class PostReadingPage extends WizardPage {
 		aux.setInputs(inputs);
 		aux.setOutputs(outputs);
 		aux.setIndex(table.getItemCount() - 1);
-		senSubsystems.add(aux);
+		aux.setTemplate(template);
+		senFunctions.add(aux);
 
 		treeItem.setText(0, name);
-		treeItem.setText(1, "sensors");
-		treeItem.setText(2, "outputs");
+		treeItem.setText(1, "");
+		treeItem.setText(2, "");
 
-		// System.out.println("IS: " + inputs.size() + " OS: " +
-		// outputs.size());
 		if (inputs.size() >= outputs.size()) {
-			// System.out.println("IS >= OS");
 			for (int i = 0; i < inputs.size(); i++) {
 				subitem = new TreeItem(treeItem, SWT.NONE);
 				if (i < outputs.size()) {
-					// System.out.println("I: " + inputs.get(i));
 					subitem.setText(1, inputs.get(i));
-					// System.out.println("O: " + outputs.get(i));
 					subitem.setText(2, outputs.get(i));
 				} else {
-					// System.out.println("Else");
-					// System.out.println("I: " + inputs.get(i));
 					subitem.setText(1, inputs.get(i));
 				}
 			}
 		} else {
-			// System.out.println("IS < OS");
 			for (int i = 0; i < outputs.size(); i++) {
 				subitem = new TreeItem(treeItem, SWT.NONE);
 				if (i < inputs.size()) {
-					// System.out.println("I: " + inputs.get(i));
 					subitem.setText(1, inputs.get(i));
-					// System.out.println("O: " + outputs.get(i));
 					subitem.setText(2, outputs.get(i));
 				} else {
-					// System.out.println("Else");
-					// System.out.println("O: " + outputs.get(i));
 					subitem.setText(2, outputs.get(i));
 				}
 			}
@@ -245,24 +227,24 @@ public class PostReadingPage extends WizardPage {
 	public void checkConditions() {
 		if (outputs.isEmpty()) {
 			setPageComplete(true);
-			btAddSubsystem.setEnabled(false);
+			btAddFunction.setEnabled(false);
 		} else {
 			setPageComplete(false);
-			btAddSubsystem.setEnabled(true);
+			btAddFunction.setEnabled(true);
 		}
 	}
 
 	public Sensing getItemByName(String name) {
-		if (!senSubsystems.isEmpty()) {
-			for (int i = 0; i < senSubsystems.size(); i++) {
-				if (senSubsystems.get(i).getName().equals(name))
-					return senSubsystems.get(i);
+		if (!senFunctions.isEmpty()) {
+			for (int i = 0; i < senFunctions.size(); i++) {
+				if (senFunctions.get(i).getName().equals(name))
+					return senFunctions.get(i);
 			}
 		}
 		return null;
 	}
 
-	public void editSubsys(String name, ArrayList<String> inputs, ArrayList<String> outputs, Sensing item) {
+	public void editFunction(String name, ArrayList<String> inputs, ArrayList<String> outputs, Sensing item, String template) {
 		TreeItem[] treeItem = table.getSelection();
 		for (int i = 0; i < treeItem.length; i++) {
 			treeItem[i].dispose();
@@ -277,41 +259,30 @@ public class PostReadingPage extends WizardPage {
 		item.setName(name);
 		item.setInputs(inputs);
 		item.setOutputs(outputs);
-		senSubsystems.set(item.index, item);
+		item.setTemplate(template);
+		senFunctions.set(item.index, item);
 
 		newTreeItem.setText(0, name);
-		newTreeItem.setText(1, "sensors");
-		newTreeItem.setText(2, "outputs");
+		newTreeItem.setText(1, "");
+		newTreeItem.setText(2, "");
 
-		// System.out.println("IS: " + inputs.size() + " OS: " +
-		// outputs.size());
 		if (inputs.size() >= outputs.size()) {
-			// System.out.println("IS >= OS");
 			for (int i = 0; i < inputs.size(); i++) {
 				newSubItem = new TreeItem(newTreeItem, SWT.NONE);
 				if (i < outputs.size()) {
-					// System.out.println("I: " + inputs.get(i));
 					newSubItem.setText(1, inputs.get(i));
-					// System.out.println("O: " + outputs.get(i));
 					newSubItem.setText(2, outputs.get(i));
 				} else {
-					// System.out.println("Else");
-					// System.out.println("I: " + inputs.get(i));
 					newSubItem.setText(1, inputs.get(i));
 				}
 			}
 		} else {
-			// System.out.println("IS < OS");
 			for (int i = 0; i < outputs.size(); i++) {
 				newSubItem = new TreeItem(newTreeItem, SWT.NONE);
 				if (i < inputs.size()) {
-					// System.out.println("I: " + inputs.get(i));
 					newSubItem.setText(1, inputs.get(i));
-					// System.out.println("O: " + outputs.get(i));
 					newSubItem.setText(2, outputs.get(i));
 				} else {
-					// System.out.println("Else");
-					// System.out.println("O: " + outputs.get(i));
 					newSubItem.setText(2, outputs.get(i));
 				}
 			}
@@ -319,16 +290,16 @@ public class PostReadingPage extends WizardPage {
 		checkConditions();
 	}
 
-	public void editSubsystemProperties(Display display) {
+	public void editFunctionProperties(Display display) {
 		Sensing aux = getItemByName(table.getSelection()[0].getText(0));
-		SenSubsystemShell edit = new SenSubsystemShell(display, outputs, aux);
+		SenFunctionShell edit = new SenFunctionShell(display, outputs, aux, aux.getTemplate());
 		if (edit.isConfirm()) {
 			outputs = edit.getOutputs();
-			editSubsys(edit.getName(), edit.getInputs(), edit.getSubsys(), aux);
+			editFunction(edit.getName(), edit.getInputs(), edit.getFunction(), aux, edit.geTemplate());
 		}
 	}
 
 	public ArrayList<Sensing> getSenSubsystems() {
-		return senSubsystems;
+		return senFunctions;
 	}
 }

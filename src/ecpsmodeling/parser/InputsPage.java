@@ -197,10 +197,7 @@ public class InputsPage extends WizardPage {
 	}
 	
 	public void clearTable(){
-		//System.out.println("Clearing");
 		for(int i = 0; i < table.getItemCount(); i++){
-			//System.out.println("Size " + table.getItemCount());
-//			System.out.println("Clear " + i);
 			Button check = (Button) table.getItem(i).getData("check");
 			Label port = (Label) table.getItem(i).getData("port");
 			Text size = (Text) table.getItem(i).getData("size");

@@ -158,19 +158,13 @@ public class PreWritingPage extends WizardPage {
 	public void populateSignals(Table table) {
 		if(table.getItemCount() > 0)
 			clearData();
-		//System.out.println("Begin");
 		inputs.clear();
 		for (int i = 0; i < table.getItemCount(); i++) {
-			//System.out.println("Item "+i);
 			Label port = (Label) table.getItem(i).getData("port");
 			Text size = (Text) table.getItem(i).getData("size");
 			Button prewriting = (Button) table.getItem(i).getData("PreWcheck");
-			//System.out.println("Pre IF");
 			if (prewriting.getSelection()) {
-				//System.out.println("IF");
-				//System.out.println("Size "+size.getText());
 				for (int z = 0; z < Integer.valueOf(size.getText()); z++) {
-					//System.out.println(port.getText() + (z + 1));
 					inputs.add(port.getText() + (z + 1));
 				}
 			}
@@ -187,11 +181,11 @@ public class PreWritingPage extends WizardPage {
 		ActuationFunctionShell add = new ActuationFunctionShell(display, inputs);
 		if (add.isConfirm()) {
 			inputs = add.getInputs();
-			addFunction(add.getName(), add.getFuntion(), add.getOutputs());
+			addFunction(add.getName(), add.getFuntion(), add.getOutputs(), add.geTemplate());
 		}
 	}
 
-	public void addFunction(String name, ArrayList<String> inputs, ArrayList<String> outputs) {
+	public void addFunction(String name, ArrayList<String> inputs, ArrayList<String> outputs, String template) {
 		Actuation aux = new Actuation();
 		TreeItem treeItem = new TreeItem(table, SWT.NONE);
 		TreeItem subitem;
@@ -199,6 +193,7 @@ public class PreWritingPage extends WizardPage {
 		aux.setInputs(inputs);
 		aux.setOutputs(outputs);
 		aux.setIndex(table.getItemCount() - 1);
+		aux.setTemplate(template);
 		actFunctions.add(aux);
 
 		treeItem.setText(0, name);
@@ -249,7 +244,7 @@ public class PreWritingPage extends WizardPage {
 		return null;
 	}
 	
-	public void editFunction(String name, ArrayList<String> inputs, ArrayList<String> outputs, Actuation item) {
+	public void editFunction(String name, ArrayList<String> inputs, ArrayList<String> outputs, Actuation item, String template) {
 		TreeItem[] treeItem = table.getSelection();
 		for(int i = 0; i < treeItem.length; i++){
 			treeItem[i].dispose();
@@ -264,6 +259,7 @@ public class PreWritingPage extends WizardPage {
 		item.setName(name);
 		item.setInputs(inputs);
 		item.setOutputs(outputs);
+		item.setTemplate(template);
 		actFunctions.set(item.index, item);
 
 		newTreeItem.setText(0, name);
@@ -299,7 +295,7 @@ public class PreWritingPage extends WizardPage {
 		ActuationFunctionShell edit = new ActuationFunctionShell(display, inputs, aux);
 		if (edit.isConfirm()) {
 			inputs = edit.getInputs();
-			editFunction(edit.getName(), edit.getFuntion(), edit.getOutputs(), aux);
+			editFunction(edit.getName(), edit.getFuntion(), edit.getOutputs(), aux, edit.geTemplate());
 		}
 	}
 	
