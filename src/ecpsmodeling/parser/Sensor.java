@@ -6,8 +6,11 @@ public class Sensor {
 	protected ArrayList<String> inputs;
 	protected ArrayList<String> outputs;
 	
+	protected boolean periodic;
+	
 	protected int sampling;
 	protected int priority;
+	protected int period;
 	protected int index;
 		
 	protected String protocol;
@@ -82,4 +85,21 @@ public class Sensor {
 	public void setSignal(String signal) {
 		this.signal = signal;
 	}
+
+	public boolean isPeriodic() {
+		return periodic;
+	}
+
+	public void setPeriodic(boolean periodic) {
+		this.periodic = periodic;
+	}
+
+	public int getPeriod() {
+		return period;
+	}
+
+	public void setPeriod(int period) {
+		this.period = period;
+	}
+	
 }

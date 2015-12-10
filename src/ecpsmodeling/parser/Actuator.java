@@ -7,12 +7,14 @@ public class Actuator {
 	protected ArrayList<String> outputs;
 	
 	protected boolean periodic;
+	
 	protected int sampling;
 	protected int priority;
 	protected int period;
 	protected int index;
 	
 	protected String protocol;
+	protected String signal;
 	protected String name;
 	
 	Actuator(){
@@ -76,7 +78,7 @@ public class Actuator {
 		this.protocol = protocol;
 	}
 
-	public boolean getPeriodic() {
+	public boolean isPeriodic() {
 		return periodic;
 	}
 
@@ -92,13 +94,13 @@ public class Actuator {
 		this.period = period;
 	}
 
-	
-	
-	/*public String getSignal() {
+	public String getSignal() {
 		return signal;
 	}
 
 	public void setSignal(String signal) {
 		this.signal = signal;
-	}*/
+	}
+	
+	
 }

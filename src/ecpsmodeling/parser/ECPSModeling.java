@@ -23,17 +23,19 @@ import org.eclipse.ui.IWorkbench;
 public class ECPSModeling extends Wizard implements IImportWizard {
 
 	// Variables that represent the names of system pages
-	public static String SAMODELING = "Sensing and Actuation Modeling";
-	public static String ACTSPECIFICATION = "Actuator Specification";
-	public static String POSTREADING = "Post-reading Specification";
-	public static String SENSPECIFICATION = "Sensor Specification";
-	public static String PREWRITING = "Prewriting Specification";
-	public static String MAIN_PAGE = "ECPSModeling Import File";
-	public static String ACTUATION = "Actuation Analyze";
-	public static String SENSING = "Sensing Analyze";
-	public static String MAIN = "ECPSModeling Import File";
+	protected static final String ACTUATORTHREADS = "Actuators Threads Specification";
+	protected static final String SAMODELING = "Sensing and Actuation Modeling";
+	protected static final String ACTSPECIFICATION = "Actuator Specification";
+	protected static final String POSTREADING = "Post-reading Specification";
+	protected static final String SENSPECIFICATION = "Sensor Specification";
+	protected static final String PREWRITING = "Prewriting Specification";
+	protected static final String MAIN_PAGE = "ECPSModeling Import File";
+	protected static final String MAIN = "ECPSModeling Import File";
+	protected static final String ACTUATION = "Actuation Analyze";
+	protected static final String SENSING = "Sensing Analyze";
 
 	// Objects of the system pages
+	ActuatorsThreadsPage actuatorsThreadsPage;
 	PostReadingPage postReadingPage;
 	PreWritingPage prewritingPage;
 	ActuatorsPage actuatorsPage;
@@ -60,42 +62,94 @@ public class ECPSModeling extends Wizard implements IImportWizard {
 	@Override
 	public IWizardPage getNextPage(IWizardPage page) {
 		if (page.isPageComplete()) {
-			if (page.getName().equals(MAIN)) {
+			switch (page.getName()) {
+			case MAIN:
 				performMainPage();
-			} else {
-				if (page.getName().equals(SAMODELING)) {
-					// Selected the mathematical model sybsystem, this function read their input ports and populate a list to analyze it.
-					inputsPage.populateInputList(mdl2Aadl.aadl.getSubSystem().searchSubSystem(
-							subsysPage.table.getItem(subsysPage.table.getSelectionIndex()).getText(0)));
-				} else {
-					if (page.getName().equals(ACTUATION)) {
-						// Perform the instruction to populate the table with the output ports of the selected subsystem 
-						prewritingPage.populateSignals(inputsPage.getTable());
-					} else {
-						if (page.getName().equals(PREWRITING)) {
-							// Perform the instructions to populate the table with the list of system actuator
-							actuatorsPage.populateActuatorsTable(inputsPage.getTable(),
-									prewritingPage.getActFunction());
-						} else {
-							if (page.getName().equals(ACTSPECIFICATION)) {
-								// This function reads the output ports and populate the list to analyze this information
-								outputsPage.populateOutputList(mdl2Aadl.aadl.getSubSystem().searchSubSystem(
-										subsysPage.table.getItem(subsysPage.table.getSelectionIndex()).getText(0)));
-							} else {
-								if (page.getName().equals(SENSING)) {
-									// Perform the instruction to populate the table with the input ports of the selected subsystem									
-									postReadingPage.populateSignals(outputsPage.getTable());
-								} else {
-									if (page.getName().equals(POSTREADING)) {
-										// Perform the instructions to populate the table with the list of system sensors
-										sensorsPage.populateSensorsTable(outputsPage.getTable(), postReadingPage.getSenSubsystems());
-									}
-								}
-							}
-						}
-					}
-				}
+				break;
+			case SAMODELING:
+				// Selected the mathematical model sybsystem, this function read
+				// their input ports and populate a list to analyze it.
+				inputsPage.populateInputList(mdl2Aadl.aadl.getSubSystem()
+						.searchSubSystem(subsysPage.table.getItem(subsysPage.table.getSelectionIndex()).getText(0)));
+				break;
+			case ACTUATION:
+				// Perform the instruction to populate the table with the output
+				// ports of the selected subsystem
+				prewritingPage.populateSignals(inputsPage.getTable());
+				break;
+			case PREWRITING:
+				// Perform the instructions to populate the table with the list
+				// of system actuator
+				actuatorsPage.populateActuatorsTable(inputsPage.getTable(), prewritingPage.getActFunction());
+				break;
+			case ACTSPECIFICATION:
+				// This function reads the specified actuators and populate the
+				// list periodic and sporadic actuators
+				System.out.println(actuatorsPage.getActuators().size());
+				actuatorsThreadsPage.populateThreadsTable(actuatorsPage.getActuators());				
+				break;
+			case ACTUATORTHREADS:
+				// This function reads the output ports and populate the list to
+				// analyze this information
+				outputsPage.populateOutputList(mdl2Aadl.aadl.getSubSystem()
+						.searchSubSystem(subsysPage.table.getItem(subsysPage.table.getSelectionIndex()).getText(0)));
+				break;
+			case SENSING:
+				// // Perform the instruction to populate the table with the
+				// input ports of the selected subsystem
+				postReadingPage.populateSignals(outputsPage.getTable());
+				break;
+			case POSTREADING:
+				// // Perform the instructions to populate the table with the
+				// list of system sensors
+				sensorsPage.populateSensorsTable(outputsPage.getTable(), postReadingPage.getSenSubsystems());
+				break;
+
 			}
+
+			// if (page.getName().equals(MAIN)) {
+			// performMainPage();
+			// } else {
+			// if (page.getName().equals(SAMODELING)) {
+			// // Selected the mathematical model sybsystem, this function read
+			// their input ports and populate a list to analyze it.
+			// inputsPage.populateInputList(mdl2Aadl.aadl.getSubSystem().searchSubSystem(
+			// subsysPage.table.getItem(subsysPage.table.getSelectionIndex()).getText(0)));
+			// } else {
+			// if (page.getName().equals(ACTUATION)) {
+			// // Perform the instruction to populate the table with the output
+			// ports of the selected subsystem
+			// prewritingPage.populateSignals(inputsPage.getTable());
+			// } else {
+			// if (page.getName().equals(PREWRITING)) {
+			// // Perform the instructions to populate the table with the list
+			// of system actuator
+			// actuatorsPage.populateActuatorsTable(inputsPage.getTable(),
+			// prewritingPage.getActFunction());
+			// } else {
+			// if (page.getName().equals(ACTSPECIFICATION)) {
+			// // This function reads the output ports and populate the list to
+			// analyze this information
+			// outputsPage.populateOutputList(mdl2Aadl.aadl.getSubSystem().searchSubSystem(
+			// subsysPage.table.getItem(subsysPage.table.getSelectionIndex()).getText(0)));
+			// } else {
+			// if (page.getName().equals(SENSING)) {
+			// // Perform the instruction to populate the table with the input
+			// ports of the selected subsystem
+			// postReadingPage.populateSignals(outputsPage.getTable());
+			// } else {
+			// if (page.getName().equals(POSTREADING)) {
+			// // Perform the instructions to populate the table with the list
+			// of system sensors
+			// sensorsPage.populateSensorsTable(outputsPage.getTable(),
+			// postReadingPage.getSenSubsystems());
+			// }
+			// }
+			// }
+			// }
+			// }
+			// }
+			// }
 		}
 
 		return super.getNextPage(page);
@@ -107,15 +161,15 @@ public class ECPSModeling extends Wizard implements IImportWizard {
 	 * mathematical model subsystem
 	 */
 	private void performMainPage() {
-			try {
-				mdl2Aadl = new Mdl2Aadl(mainPage.editor.getStringValue());
-				// Chamada da função de marcação automatizada
-				mdl2Aadl.autoMark();
-				// Carrega Lista
-				subsysPage.populateList(mdl2Aadl);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+		try {
+			mdl2Aadl = new Mdl2Aadl(mainPage.editor.getStringValue());
+			// Chamada da função de marcação automatizada
+			mdl2Aadl.autoMark();
+			// Carrega Lista
+			subsysPage.populateList(mdl2Aadl);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/*
@@ -128,13 +182,17 @@ public class ECPSModeling extends Wizard implements IImportWizard {
 		// System.out.println("FINISH PRESSED");
 		IFile file = mainPage.createNewFile();
 		try {
-			//Construtor criação do processo de transformação e leitura do arquivo mdl
-			//Mdl2Aadl mdl2Aadl = new Mdl2Aadl(file.getRawLocation().toString());
+			// Construtor criação do processo de transformação e leitura do
+			// arquivo mdl
+			// Mdl2Aadl mdl2Aadl = new
+			// Mdl2Aadl(file.getRawLocation().toString());
 			// Chamada da função de marcação automatizada
-			//mdl2Aadl.autoMark();
+			// mdl2Aadl.autoMark();
 			// Chamada da função de transformação de sensores e atuadores
-			mdl2Aadl.sensingActuationTransformation(prewritingPage.getActFunction(), actuatorsPage.getActuators(), postReadingPage.getSenSubsystems(), sensorsPage.getSensors(), mdl2Aadl.aadl.getSubSystem().searchSubSystem(
-					subsysPage.table.getItem(subsysPage.table.getSelectionIndex()).getText(0)));
+			mdl2Aadl.sensingActuationTransformation(prewritingPage.getActFunction(), actuatorsPage.getActuators(),
+					postReadingPage.getSenSubsystems(), sensorsPage.getSensors(),
+					mdl2Aadl.aadl.getSubSystem().searchSubSystem(
+							subsysPage.table.getItem(subsysPage.table.getSelectionIndex()).getText(0)));
 			// Geração do arquivo AADL de saída
 			mdl2Aadl.save(file.getRawLocation().removeLastSegments(1) + "/",
 					file.getRawLocation().lastSegment().substring(0, file.getRawLocation().lastSegment().length() - 4)
@@ -167,6 +225,7 @@ public class ECPSModeling extends Wizard implements IImportWizard {
 	 * process pages
 	 */
 	public void addPages() {
+		actuatorsThreadsPage = new ActuatorsThreadsPage();
 		postReadingPage = new PostReadingPage();
 		prewritingPage = new PreWritingPage();
 		actuatorsPage = new ActuatorsPage();
@@ -180,6 +239,7 @@ public class ECPSModeling extends Wizard implements IImportWizard {
 		addPage(inputsPage);
 		addPage(prewritingPage);
 		addPage(actuatorsPage);
+		addPage(actuatorsThreadsPage);
 		addPage(outputsPage);
 		addPage(postReadingPage);
 		addPage(sensorsPage);

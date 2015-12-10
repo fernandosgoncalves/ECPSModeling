@@ -15,6 +15,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TableItem;
@@ -30,7 +31,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import java.util.ArrayList;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.TableEditor;
 
 public class SensorsPage extends WizardPage {
 	protected ArrayList<Sensor> sensors;
@@ -160,14 +160,14 @@ public class SensorsPage extends WizardPage {
 			aux.setText(2, edit.getProtocol());
 			aux.setText(3, edit.getPriority());
 			Button bt = (Button) aux.getData("periodic");
-			//bt.setSelection(edit.getPeriodic());
-			//aux.setText(5, edit.getPeriod());
+			bt.setSelection(edit.getPeriodic());
+			aux.setText(5, edit.getPeriod());
 
 			auxSensor.setName(edit.getSensor());
 			auxSensor.setProtocol(edit.getProtocol());
 			auxSensor.setPriority(Integer.valueOf(edit.getPriority()));
-			//auxSensor.setPeriod(Integer.valueOf(edit.getPeriod()));
-			//auxSensor.outputs.add(edit.getSignal());
+			auxSensor.setPeriod(Integer.valueOf(edit.getPeriod()));
+			auxSensor.outputs.add(edit.getSignal());
 
 			sensors.set(table.getSelectionIndex(), auxSensor);
 

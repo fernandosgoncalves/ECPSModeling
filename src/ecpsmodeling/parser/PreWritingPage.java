@@ -34,7 +34,7 @@ public class PreWritingPage extends WizardPage {
 
 	protected Tree table;
 
-	protected ArrayList<Actuation> actFunctions;
+	protected ArrayList<ActuationFunction> actFunctions;
 	protected ArrayList<String> inputs;
 
 	protected Label information;
@@ -100,7 +100,7 @@ public class PreWritingPage extends WizardPage {
 				switch (e.type) {
 				case SWT.Selection:
 					btEditFunction.setEnabled(true);
-					btRemoveFunction.setEnabled(true);
+					//btRemoveFunction.setEnabled(true);
 				}				
 			}
 		});
@@ -186,7 +186,7 @@ public class PreWritingPage extends WizardPage {
 	}
 
 	public void addFunction(String name, ArrayList<String> inputs, ArrayList<String> outputs, String template) {
-		Actuation aux = new Actuation();
+		ActuationFunction aux = new ActuationFunction();
 		TreeItem treeItem = new TreeItem(table, SWT.NONE);
 		TreeItem subitem;
 		aux.setName(name);
@@ -234,7 +234,7 @@ public class PreWritingPage extends WizardPage {
 		}
 	}
 
-	public Actuation getItemByName(String name){
+	public ActuationFunction getItemByName(String name){
 		if(!actFunctions.isEmpty()){
 			for(int i=0; i < actFunctions.size(); i++){
 				if(actFunctions.get(i).getName().equals(name))
@@ -244,7 +244,7 @@ public class PreWritingPage extends WizardPage {
 		return null;
 	}
 	
-	public void editFunction(String name, ArrayList<String> inputs, ArrayList<String> outputs, Actuation item, String template) {
+	public void editFunction(String name, ArrayList<String> inputs, ArrayList<String> outputs, ActuationFunction item, String template) {
 		TreeItem[] treeItem = table.getSelection();
 		for(int i = 0; i < treeItem.length; i++){
 			treeItem[i].dispose();
@@ -291,7 +291,7 @@ public class PreWritingPage extends WizardPage {
 	}
 	
 	public void editFunctionProperties(Display display) {
-		Actuation aux = getItemByName(table.getSelection()[0].getText(0));
+		ActuationFunction aux = getItemByName(table.getSelection()[0].getText(0));
 		ActuationFunctionShell edit = new ActuationFunctionShell(display, inputs, aux);
 		if (edit.isConfirm()) {
 			inputs = edit.getInputs();
@@ -299,7 +299,7 @@ public class PreWritingPage extends WizardPage {
 		}
 	}
 	
-	public ArrayList<Actuation> getActFunction (){
+	public ArrayList<ActuationFunction> getActFunction (){
 		return actFunctions;
 	}
 }

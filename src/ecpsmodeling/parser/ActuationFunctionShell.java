@@ -94,7 +94,7 @@ public class ActuationFunctionShell {
 		}
 	}
 
-	public ActuationFunctionShell(Display display, ArrayList<String> iinputs, Actuation actuation) {
+	public ActuationFunctionShell(Display display, ArrayList<String> iinputs, ActuationFunction actuation) {
 		shell = new Shell(display,
 				SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL | SWT.RESIZE | SWT.BORDER | SWT.CLOSE | SWT.CENTER);
 
@@ -397,7 +397,7 @@ public class ActuationFunctionShell {
 		}
 	}
 
-	private void init(ArrayList<String> inputs, Actuation actuation, String template) {
+	private void init(ArrayList<String> inputs, ActuationFunction actuation, String template) {
 		init(inputs);
 		name.setText(actuation.getName());
 		for(int i = 0; i < actuation.getInputs().size(); i++){

@@ -184,7 +184,7 @@ public class OutputsPage extends WizardPage {
 			editor = new TableEditor(table);
 			
 			cSensor.setText("");
-			cSensor.setItems(new String[] {"IMU", "GPS", "Sonar", "Barometer", "Encoder", });
+			cSensor.setItems(new String[] {"IMU", "GPS", "Sonar", "Barometer", "Encoder"});
 			editor.grabHorizontal = true;
 			editor.setEditor(cSensor, item, 4);
 			item.setData("sensor", cSensor);

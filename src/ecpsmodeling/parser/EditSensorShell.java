@@ -17,28 +17,34 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 
 public class EditSensorShell {
-
-	final Shell shell;
-	
 	protected boolean confirm = false;
 	
+	final Shell shell;
+		
 	protected String txtSensor;
-	protected String txtSampling;
 	protected String txtProtocol;
 	protected String txtPriority;
+	protected String txtPeriod;
+	protected String txtSignal;
 	
+	protected boolean periodic;
+		
 	protected Spinner priority;
-	protected Spinner sampling;
+	protected Spinner period;
 	
-	protected Text sensor;
+	protected Text signal;
 		
 	protected Combo protocol;
+	protected Combo sensor;
 	
 	protected Label lsensor;
-	protected Label lsampling;
+	protected Label lperiodic;
 	protected Label lpriority;
 	protected Label lprotocol;
+	protected Label lperiod;
+	protected Label lsignal;
 
+	protected Button bperiodic;
 	protected Button cancel;
 	protected Button ok;
 		
@@ -51,7 +57,7 @@ public class EditSensorShell {
 		layout.marginTop = 8;
 		
 		shell.setLayout(layout);
-		shell.setSize(295, 210);
+		shell.setSize(290, 270);
 		shell.setText("Sensor Specification");
 		
 		Monitor primary = display.getPrimaryMonitor();
@@ -80,17 +86,19 @@ public class EditSensorShell {
 		GridData ilayout = new GridData();
 		ilayout.widthHint = 150;
 		
+		lsignal = new Label(shell, SWT.NONE);
+		lsignal.setText("Signal:");
+		
+		signal = new Text(shell, SWT.SINGLE | SWT.BORDER);
+		signal.setLayoutData(ilayout);
+		signal.setEnabled(false);
+		
 		lsensor = new Label(shell, SWT.NONE);
 		lsensor.setText("Sensor:");
 		
-		sensor = new Text(shell, SWT.SINGLE | SWT.BORDER);
-		sensor.setLayoutData(ilayout);		
-		
-		lsampling = new Label(shell, SWT.NONE);
-		lsampling.setText("Sampling (ms):");
-				
-		sampling = new Spinner(shell, SWT.BORDER);
-		sampling.setLayoutData(ilayout);
+		sensor = new Combo(shell, SWT.SINGLE | SWT.BORDER);
+		sensor.setItems(new String[] {"IMU", "GPS", "Sonar", "Barometer", "Encoder"});
+		sensor.setLayoutData(ilayout);
 		
 		lprotocol = new Label(shell, SWT.NONE);
 		lprotocol.setText("Protocol:");
@@ -99,12 +107,39 @@ public class EditSensorShell {
 		String[] items = {"I2C", "SPI", "Serial", "PWM"};
 		protocol.setItems(items);
 		protocol.setLayoutData(ilayout);
-		
+
 		lpriority = new Label(shell, SWT.NONE);
 		lpriority.setText("Priority:");
 		
 		priority = new Spinner(shell, SWT.BORDER);
 		priority.setLayoutData(ilayout);
+		
+		lperiodic = new Label(shell, SWT.NONE);
+		lperiodic.setText("Periodic:");
+		
+		bperiodic = new Button(shell, SWT.CHECK);
+		bperiodic.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if(period.isEnabled())
+					period.setEnabled(false);
+				else
+					period.setEnabled(true);
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});		
+		
+		lperiod = new Label(shell, SWT.NONE);
+		lperiod.setText("Period:");
+		
+		period = new Spinner(shell, SWT.BORDER);
+		period.setLayoutData(ilayout);
+		period.setEnabled(false);		
 		
 		GridData blayout = new GridData();
 		blayout.widthHint = 80;
@@ -116,11 +151,13 @@ public class EditSensorShell {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				confirm = true;
-				
+
+				txtSignal = signal.getText();
 				txtSensor = sensor.getText();
-				txtSampling = sampling.getText();
 				txtProtocol = protocol.getText();
 				txtPriority = priority.getText();
+				periodic = bperiodic.getSelection();
+				txtPeriod = period.getText();
 				
 				shell.close();
 			}
@@ -150,35 +187,60 @@ public class EditSensorShell {
 	}
 	
 	private void init(TableItem item) {
-		sensor.setText(item.getText(0));
-		if(!item.getText(1).isEmpty())
-			sampling.setSelection(Integer.valueOf(item.getText(1)));
-		if(!item.getText(2).isEmpty())
-			priority.setSelection(Integer.valueOf(item.getText(2)));			
-		if(!item.getText(3).isEmpty()){
+		signal.setText(item.getText(0));
+		
+		if(!item.getText(1).isEmpty()){
+			for(int i = 0; i < sensor.getItemCount(); i++){
+				if(sensor.getItem(i).equals(item.getText(1)))
+					sensor.select(i);
+			}
+		}
+
+		if(!item.getText(2).isEmpty()){
 			for(int i=0; i< protocol.getItemCount(); i++){
-				if(protocol.getItem(i).equals(item.getText(3)))
+				if(protocol.getItem(i).equals(item.getText(2)))
 					protocol.select(i);
 			}
 		}
+			
+		if(!item.getText(3).isEmpty())
+			priority.setSelection(Integer.valueOf(item.getText(3)));
+			
+		Button bt = (Button)item.getData("periodic");
+		if(bt.getSelection()){
+			bperiodic.setSelection(true);
+			period.setEnabled(true);
+		}
+		
+		if(!item.getText(5).isEmpty())
+			period.setSelection(Integer.valueOf(item.getText(5)));
+		
 	}
 
 	public String getPriority() {
 		return txtPriority;
 	}
 
-	public String getSampling() {
-		return txtSampling;
-	}
-
 	public String getSensor() {
 		return txtSensor;
 	}
-
+	
+	public String getSignal() {
+		return txtSignal;
+	}
+	
 	public String getProtocol() {
 		return txtProtocol;
 	}
 
+	public Boolean getPeriodic() {
+		return periodic;
+	}
+	
+	public String getPeriod() {
+		return txtPeriod;
+	}
+	
 	public boolean isConfirm() {
 		return confirm;
 	}	

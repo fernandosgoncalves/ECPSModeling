@@ -100,7 +100,7 @@ public class PostReadingPage extends WizardPage {
 				switch (e.type) {
 				case SWT.Selection:
 					btEditFunction.setEnabled(true);
-					btRemoveFunction.setEnabled(true);
+					//btRemoveFunction.setEnabled(true);
 				}
 			}
 		});

@@ -178,7 +178,7 @@ public class ActuatorsPage extends WizardPage {
 	 * Verify the input table and according the vector amount of each input port
 	 * the signals are inserted into the sensors list specification
 	 */
-	public void populateActuatorsTable(Table inputTable, ArrayList<Actuation> functions) {
+	public void populateActuatorsTable(Table inputTable, ArrayList<ActuationFunction> functions) {
 		//If table have data clear it
 		if(table.getItemCount() > 0)
 			clearData();
@@ -243,6 +243,7 @@ public class ActuatorsPage extends WizardPage {
 			actuator.inputs.add(table.getItem(i).getText(0));
 			if(table.getItem(i).getText(1).isEmpty())
 				actuator.setName(table.getItem(i).getText(1));
+			
 			actuators.add(actuator);
 		}
 		
@@ -275,6 +276,7 @@ public class ActuatorsPage extends WizardPage {
 	}
 	
 	protected ArrayList<Actuator> getActuators(){
+		System.out.println(actuators.size());
 		return actuators;
 	}
 }
