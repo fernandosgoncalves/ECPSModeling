@@ -276,7 +276,7 @@ public class ActuatorsPage extends WizardPage {
 	}
 	
 	protected ArrayList<Actuator> getActuators(){
-		System.out.println(actuators.size());
+		//System.out.println(actuators.size());
 		return actuators;
 	}
 }

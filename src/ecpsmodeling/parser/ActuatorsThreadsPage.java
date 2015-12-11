@@ -253,10 +253,12 @@ public class ActuatorsThreadsPage extends WizardPage {
 	}
 
 	private void addPeriodicThread(Display display) {
+		//System.out.println(actuatorsList.size());
 		ActuationThreadShell add = new ActuationThreadShell(display, actuatorsList, "Add Periodic Thread", true);
 		
 		if(add.isConfirm()){
 			actuatorsList = add.getActuators();
+			System.out.println(add.getThreadActuators().size());
 			addThread(add.getName(), add.getPeriod(), add.getPriority(), add.getThreadActuators(), add.geTemplate(), true);
 		}
 		
@@ -277,6 +279,44 @@ public class ActuatorsThreadsPage extends WizardPage {
 			aux.setPriority(priority);
 			aux.setTemplate(sTemplate);
 			aux.setIndex(periodicTable.getItemCount()-1);
+			//aux.setFunctions(threadFunctions);
+			
+			threads.add(aux);
+			
+			treeItem.setText(0, name);
+			treeItem.setText(1, String.valueOf(period));
+			treeItem.setText(2, String.valueOf(priority));
+
+			//if (inputs.size() >= outputs.size()) {
+			for (int i = 0; i < threadActuators.size(); i++) {
+				subitem = new TreeItem(treeItem, SWT.NONE);
+				//if (i < outputs.size()) {
+				//	subitem.setText(1, inputs.get(i));
+				//	subitem.setText(2, outputs.get(i));
+				//} else {
+					subitem.setText(3, threadActuators.get(i).getName());
+				//}
+			}
+			/*} else {
+			for (int i = 0; i < outputs.size(); i++) {
+				subitem = new TreeItem(treeItem, SWT.NONE);
+				if (i < inputs.size()) {
+					subitem.setText(1, inputs.get(i));
+					subitem.setText(2, outputs.get(i));
+				} else {
+					subitem.setText(2, outputs.get(i));
+				}
+			}*/
+		}else{
+			TreeItem treeItem = new TreeItem(sporadicTable, SWT.NONE);
+			TreeItem subitem;
+			aux.setName(name);
+			aux.setPeriod(period);
+			aux.setPeriodic(bperiodic);
+			aux.setActuators(threadActuators);
+			aux.setPriority(priority);
+			aux.setTemplate(sTemplate);
+			aux.setIndex(sporadicTable.getItemCount()-1);
 			//aux.setFunctions(threadFunctions);
 			
 			threads.add(aux);
@@ -328,7 +368,14 @@ public class ActuatorsThreadsPage extends WizardPage {
 	}
 
 	protected void addSporadicThread(Display display) {
-		// TODO Auto-generated method stub
+		ActuationThreadShell add = new ActuationThreadShell(display, actuatorsList, "Add Sporadic Thread", false);
+		
+		if(add.isConfirm()){
+			actuatorsList = add.getActuators();
+			addThread(add.getName(), add.getPeriod(), add.getPriority(), add.getThreadActuators(), add.geTemplate(), false);
+		}
+		
+		checkSpecified();
 		
 	}
 
@@ -356,10 +403,12 @@ public class ActuatorsThreadsPage extends WizardPage {
 		if (periodicTable.getItemCount() > 0 || sporadicTable.getItemCount() > 0)
 			clearData();
 
-		actuators.clear();
+		actuatorsList.clear();
 		
-		setActuatorsList(actuators);
-
+		for(int i = 0; i < actuators.size(); i++){
+			actuatorsList.add(actuators.get(i));
+		}
+		
 		checkSpecified();
 	}
 
@@ -388,8 +437,4 @@ public class ActuatorsThreadsPage extends WizardPage {
 		return threads;
 	}
 
-	public void setActuatorsList(ArrayList<Actuator> actuators) {
-		//System.out.println(actuators.size());
-		this.actuatorsList = actuators;
-	}
 }

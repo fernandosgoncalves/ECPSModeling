@@ -85,7 +85,6 @@ public class ECPSModeling extends Wizard implements IImportWizard {
 			case ACTSPECIFICATION:
 				// This function reads the specified actuators and populate the
 				// list periodic and sporadic actuators
-				System.out.println(actuatorsPage.getActuators().size());
 				actuatorsThreadsPage.populateThreadsTable(actuatorsPage.getActuators());				
 				break;
 			case ACTUATORTHREADS:

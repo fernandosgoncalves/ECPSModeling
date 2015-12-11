@@ -39,7 +39,8 @@ public class ActuationThreadShell {
 	
 	protected TabFolder tabFolder;
 
-	protected Table tableThreadSensors;
+	protected Table tableThreadActuators;
+	protected Table tableThreadFunctions;
 	protected Table tableFunctions;
 	protected Table tableActuators;
 	
@@ -72,11 +73,17 @@ public class ActuationThreadShell {
 		createShell(display, title);
 		
 		periodic = bperiodic;
+		
 		createControl();
+		
+		threadActuators = new ArrayList<Actuator>();
+		actuators = new ArrayList<Actuator>();
+		functions = new ArrayList<ActuationFunction>();
+		
 		init(iinputs);
 
 		shell.open();
-		
+				
 		// Set up the event loop.
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) {
@@ -92,8 +99,13 @@ public class ActuationThreadShell {
 		periodic = bperiodic;
 		
 		createControl();
-		init(iinputs, thread);
 
+		threadActuators = new ArrayList<Actuator>();
+		actuators = new ArrayList<Actuator>();
+		functions = new ArrayList<ActuationFunction>();
+
+		init(iinputs, thread);
+		
 		shell.open();
 
 		// Set up the event loop.
@@ -162,15 +174,11 @@ public class ActuationThreadShell {
 		
 		sPeriod = new Spinner(shell, SWT.BORDER);
 		sPeriod.setMinimum(0);
+		sPeriod.setEnabled(false);
 		
-		if(periodic){
-			btPeriodic.setEnabled(true);
+		if(periodic)
 			sPeriod.setEnabled(true);
-		}else{
-			btPeriodic.setEnabled(false);
-			sPeriod.setEnabled(false);
-		}
-				
+			
 		lsPriority = new Label(shell, SWT.NONE);
 		lsPriority.setText("Priority:");
 		
@@ -188,11 +196,11 @@ public class ActuationThreadShell {
 
 		TabItem tab0 = new TabItem(tabFolder, SWT.NONE);
 		tab0.setText("Actuators");
-		tab0.setControl(getTabSensorsControl(tabFolder));
+		tab0.setControl(getTabActuatorsControl(tabFolder));
 		
 		TabItem tab1 = new TabItem(tabFolder, SWT.NONE);
 		tab1.setText("Functions");
-		//tab1.setControl(getTabSensorsControl(tabFolder));
+		tab1.setControl(getTabFunctionsControl(tabFolder));
 		
 		GridData blayout = new GridData();
 		blayout.widthHint = 80;
@@ -206,10 +214,19 @@ public class ActuationThreadShell {
 				//int i;
 				confirm = true;
 
-				/*txtName = name.getText();
+				txtName = name.getText();
+				
 				functions.clear();
+				
+				txtTemplate = cTemplate.getText();
 
-				for (i = 0; i < tableFunctions.getItemCount(); i++) {
+				priority = sPriority.getSelection();
+				period = sPeriod.getSelection();
+				
+				System.out.println(threadActuators.size());
+				System.out.println(actuators.size());
+				
+				/*for (i = 0; i < tableFunctions.getItemCount(); i++) {
 					functions.add(tableFunctions.getItem(i).getText(0));
 				}
 
@@ -219,9 +236,7 @@ public class ActuationThreadShell {
 
 				for (i = 0; i < tableThreadSensors.getItemCount(); i++) {
 					threadSensors.add(tableThreadSensors.getItem(i).getText(0));
-				}
-
-				txtTemplate = cTemplate.getText();*/
+				}*/
 				
 				shell.close();
 			}
@@ -254,7 +269,94 @@ public class ActuationThreadShell {
 		});
 	}
 
-	private Control getTabSensorsControl(TabFolder tabFolder) {
+	private Control getTabFunctionsControl(TabFolder tabFolder2) {
+		// Create a composite and add the components to the sensor specification
+		Composite composite = new Composite(tabFolder, SWT.NONE);
+		GridLayout folder = new GridLayout();
+		folder.numColumns = 2;
+		composite.setLayout(folder);
+
+		// ---------------------- Table ---------------------------
+		tableFunctions = new Table(composite, SWT.BORDER);
+		tableFunctions.setLinesVisible(true);
+		tableFunctions.setHeaderVisible(true);
+
+		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
+		data.verticalSpan = 2;
+
+		tableFunctions.setLayoutData(data);
+
+		final TableColumn column = new TableColumn(tableFunctions, SWT.NONE);
+		column.setText("Functions");
+		column.setWidth(165);
+				
+		// ---------------------- Table ---------------------------
+		tableThreadFunctions = new Table(composite, SWT.BORDER);
+		tableThreadFunctions.setLinesVisible(true);
+		tableThreadFunctions.setHeaderVisible(true);
+
+		tableThreadFunctions.setLayoutData(data);
+
+		final TableColumn columnOut = new TableColumn(tableThreadFunctions, SWT.NONE);
+		columnOut.setText("Thread Functions");
+		columnOut.setWidth(165);
+
+		// ------------Buttons------------
+		Button remove = new Button(composite, SWT.PUSH);
+		remove.setText("<<");
+		GridData bt = new GridData();
+		bt.horizontalAlignment = SWT.RIGHT;
+		remove.setLayoutData(bt);
+		remove.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (tableThreadFunctions.getSelectionIndex() > -1) {
+					TableItem item = new TableItem(tableFunctions, SWT.NONE);
+					item.setText(0, tableThreadFunctions.getItem(tableThreadFunctions.getSelectionIndex()).getText(0));
+					for(int i = 0; i < functions.size(); i++){
+						if(functions.get(i).getName().equals(tableThreadFunctions.getItem(tableThreadFunctions.getSelectionIndex()).getText(0))){
+								threadFunctions.add(functions.get(i));
+								functions.remove(i);
+						}
+					}
+					tableThreadFunctions.remove(tableThreadFunctions.getSelectionIndex());
+				}
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+			}
+		});
+
+		Button add = new Button(composite, SWT.PUSH);
+		add.setText(">>");
+		add.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (tableFunctions.getSelectionIndex() > -1) {
+					TableItem itemADD = new TableItem(tableThreadFunctions, SWT.NONE);
+					itemADD.setText(0, tableFunctions.getItem(tableFunctions.getSelectionIndex()).getText(0));
+					for(int i = 0; i < threadFunctions.size(); i++){
+						if(threadFunctions.get(i).getName().equals(tableFunctions.getItem(tableFunctions.getSelectionIndex()).getText(0))){
+							functions.add(threadFunctions.get(i));
+							threadFunctions.remove(i);
+						}
+					}
+					tableFunctions.remove(tableFunctions.getSelectionIndex());
+				}
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+			}
+		});
+				
+		return composite;		
+	}
+
+	private Control getTabActuatorsControl(TabFolder tabFolder) {
 		// Create a composite and add the components to the sensor specification
 		Composite composite = new Composite(tabFolder, SWT.NONE);
 		GridLayout folder = new GridLayout();
@@ -276,13 +378,13 @@ public class ActuationThreadShell {
 		column.setWidth(165);
 		
 		// ---------------------- Table ---------------------------
-		tableThreadSensors = new Table(composite, SWT.BORDER);
-		tableThreadSensors.setLinesVisible(true);
-		tableThreadSensors.setHeaderVisible(true);
+		tableThreadActuators = new Table(composite, SWT.BORDER);
+		tableThreadActuators.setLinesVisible(true);
+		tableThreadActuators.setHeaderVisible(true);
 
-		tableThreadSensors.setLayoutData(data);
+		tableThreadActuators.setLayoutData(data);
 
-		final TableColumn columnOut = new TableColumn(tableThreadSensors, SWT.NONE);
+		final TableColumn columnOut = new TableColumn(tableThreadActuators, SWT.NONE);
 		columnOut.setText("Thread Actuators");
 		columnOut.setWidth(165);
 
@@ -295,10 +397,25 @@ public class ActuationThreadShell {
 		remove.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (tableThreadSensors.getSelectionIndex() > -1) {
+				if (tableThreadActuators.getSelectionIndex() > -1) {
 					TableItem item = new TableItem(tableActuators, SWT.NONE);
-					item.setText(0, tableThreadSensors.getItem(tableThreadSensors.getSelectionIndex()).getText(0));
-					tableThreadSensors.remove(tableThreadSensors.getSelectionIndex());
+					item.setText(0, tableThreadActuators.getItem(tableThreadActuators.getSelectionIndex()).getText(0));
+					if(periodic){
+						for(int i = 0; i < threadActuators.size(); i++){
+							if(threadActuators.get(i).getName().equals(tableThreadActuators.getItem(tableThreadActuators.getSelectionIndex()).getText(0)) && threadActuators.get(i).isPeriodic()){
+								actuators.add(threadActuators.get(i));
+								threadActuators.remove(i);
+							}
+						}
+					}else{
+						for(int i = 0; i < threadActuators.size(); i++){
+							if(threadActuators.get(i).getName().equals(tableThreadActuators.getItem(tableThreadActuators.getSelectionIndex()).getText(0)) && !threadActuators.get(i).isPeriodic()){
+								actuators.add(threadActuators.get(i));
+								threadActuators.remove(i);
+							}
+						}
+					}
+					tableThreadActuators.remove(tableThreadActuators.getSelectionIndex());
 				}
 			}
 
@@ -315,8 +432,23 @@ public class ActuationThreadShell {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (tableActuators.getSelectionIndex() > -1) {
-					TableItem itemADD = new TableItem(tableThreadSensors, SWT.NONE);
+					TableItem itemADD = new TableItem(tableThreadActuators, SWT.NONE);
 					itemADD.setText(0, tableActuators.getItem(tableActuators.getSelectionIndex()).getText(0));
+					if(periodic){
+						for(int i = 0; i < actuators.size(); i++){
+							if(actuators.get(i).getName().equals(tableActuators.getItem(tableActuators.getSelectionIndex()).getText(0)) && actuators.get(i).isPeriodic()){
+								threadActuators.add(actuators.get(i));
+								actuators.remove(i);
+							}
+						}
+					}else{
+						for(int i = 0; i < actuators.size(); i++){
+							if(actuators.get(i).getName().equals(tableActuators.getItem(tableActuators.getSelectionIndex()).getText(0)) && !actuators.get(i).isPeriodic()){
+								threadActuators.add(actuators.get(i));
+								actuators.remove(i);
+							}
+						}
+					}
 					tableActuators.remove(tableActuators.getSelectionIndex());
 				}
 			}
@@ -332,36 +464,46 @@ public class ActuationThreadShell {
 	}
 
 	private void init(ArrayList<Actuator> inputs) {
-		threadActuators = new ArrayList();
-		actuators = new ArrayList();
-		functions = new ArrayList();
-		
-		for (int i = 0; i < inputs.size(); i++) {
-			TableItem item = new TableItem(tableActuators, SWT.NONE);
-			item.setText(inputs.get(i).getName());
+		//System.out.println(inputs.size());		
+		if(periodic){
+			for (int i = 0; i < inputs.size(); i++) {
+				if(inputs.get(i).isPeriodic()){
+					TableItem item = new TableItem(tableActuators, SWT.NONE);
+					item.setText(inputs.get(i).getName());
+					actuators.add(inputs.get(i));
+				}
+			}
+		}else{
+			for (int i = 0; i < inputs.size(); i++) {
+				if(!inputs.get(i).isPeriodic()){
+					TableItem item = new TableItem(tableActuators, SWT.NONE);
+					item.setText(inputs.get(i).getName());
+					actuators.add(inputs.get(i));
+				}
+			}
 		}
 	}
 
 	private void init(ArrayList<Actuator> inputs, AADLThread thread) {
 		init(inputs);
 		name.setText(thread.getName());
-		/*for(int i = 0; i < cTemplate.getItemCount(); i++){
+		for(int i = 0; i < cTemplate.getItemCount(); i++){
 			if(cTemplate.getItem(i).equals(thread.getTemplate()))
 				cTemplate.select(i);
-		}*/		
+		}		
 		
 		btPeriodic.setSelection(thread.isPeriodic());
-						
 		
-		/*for (int i = 0; i < thread.getSensors().size(); i++) {
-			TableItem item = new TableItem(tableThreadSensors, SWT.NONE);
-			item.setText(0, thread.getSensors().get(i).getName());
-		}*/
+		for (int i = 0; i < thread.getActuators().size(); i++) {
+			TableItem item = new TableItem(tableThreadActuators, SWT.NONE);
+			item.setText(0, thread.getActuators().get(i).getName());
+			threadActuators.add(thread.getActuators().get(i));
+		}
 		
-		for (int i = 0; i < inputs.size(); i++) {
+		/*for (int i = 0; i < inputs.size(); i++) {
 			TableItem item = new TableItem(tableActuators, SWT.NONE);
 			item.setText(inputs.get(i).getName());
-		}
+		}*/
 
 		edit = true;
 	}
