@@ -34,7 +34,7 @@ public class PostReadingPage extends WizardPage {
 
 	protected Tree table;
 
-	protected ArrayList<Sensing> senFunctions;
+	protected ArrayList<SensingFunction> senFunctions;
 	protected ArrayList<String> outputs;
 
 	protected Label information;
@@ -186,7 +186,7 @@ public class PostReadingPage extends WizardPage {
 	}
 
 	public void addFunction(String name, ArrayList<String> inputs, ArrayList<String> outputs, String template) {
-		Sensing aux = new Sensing();
+		SensingFunction aux = new SensingFunction();
 		TreeItem treeItem = new TreeItem(table, SWT.NONE);
 		TreeItem subitem;
 		aux.setName(name);
@@ -234,7 +234,7 @@ public class PostReadingPage extends WizardPage {
 		}
 	}
 
-	public Sensing getItemByName(String name) {
+	public SensingFunction getItemByName(String name) {
 		if (!senFunctions.isEmpty()) {
 			for (int i = 0; i < senFunctions.size(); i++) {
 				if (senFunctions.get(i).getName().equals(name))
@@ -244,7 +244,7 @@ public class PostReadingPage extends WizardPage {
 		return null;
 	}
 
-	public void editFunction(String name, ArrayList<String> inputs, ArrayList<String> outputs, Sensing item, String template) {
+	public void editFunction(String name, ArrayList<String> inputs, ArrayList<String> outputs, SensingFunction item, String template) {
 		TreeItem[] treeItem = table.getSelection();
 		for (int i = 0; i < treeItem.length; i++) {
 			treeItem[i].dispose();
@@ -291,7 +291,7 @@ public class PostReadingPage extends WizardPage {
 	}
 
 	public void editFunctionProperties(Display display) {
-		Sensing aux = getItemByName(table.getSelection()[0].getText(0));
+		SensingFunction aux = getItemByName(table.getSelection()[0].getText(0));
 		SenFunctionShell edit = new SenFunctionShell(display, outputs, aux, aux.getTemplate());
 		if (edit.isConfirm()) {
 			outputs = edit.getOutputs();
@@ -299,7 +299,7 @@ public class PostReadingPage extends WizardPage {
 		}
 	}
 
-	public ArrayList<Sensing> getSenSubsystems() {
+	public ArrayList<SensingFunction> getSenSubsystems() {
 		return senFunctions;
 	}
 }

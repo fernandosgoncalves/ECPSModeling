@@ -2,7 +2,7 @@ package ecpsmodeling.parser;
 
 import java.util.ArrayList;
 
-public class Sensing {
+public class SensingFunction {
 	protected ArrayList<String> inputs;
 	protected ArrayList<String> outputs;
 	
@@ -13,7 +13,7 @@ public class Sensing {
 	
 	protected String name;
 
-	Sensing(){
+	SensingFunction(){
 		inputs = new ArrayList<>();
 		outputs = new ArrayList<>();
 	}

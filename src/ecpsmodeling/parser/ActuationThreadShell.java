@@ -225,19 +225,7 @@ public class ActuationThreadShell {
 				
 				System.out.println(threadActuators.size());
 				System.out.println(actuators.size());
-				
-				/*for (i = 0; i < tableFunctions.getItemCount(); i++) {
-					functions.add(tableFunctions.getItem(i).getText(0));
-				}
-
-				for (i = 0; i < tableSensors.getItemCount(); i++) {
-					sensors.add(tableSensors.getItem(i).getText(0));
-				}
-
-				for (i = 0; i < tableThreadSensors.getItemCount(); i++) {
-					threadSensors.add(tableThreadSensors.getItem(i).getText(0));
-				}*/
-				
+								
 				shell.close();
 			}
 
@@ -400,21 +388,13 @@ public class ActuationThreadShell {
 				if (tableThreadActuators.getSelectionIndex() > -1) {
 					TableItem item = new TableItem(tableActuators, SWT.NONE);
 					item.setText(0, tableThreadActuators.getItem(tableThreadActuators.getSelectionIndex()).getText(0));
-					if(periodic){
-						for(int i = 0; i < threadActuators.size(); i++){
-							if(threadActuators.get(i).getName().equals(tableThreadActuators.getItem(tableThreadActuators.getSelectionIndex()).getText(0)) && threadActuators.get(i).isPeriodic()){
-								actuators.add(threadActuators.get(i));
-								threadActuators.remove(i);
-							}
-						}
-					}else{
-						for(int i = 0; i < threadActuators.size(); i++){
-							if(threadActuators.get(i).getName().equals(tableThreadActuators.getItem(tableThreadActuators.getSelectionIndex()).getText(0)) && !threadActuators.get(i).isPeriodic()){
-								actuators.add(threadActuators.get(i));
-								threadActuators.remove(i);
-							}
+					for(int i = 0; i < threadActuators.size(); i++){
+						if(threadActuators.get(i).getName().equals(tableThreadActuators.getItem(tableThreadActuators.getSelectionIndex()).getText(0)) && threadActuators.get(i).isPeriodic() == periodic){
+							actuators.add(threadActuators.get(i));
+							threadActuators.remove(i);
 						}
 					}
+
 					tableThreadActuators.remove(tableThreadActuators.getSelectionIndex());
 				}
 			}
@@ -434,21 +414,13 @@ public class ActuationThreadShell {
 				if (tableActuators.getSelectionIndex() > -1) {
 					TableItem itemADD = new TableItem(tableThreadActuators, SWT.NONE);
 					itemADD.setText(0, tableActuators.getItem(tableActuators.getSelectionIndex()).getText(0));
-					if(periodic){
-						for(int i = 0; i < actuators.size(); i++){
-							if(actuators.get(i).getName().equals(tableActuators.getItem(tableActuators.getSelectionIndex()).getText(0)) && actuators.get(i).isPeriodic()){
-								threadActuators.add(actuators.get(i));
-								actuators.remove(i);
-							}
-						}
-					}else{
-						for(int i = 0; i < actuators.size(); i++){
-							if(actuators.get(i).getName().equals(tableActuators.getItem(tableActuators.getSelectionIndex()).getText(0)) && !actuators.get(i).isPeriodic()){
-								threadActuators.add(actuators.get(i));
-								actuators.remove(i);
-							}
+					for(int i = 0; i < actuators.size(); i++){
+						if(actuators.get(i).getName().equals(tableActuators.getItem(tableActuators.getSelectionIndex()).getText(0)) && actuators.get(i).isPeriodic() == periodic){
+							threadActuators.add(actuators.get(i));
+							actuators.remove(i);
 						}
 					}
+
 					tableActuators.remove(tableActuators.getSelectionIndex());
 				}
 			}
@@ -464,22 +436,12 @@ public class ActuationThreadShell {
 	}
 
 	private void init(ArrayList<Actuator> inputs) {
-		//System.out.println(inputs.size());		
-		if(periodic){
-			for (int i = 0; i < inputs.size(); i++) {
-				if(inputs.get(i).isPeriodic()){
-					TableItem item = new TableItem(tableActuators, SWT.NONE);
-					item.setText(inputs.get(i).getName());
-					actuators.add(inputs.get(i));
-				}
-			}
-		}else{
-			for (int i = 0; i < inputs.size(); i++) {
-				if(!inputs.get(i).isPeriodic()){
-					TableItem item = new TableItem(tableActuators, SWT.NONE);
-					item.setText(inputs.get(i).getName());
-					actuators.add(inputs.get(i));
-				}
+		//System.out.println(inputs.size());
+		for (int i = 0; i < inputs.size(); i++) {
+			if(inputs.get(i).isPeriodic() == periodic){
+				TableItem item = new TableItem(tableActuators, SWT.NONE);
+				item.setText(inputs.get(i).getName());
+				actuators.add(inputs.get(i));
 			}
 		}
 	}
@@ -493,6 +455,10 @@ public class ActuationThreadShell {
 		}		
 		
 		btPeriodic.setSelection(thread.isPeriodic());
+		
+		sPeriod.setSelection(thread.getPeriod());
+		
+		sPriority.setSelection(thread.getPriority());
 		
 		for (int i = 0; i < thread.getActuators().size(); i++) {
 			TableItem item = new TableItem(tableThreadActuators, SWT.NONE);

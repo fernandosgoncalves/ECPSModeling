@@ -705,7 +705,7 @@ public class Mdl2Aadl {
 	}
 
 	protected void sensingActuationTransformation(ArrayList<ActuationFunction> actSubsystems, ArrayList<Actuator> actuators,
-			ArrayList<Sensing> senSubsystems, ArrayList<Sensor> sensors, SubSystem subsystem) {
+			ArrayList<SensingFunction> senSubsystems, ArrayList<Sensor> sensors, SubSystem subsystem) {
 		ArrayList<String> inPorts;
 		ArrayList<String> outPorts;
 		SubSystem processAct;

@@ -23,17 +23,19 @@ import org.eclipse.ui.IWorkbench;
 public class ECPSModeling extends Wizard implements IImportWizard {
 
 	// Variables that represent the names of system pages
-	protected static final String ACTUATORTHREADS = "Actuators Threads Specification";
-	protected static final String SAMODELING = "Sensing and Actuation Modeling";
 	protected static final String ACTSPECIFICATION = "Actuator Specification";
-	protected static final String POSTREADING = "Post-reading Specification";
 	protected static final String SENSPECIFICATION = "Sensor Specification";
+	protected static final String ACTUATORTHREADS = "Actuators Threads Specification";
+	protected static final String SIMULINKMODEL = "Simulink Model";
+	protected static final String POSTREADING = "Post-reading Specification";
 	protected static final String PREWRITING = "Prewriting Specification";
-	protected static final String MAIN_PAGE = "ECPSModeling Import File";
-	protected static final String MAIN = "ECPSModeling Import File";
+	protected static final String SAMODELING = "Sensing and Actuation Modeling";
 	protected static final String ACTUATION = "Actuation Analyze";
+	protected static final String MAIN_PAGE = "ECPSModeling Import File";
+	protected static final String AADLMODEL = "AADL Model";
 	protected static final String SENSING = "Sensing Analyze";
-
+	protected static final String MAIN = "ECPSModeling Import File";
+		
 	// Objects of the system pages
 	ActuatorsThreadsPage actuatorsThreadsPage;
 	PostReadingPage postReadingPage;
@@ -69,8 +71,9 @@ public class ECPSModeling extends Wizard implements IImportWizard {
 			case SAMODELING:
 				// Selected the mathematical model sybsystem, this function read
 				// their input ports and populate a list to analyze it.
-				inputsPage.populateInputList(mdl2Aadl.aadl.getSubSystem()
-						.searchSubSystem(subsysPage.table.getItem(subsysPage.table.getSelectionIndex()).getText(0)));
+				if (subsysPage.table.getSelectionIndex() > 0)
+					inputsPage.populateInputList(mdl2Aadl.aadl.getSubSystem().searchSubSystem(
+							subsysPage.table.getItem(subsysPage.table.getSelectionIndex()).getText(0)));
 				break;
 			case ACTUATION:
 				// Perform the instruction to populate the table with the output
@@ -85,7 +88,10 @@ public class ECPSModeling extends Wizard implements IImportWizard {
 			case ACTSPECIFICATION:
 				// This function reads the specified actuators and populate the
 				// list periodic and sporadic actuators
-				actuatorsThreadsPage.populateThreadsTable(actuatorsPage.getActuators());				
+				if(subsysPage.getOutputModel().equals(AADLMODEL))
+					actuatorsThreadsPage.populateThreadsTable(actuatorsPage.getActuators());
+				else
+					actuatorsThreadsPage.nextStep();
 				break;
 			case ACTUATORTHREADS:
 				// This function reads the output ports and populate the list to

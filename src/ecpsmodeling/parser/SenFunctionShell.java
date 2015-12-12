@@ -94,7 +94,7 @@ public class SenFunctionShell {
 		}
 	}
 
-	public SenFunctionShell(Display display, ArrayList<String> iinputs, Sensing sensing, String template) {
+	public SenFunctionShell(Display display, ArrayList<String> iinputs, SensingFunction sensing, String template) {
 		shell = new Shell(display,
 				SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL | SWT.RESIZE | SWT.BORDER | SWT.CLOSE | SWT.CENTER);
 
@@ -389,7 +389,7 @@ public class SenFunctionShell {
 		}
 	}
 
-	private void init(ArrayList<String> inputs, Sensing sensing, String template) {
+	private void init(ArrayList<String> inputs, SensingFunction sensing, String template) {
 		init(inputs);
 		name.setText(sensing.getName());
 		for (int i = 0; i < sensing.getOutputs().size(); i++) {

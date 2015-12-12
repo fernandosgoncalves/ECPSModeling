@@ -179,7 +179,7 @@ public class SensorsPage extends WizardPage {
 	 * Verify the input table and according the vector amount of each input port
 	 * the signals are inserted into the sensors list specification
 	 */
-	public void populateSensorsTable(Table inputTable, ArrayList<Sensing> subsystems) {
+	public void populateSensorsTable(Table inputTable, ArrayList<SensingFunction> subsystems) {
 		// If table have data clear it
 		if (table.getItemCount() > 0)
 			clearData();

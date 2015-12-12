@@ -135,7 +135,7 @@ public class EditActuatorShell {
 		});
 
 		lperiod = new Label(shell, SWT.NONE);
-		lperiod.setText("Period:");
+		lperiod.setText("Period (ms):");
 
 		period = new Spinner(shell, SWT.BORDER);
 		period.setLayoutData(ilayout);

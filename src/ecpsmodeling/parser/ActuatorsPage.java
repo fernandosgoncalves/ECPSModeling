@@ -94,7 +94,7 @@ public class ActuatorsPage extends WizardPage {
 		column5.setWidth(70);
 
 		final TableColumn column6 = new TableColumn(table, SWT.NONE);
-		column6.setText("Period");
+		column6.setText("Period (ms)");
 		column6.setWidth(70);
 		
 		Button btEditActuator = new Button(container, SWT.NONE);
@@ -135,7 +135,8 @@ public class ActuatorsPage extends WizardPage {
 			public void handleEvent(Event e) {
 				switch (e.type) {
 				case SWT.Selection:
-					editActuatorProperties(parent.getDisplay());
+					if(table.getSelectionIndex() > -1)
+						editActuatorProperties(parent.getDisplay());
 				}
 			}
 		});

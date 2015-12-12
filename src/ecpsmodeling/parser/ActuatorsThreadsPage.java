@@ -31,9 +31,9 @@ import org.eclipse.swt.SWT;
 
 public class ActuatorsThreadsPage extends WizardPage {
 	protected ArrayList<Actuator> actuatorsList;
-	
+
 	protected ArrayList<AADLThread> threads;
-	
+
 	private Composite container;
 
 	protected Label pinformation;
@@ -41,7 +41,14 @@ public class ActuatorsThreadsPage extends WizardPage {
 
 	protected Tree periodicTable;
 	protected Tree sporadicTable;
-	
+
+	protected Button btRemovePeriodicThread;
+	protected Button btRemoveSporadicThread;
+	protected Button btEditPeriodicThread;
+	protected Button btEditSporadicThread;
+	protected Button btAddPeriodicThread;
+	protected Button btAddSporadicThread;
+
 	public ActuatorsThreadsPage() {
 		super("Actuators Threads Specification");
 		setTitle("Actuators Threads Specification");
@@ -89,16 +96,16 @@ public class ActuatorsThreadsPage extends WizardPage {
 		final TreeColumn column3 = new TreeColumn(periodicTable, SWT.NONE);
 		column3.setText("Actuators");
 		column3.setWidth(100);
-		
-		Button btAddPeriodicThread = new Button(container, SWT.NONE);
-		Button btEditPeriodicThread = new Button(container, SWT.NONE);
-		Button btRemovePeriodicThread = new Button(container, SWT.NONE);
+
+		btAddPeriodicThread = new Button(container, SWT.NONE);
+		btEditPeriodicThread = new Button(container, SWT.NONE);
+		btRemovePeriodicThread = new Button(container, SWT.NONE);
 
 		periodicTable.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				btEditPeriodicThread.setEnabled(true);
-				//btRemovePeriodicThread.setEnabled(true);
+				// btRemovePeriodicThread.setEnabled(true);
 			}
 
 			@Override
@@ -108,19 +115,19 @@ public class ActuatorsThreadsPage extends WizardPage {
 		});
 
 		periodicTable.addMouseListener(new MouseListener() {
-			
+
 			@Override
 			public void mouseUp(MouseEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
 			public void mouseDown(MouseEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
 			public void mouseDoubleClick(MouseEvent e) {
 				editPeriodicThread(parent.getDisplay());
@@ -137,7 +144,7 @@ public class ActuatorsThreadsPage extends WizardPage {
 				}
 			}
 		});
-		
+
 		btEditPeriodicThread.setText("Edit Periodic Thread");
 		btEditPeriodicThread.setEnabled(false);
 		btEditPeriodicThread.addListener(SWT.Selection, new Listener() {
@@ -152,12 +159,12 @@ public class ActuatorsThreadsPage extends WizardPage {
 
 		btRemovePeriodicThread.setText("Remove Periodic Thread");
 		btRemovePeriodicThread.setEnabled(false);
-				
+
 		sinformation = new Label(container, SWT.NONE);
 		ilayout.horizontalSpan = 3;
 		sinformation.setLayoutData(ilayout);
 		sinformation.setText("Sporadic Threads:");
-		
+
 		// ---------------------- Table ---------------------------
 		sporadicTable = new Tree(container, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		sporadicTable.setLinesVisible(true);
@@ -184,16 +191,16 @@ public class ActuatorsThreadsPage extends WizardPage {
 		final TreeColumn scolumn3 = new TreeColumn(sporadicTable, SWT.NONE);
 		scolumn3.setText("Actuators");
 		scolumn3.setWidth(100);
-		
-		Button btAddSporadicThread = new Button(container, SWT.NONE);
-		Button btEditSporadicThread = new Button(container, SWT.NONE);
-		Button btRemoveSporadicThread = new Button(container, SWT.NONE);
+
+		btAddSporadicThread = new Button(container, SWT.NONE);
+		btEditSporadicThread = new Button(container, SWT.NONE);
+		btRemoveSporadicThread = new Button(container, SWT.NONE);
 
 		sporadicTable.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				btEditSporadicThread.setEnabled(true);
-				//btRemoveSporadicThread.setEnabled(true);
+				// btRemoveSporadicThread.setEnabled(true);
 			}
 
 			@Override
@@ -229,7 +236,7 @@ public class ActuatorsThreadsPage extends WizardPage {
 				}
 			}
 		});
-		
+
 		btEditSporadicThread.setText("Edit Sporadic Thread");
 		btEditSporadicThread.setEnabled(false);
 		btEditSporadicThread.addListener(SWT.Selection, new Listener() {
@@ -244,150 +251,208 @@ public class ActuatorsThreadsPage extends WizardPage {
 
 		btRemoveSporadicThread.setText("Remove Sporadic Thread");
 		btRemoveSporadicThread.setEnabled(false);
-		
+
 		threads = new ArrayList<>();
 		actuatorsList = new ArrayList<>();
 
 		setControl(container);
-		setPageComplete(false);
+		// setPageComplete(false);
+		setPageComplete(true);
 	}
 
 	private void addPeriodicThread(Display display) {
-		//System.out.println(actuatorsList.size());
 		ActuationThreadShell add = new ActuationThreadShell(display, actuatorsList, "Add Periodic Thread", true);
-		
-		if(add.isConfirm()){
-			actuatorsList = add.getActuators();
-			System.out.println(add.getThreadActuators().size());
-			addThread(add.getName(), add.getPeriod(), add.getPriority(), add.getThreadActuators(), add.geTemplate(), true);
+
+		if (add.isConfirm()) {
+			updateActuatorsList(add.getActuators(), true);
+			
+			addThread(add.getName(), add.getPeriod(), add.getPriority(), add.getThreadActuators(), add.geTemplate(),
+					true);
 		}
-		
+
 		checkSpecified();
-		
+
 	}
-		
-	private void addThread(String name, int period, int priority, ArrayList<Actuator> threadActuators, String sTemplate, boolean bperiodic) {
-		AADLThread aux = new AADLThread();
-		
-		if(bperiodic){
-			TreeItem treeItem = new TreeItem(periodicTable, SWT.NONE);
-			TreeItem subitem;
-			aux.setName(name);
-			aux.setPeriod(period);
-			aux.setPeriodic(bperiodic);
-			aux.setActuators(threadActuators);
-			aux.setPriority(priority);
-			aux.setTemplate(sTemplate);
-			aux.setIndex(periodicTable.getItemCount()-1);
-			//aux.setFunctions(threadFunctions);
-			
-			threads.add(aux);
-			
-			treeItem.setText(0, name);
-			treeItem.setText(1, String.valueOf(period));
-			treeItem.setText(2, String.valueOf(priority));
 
-			//if (inputs.size() >= outputs.size()) {
-			for (int i = 0; i < threadActuators.size(); i++) {
-				subitem = new TreeItem(treeItem, SWT.NONE);
-				//if (i < outputs.size()) {
-				//	subitem.setText(1, inputs.get(i));
-				//	subitem.setText(2, outputs.get(i));
-				//} else {
-					subitem.setText(3, threadActuators.get(i).getName());
-				//}
-			}
-			/*} else {
-			for (int i = 0; i < outputs.size(); i++) {
-				subitem = new TreeItem(treeItem, SWT.NONE);
-				if (i < inputs.size()) {
-					subitem.setText(1, inputs.get(i));
-					subitem.setText(2, outputs.get(i));
-				} else {
-					subitem.setText(2, outputs.get(i));
-				}
-			}*/
-		}else{
-			TreeItem treeItem = new TreeItem(sporadicTable, SWT.NONE);
-			TreeItem subitem;
-			aux.setName(name);
-			aux.setPeriod(period);
-			aux.setPeriodic(bperiodic);
-			aux.setActuators(threadActuators);
-			aux.setPriority(priority);
-			aux.setTemplate(sTemplate);
-			aux.setIndex(sporadicTable.getItemCount()-1);
-			//aux.setFunctions(threadFunctions);
-			
-			threads.add(aux);
-			
-			treeItem.setText(0, name);
-			treeItem.setText(1, String.valueOf(period));
-			treeItem.setText(2, String.valueOf(priority));
+	protected void addSporadicThread(Display display) {
+		ActuationThreadShell addSporadic = new ActuationThreadShell(display, actuatorsList, "Add Sporadic Thread", false);
 
-			//if (inputs.size() >= outputs.size()) {
-			for (int i = 0; i < threadActuators.size(); i++) {
-				subitem = new TreeItem(treeItem, SWT.NONE);
-				//if (i < outputs.size()) {
-				//	subitem.setText(1, inputs.get(i));
-				//	subitem.setText(2, outputs.get(i));
-				//} else {
-					subitem.setText(3, threadActuators.get(i).getName());
-				//}
-			}
-			/*} else {
-			for (int i = 0; i < outputs.size(); i++) {
-				subitem = new TreeItem(treeItem, SWT.NONE);
-				if (i < inputs.size()) {
-					subitem.setText(1, inputs.get(i));
-					subitem.setText(2, outputs.get(i));
-				} else {
-					subitem.setText(2, outputs.get(i));
-				}
-			}*/
+		if (addSporadic.isConfirm()) {
+			updateActuatorsList(addSporadic.getActuators(), false);
+
+			addThread(addSporadic.getName(), addSporadic.getPeriod(), addSporadic.getPriority(), addSporadic.getThreadActuators(), addSporadic.geTemplate(),
+					false);
 		}
+
+		checkSpecified();
+
+	}
+
+	private void updateActuatorsList(ArrayList<Actuator> actuators, boolean bperiodic) {
+		//System.out.println(actuators.size());
+		//System.out.println(actuatorsList.size());
+
+		actuatorsList.removeIf(p -> p.isPeriodic() == bperiodic);
+						
+		//System.out.println(actuatorsList.size());
+		
+		for (int i = 0; i < actuators.size(); i++) {
+			actuatorsList.add(actuators.get(i));
+		}
+		
+		//System.out.println(actuatorsList.size());
+	}
+
+	private void addThread(String name, int period, int priority, ArrayList<Actuator> threadActuators, String sTemplate,
+			boolean bperiodic) {
+		AADLThread aux = new AADLThread();
+		TreeItem treeItem;
+		TreeItem subitem;
+
+		aux.setName(name);
+		aux.setPeriod(period);
+		aux.setPeriodic(bperiodic);
+		aux.setActuators(threadActuators);
+		aux.setPriority(priority);
+		aux.setTemplate(sTemplate);
+		// aux.setFunctions(threadFunctions);
+		
+		if (bperiodic) {
+			treeItem = new TreeItem(periodicTable, SWT.NONE);
+			
+			aux.setIndex(periodicTable.getItemCount() - 1);
+		} else {
+			treeItem = new TreeItem(sporadicTable, SWT.NONE);
+
+			aux.setIndex(sporadicTable.getItemCount() - 1);
+		}
+
+		treeItem.setText(0, name);
+		treeItem.setText(1, String.valueOf(period));
+		treeItem.setText(2, String.valueOf(priority));
+
+		// if (inputs.size() >= outputs.size()) {
+		for (int i = 0; i < threadActuators.size(); i++) {
+			subitem = new TreeItem(treeItem, SWT.NONE);
+			// if (i < outputs.size()) {
+			// subitem.setText(1, inputs.get(i));
+			// subitem.setText(2, outputs.get(i));
+			// } else {
+			subitem.setText(3, threadActuators.get(i).getName());
+			// }
+		}
+		/*
+		 * } else { for (int i = 0; i < outputs.size(); i++) { subitem = new
+		 * TreeItem(treeItem, SWT.NONE); if (i < inputs.size()) {
+		 * subitem.setText(1, inputs.get(i)); subitem.setText(2,
+		 * outputs.get(i)); } else { subitem.setText(2, outputs.get(i)); } }
+		 */
+		
+		threads.add(aux);
 	}
 
 	// Edit the properties of the specified sensor
 	public void editPeriodicThread(Display display) {
 		AADLThread thread = getPeriodicThread(periodicTable.getSelection()[0].getText(0));
 
-		ActuationThreadShell edit = new ActuationThreadShell(display, actuatorsList, thread, "Edit Periodic Thread", true);
+		ActuationThreadShell edit = new ActuationThreadShell(display, actuatorsList, thread, "Edit Periodic Thread",
+				true);
 
 		if (edit.isConfirm()) {
-			actuatorsList = edit.getActuators();
-			editThread(edit.getName(), edit.geTemplate(), edit.getThreadActuators(), true);
+			updateActuatorsList(edit.getActuators(), true);
+			
+			editThread(edit.getName(), edit.geTemplate(), edit.getThreadActuators(), true, thread, edit.getPeriod(),
+					edit.getPriority());
 
 			checkSpecified();
 		}
 	}
-	
-	private void editThread(String name, String geTemplate, ArrayList<Actuator> threadActuators, boolean bperiodic) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	protected void addSporadicThread(Display display) {
-		ActuationThreadShell add = new ActuationThreadShell(display, actuatorsList, "Add Sporadic Thread", false);
-		
-		if(add.isConfirm()){
-			actuatorsList = add.getActuators();
-			addThread(add.getName(), add.getPeriod(), add.getPriority(), add.getThreadActuators(), add.geTemplate(), false);
-		}
-		
-		checkSpecified();
-		
-	}
 
 	protected void editSporadicThread(Display display) {
-		// TODO Auto-generated method stub
-		
+		AADLThread thread = getSporadicThread(sporadicTable.getSelection()[0].getText(0));
+
+		ActuationThreadShell edit = new ActuationThreadShell(display, actuatorsList, thread, "Edit Sporadic Thread",
+				false);
+
+		if (edit.isConfirm()) {
+			updateActuatorsList(edit.getActuators(), false);
+			editThread(edit.getName(), edit.geTemplate(), edit.getThreadActuators(), false, thread, edit.getPeriod(),
+					edit.getPriority());
+
+			checkSpecified();
+		}
 	}
 
+	private void editThread(String name, String geTemplate, ArrayList<Actuator> threadActuators, boolean bperiodic,
+			AADLThread thread, int period, int priority) {
+		TreeItem[] treeItem;
+		TreeItem newTreeItem;
+		TreeItem newSubItem;
+		
+		/*
+		 * Update Array
+		 */
+		thread.setName(name);
+		thread.setPeriod(period);
+		thread.setPeriodic(bperiodic);
+		thread.setActuators(threadActuators);
+		thread.setPriority(priority);
+		thread.setTemplate(geTemplate);
+		// aux.setFunctions(threadFunctions);		
+		
+		if (bperiodic) {
+			treeItem = periodicTable.getSelection();
+			for (int i = 0; i < treeItem.length; i++) {
+				treeItem[i].dispose();
+			}
+
+			newTreeItem = new TreeItem(periodicTable, SWT.NONE, thread.index);
+
+		} else {
+			treeItem = sporadicTable.getSelection();
+			for (int i = 0; i < treeItem.length; i++) {
+				treeItem[i].dispose();
+			}
+
+			newTreeItem = new TreeItem(sporadicTable, SWT.NONE, thread.index);
+		}
+		
+		newTreeItem.setText(0, name);
+		newTreeItem.setText(1, String.valueOf(period));
+		newTreeItem.setText(2, String.valueOf(priority));
+
+		// if (inputs.size() >= outputs.size()) {
+		for (int i = 0; i < threadActuators.size(); i++) {
+			newSubItem = new TreeItem(newTreeItem, SWT.NONE);
+			// if (i < outputs.size()) {
+			// subitem.setText(1, inputs.get(i));
+			// subitem.setText(2, outputs.get(i));
+			// } else {
+			newSubItem.setText(3, threadActuators.get(i).getName());
+			// }
+		}
+		/*
+		 * } else { for (int i = 0; i < outputs.size(); i++) { subitem = new
+		 * TreeItem(treeItem, SWT.NONE); if (i < inputs.size()) {
+		 * subitem.setText(1, inputs.get(i)); subitem.setText(2,
+		 * outputs.get(i)); } else { subitem.setText(2, outputs.get(i)); } }
+		 */
+	}
+
+	private AADLThread getSporadicThread(String tname) {
+		if (!threads.isEmpty()) {
+			for (int i = 0; i < threads.size(); i++) {
+				if (threads.get(i).getName().equals(tname) && !threads.get(i).isPeriodic())
+					return threads.get(i);
+			}
+		}
+		return null;
+	}
+	
 	private AADLThread getPeriodicThread(String tname) {
-		if(!threads.isEmpty()){
-			for(int i = 0; i < threads.size(); i++){
-				if(threads.get(i).getName().equals(tname) && threads.get(i).isPeriodic())
+		if (!threads.isEmpty()) {
+			for (int i = 0; i < threads.size(); i++) {
+				if (threads.get(i).getName().equals(tname) && threads.get(i).isPeriodic())
 					return threads.get(i);
 			}
 		}
@@ -404,11 +469,11 @@ public class ActuatorsThreadsPage extends WizardPage {
 			clearData();
 
 		actuatorsList.clear();
-		
-		for(int i = 0; i < actuators.size(); i++){
+
+		for (int i = 0; i < actuators.size(); i++) {
 			actuatorsList.add(actuators.get(i));
 		}
-		
+
 		checkSpecified();
 	}
 
@@ -420,21 +485,48 @@ public class ActuatorsThreadsPage extends WizardPage {
 	}
 
 	private void checkSpecified() {
-		/*Boolean check = true;
-		for (int i = 0; i < periodicTable.getItemCount(); i++) {
-			for (int z = 0; z < periodicTable.getColumnCount(); z++) {
-				if (periodicTable.getItem(i).getText(z).isEmpty() && z != 4)
-					check = false;
+		boolean checkPeriodic = false;
+		boolean checkSporadic = false;
+
+		if (actuatorsList.size() > 0) {
+			for (int i = 0; i < actuatorsList.size(); i++) {
+				if (actuatorsList.get(i).isPeriodic())
+					checkPeriodic = true;
+				else
+					checkSporadic = true;
 			}
+
+			if (checkPeriodic)
+				btAddPeriodicThread.setEnabled(true);
+			else
+				btAddPeriodicThread.setEnabled(false);
+
+			if (checkSporadic)
+				btAddSporadicThread.setEnabled(true);
+			else
+				btAddSporadicThread.setEnabled(false);
 		}
-		if (check)
+
+		if (!checkPeriodic && !checkSporadic){
 			setPageComplete(true);
-		else
-			setPageComplete(false);*/
+			btAddSporadicThread.setEnabled(false);
+			btAddPeriodicThread.setEnabled(false);
+		}else
+			setPageComplete(false);
 	}
-	
-	protected ArrayList<AADLThread> getThreads(){
+
+	protected ArrayList<AADLThread> getThreads() {
 		return threads;
+	}
+
+	public void nextStep() {
+		btAddPeriodicThread.setEnabled(false);
+		btAddSporadicThread.setEnabled(false);
+		btEditPeriodicThread.setEnabled(false);
+		btEditSporadicThread.setEnabled(false);
+		btRemovePeriodicThread.setEnabled(false);
+		btRemoveSporadicThread.setEnabled(false);
+		setPageComplete(true);
 	}
 
 }

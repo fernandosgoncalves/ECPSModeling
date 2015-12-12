@@ -11,13 +11,17 @@
 package ecpsmodeling.parser;
 
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.jface.viewers.CellEditor.LayoutData;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.SWT;
@@ -31,8 +35,11 @@ public class SubsysPage extends WizardPage {
 	public static String MARK_DEVICE = "DEVICE";
 
 	protected Table table;
+	
+	protected Combo modelOutput;
 
 	Label information;
+	Label output;
 
 	public SubsysPage() {
 		super("Sensing and Actuation Modeling");
@@ -43,20 +50,41 @@ public class SubsysPage extends WizardPage {
 	@Override
 	public void createControl(Composite parent) {
 		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
 
 		container = new Composite(parent, SWT.NONE);
 		container.setLayout(layout);
 		container.setSize(300, 200);
 
+		GridData lspan = new GridData();
+		lspan.horizontalSpan = 2;
+		
 		information = new Label(container, SWT.NONE);
 		information.setText("Define the subsystem that represent the mathematical model:");
+		information.setLayoutData(lspan);
 
+		output = new Label(container, SWT.NONE);
+		output.setText("Output model: ");
+		
+		modelOutput = new Combo(container, SWT.NONE);
+		modelOutput.add("AADL Model");
+		modelOutput.add("Simulink Model");
+		modelOutput.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				if(table.getSelectionIndex() > 0)
+					setPageComplete(true);
+			}
+		});
+				
 		// ---------------------- Table ---------------------------
 		table = new Table(container, SWT.BORDER);
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
+		//table.setLayoutData(lspan);
 
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
+		data.horizontalSpan = 2;
 
 		table.setLayoutData(data);
 
@@ -67,7 +95,8 @@ public class SubsysPage extends WizardPage {
 		table.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				setPageComplete(true);
+				if(!modelOutput.getText().isEmpty())
+					setPageComplete(true);
 			}
 
 			@Override
@@ -129,5 +158,9 @@ public class SubsysPage extends WizardPage {
 				exploreSystem(subsystem.getSubSystem(i));
 			}
 		}
+	}
+	
+	public String getOutputModel() {
+		return modelOutput.getText();
 	}
 }
