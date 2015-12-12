@@ -165,9 +165,10 @@ public class InputsPage extends WizardPage {
 
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					if(cActuator.isEnabled())
+					if(cActuator.isEnabled()){
 						cActuator.setEnabled(false);
-					else
+						cActuator.setText("");
+					}else
 						cActuator.setEnabled(true);
 					
 				}

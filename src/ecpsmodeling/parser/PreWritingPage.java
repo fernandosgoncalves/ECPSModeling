@@ -299,7 +299,7 @@ public class PreWritingPage extends WizardPage {
 		}
 	}
 	
-	public ArrayList<ActuationFunction> getActFunction (){
+	public ArrayList<ActuationFunction> getActFunctions(){
 		return actFunctions;
 	}
 }
