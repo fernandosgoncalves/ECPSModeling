@@ -31,18 +31,18 @@ public class SensingThreadsShell {
 	protected boolean confirm = false;
 	protected boolean edit = false;
 
-	protected ArrayList<Actuator> threadActuators;
-	protected ArrayList<Actuator> actuators;
+	protected ArrayList<Sensor> threadSensors;
+	protected ArrayList<Sensor> sensors;
 
-	protected ArrayList<ActuationFunction> functions;
-	protected ArrayList<ActuationFunction> threadFunctions;
+	protected ArrayList<SensingFunction> functions;
+	protected ArrayList<SensingFunction> threadFunctions;
 
 	protected TabFolder tabFolder;
 
-	protected Table tableThreadActuators;
 	protected Table tableThreadFunctions;
+	protected Table tableThreadSensors;
 	protected Table tableFunctions;
-	protected Table tableActuators;
+	protected Table tableSensors;
 
 	protected String txtTemplate;
 	protected String txtName;
@@ -69,18 +69,18 @@ public class SensingThreadsShell {
 
 	Shell shell;
 
-	public SensingThreadsShell(Display display, ArrayList<Actuator> iinputs, String title, Boolean bperiodic,
-			ArrayList<ActuationFunction> iFunctions) {
+	public SensingThreadsShell(Display display, ArrayList<Sensor> iinputs, String title, Boolean bperiodic,
+			ArrayList<SensingFunction> iFunctions) {
 		createShell(display, title);
 
 		periodic = bperiodic;
 
 		createControl();
 
-		threadActuators = new ArrayList<Actuator>();
-		threadFunctions = new ArrayList<ActuationFunction>();
-		actuators = new ArrayList<Actuator>();
-		functions = new ArrayList<ActuationFunction>();
+		threadSensors = new ArrayList<Sensor>();
+		threadFunctions = new ArrayList<SensingFunction>();
+		sensors = new ArrayList<Sensor>();
+		functions = new ArrayList<SensingFunction>();
 
 		init(iinputs, iFunctions);
 
@@ -95,20 +95,20 @@ public class SensingThreadsShell {
 		}
 	}
 
-	public SensingThreadsShell(Display display, ArrayList<Actuator> iinputs, AADLThread thread, String title,
-			Boolean bperiodic, ArrayList<ActuationFunction> iActFunctionsList) {
+	public SensingThreadsShell(Display display, ArrayList<Sensor> iinputs, AADLThread thread, String title,
+			Boolean bperiodic, ArrayList<SensingFunction> iSenFunctionsList) {
 		createShell(display, title);
 
 		periodic = bperiodic;
 
 		createControl();
 
-		threadActuators = new ArrayList<Actuator>();
-		threadFunctions = new ArrayList<ActuationFunction>();
-		actuators = new ArrayList<Actuator>();
-		functions = new ArrayList<ActuationFunction>();
+		threadSensors = new ArrayList<Sensor>();
+		threadFunctions = new ArrayList<SensingFunction>();
+		sensors = new ArrayList<Sensor>();
+		functions = new ArrayList<SensingFunction>();
 
-		init(iinputs, thread, iActFunctionsList);
+		init(iinputs, thread, iSenFunctionsList);
 
 		shell.open();
 
@@ -159,9 +159,9 @@ public class SensingThreadsShell {
 		lsTemplate.setText("Template:");
 
 		cTemplate = new Combo(shell, SWT.SINGLE | SWT.BORDER);
-		cTemplate.add("SignalTransformation");
-		cTemplate.add("ESCCommunication");
-		cTemplate.add("ServoCommunication");
+		cTemplate.add("FilterApplication");
+		cTemplate.add("SensorsReading");
+		cTemplate.add("Estimation");
 		cTemplate.setLayoutData(gdLabel);
 
 		lsPeriodic = new Label(shell, SWT.NONE);
@@ -174,7 +174,7 @@ public class SensingThreadsShell {
 		btPeriodic.setEnabled(false);
 
 		lsPeriod = new Label(shell, SWT.NONE);
-		lsPeriod.setText("Period:");
+		lsPeriod.setText("Period (ms):");
 
 		sPeriod = new Spinner(shell, SWT.BORDER);
 		sPeriod.setMinimum(0);
@@ -199,7 +199,7 @@ public class SensingThreadsShell {
 		tabFolder.setSize(400, 200);
 
 		TabItem tab0 = new TabItem(tabFolder, SWT.NONE);
-		tab0.setText("Actuators");
+		tab0.setText("Sensors");
 		tab0.setControl(getTabActuatorsControl(tabFolder));
 
 		TabItem tab1 = new TabItem(tabFolder, SWT.NONE);
@@ -226,12 +226,6 @@ public class SensingThreadsShell {
 
 				priority = sPriority.getSelection();
 				period = sPeriod.getSelection();
-
-				//System.out.println(threadActuators.size());
-				//System.out.println(actuators.size());
-				
-				//System.out.println(threadFunctions.size());
-				//System.out.println(functions.size());
 
 				shell.close();
 			}
@@ -363,28 +357,28 @@ public class SensingThreadsShell {
 		composite.setLayout(folder);
 
 		// ---------------------- Table ---------------------------
-		tableActuators = new Table(composite, SWT.BORDER);
-		tableActuators.setLinesVisible(true);
-		tableActuators.setHeaderVisible(true);
+		tableSensors = new Table(composite, SWT.BORDER);
+		tableSensors.setLinesVisible(true);
+		tableSensors.setHeaderVisible(true);
 
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		data.verticalSpan = 2;
 
-		tableActuators.setLayoutData(data);
+		tableSensors.setLayoutData(data);
 
-		final TableColumn column = new TableColumn(tableActuators, SWT.NONE);
-		column.setText("Actuators");
+		final TableColumn column = new TableColumn(tableSensors, SWT.NONE);
+		column.setText("Sensors");
 		column.setWidth(165);
 
 		// ---------------------- Table ---------------------------
-		tableThreadActuators = new Table(composite, SWT.BORDER);
-		tableThreadActuators.setLinesVisible(true);
-		tableThreadActuators.setHeaderVisible(true);
+		tableThreadSensors = new Table(composite, SWT.BORDER);
+		tableThreadSensors.setLinesVisible(true);
+		tableThreadSensors.setHeaderVisible(true);
 
-		tableThreadActuators.setLayoutData(data);
+		tableThreadSensors.setLayoutData(data);
 
-		final TableColumn columnOut = new TableColumn(tableThreadActuators, SWT.NONE);
-		columnOut.setText("Thread Actuators");
+		final TableColumn columnOut = new TableColumn(tableThreadSensors, SWT.NONE);
+		columnOut.setText("Thread Sensors");
 		columnOut.setWidth(165);
 
 		// ------------Buttons------------
@@ -396,20 +390,20 @@ public class SensingThreadsShell {
 		remove.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (tableThreadActuators.getSelectionIndex() > -1) {
-					TableItem item = new TableItem(tableActuators, SWT.NONE);
-					item.setText(0, tableThreadActuators.getItem(tableThreadActuators.getSelectionIndex()).getText(0));
-					for (int i = 0; i < threadActuators.size(); i++) {
-						if (threadActuators
-								.get(i).getName().equals(tableThreadActuators
-										.getItem(tableThreadActuators.getSelectionIndex()).getText(0))
-								&& threadActuators.get(i).isPeriodic() == periodic) {
-							actuators.add(threadActuators.get(i));
-							threadActuators.remove(i);
+				if (tableThreadSensors.getSelectionIndex() > -1) {
+					TableItem item = new TableItem(tableSensors, SWT.NONE);
+					item.setText(0, tableThreadSensors.getItem(tableThreadSensors.getSelectionIndex()).getText(0));
+					for (int i = 0; i < threadSensors.size(); i++) {
+						if (threadSensors
+								.get(i).getName().equals(tableThreadSensors
+										.getItem(tableThreadSensors.getSelectionIndex()).getText(0))
+								&& threadSensors.get(i).isPeriodic() == periodic) {
+							sensors.add(threadSensors.get(i));
+							threadSensors.remove(i);
 						}
 					}
 
-					tableThreadActuators.remove(tableThreadActuators.getSelectionIndex());
+					tableThreadSensors.remove(tableThreadSensors.getSelectionIndex());
 				}
 			}
 
@@ -425,19 +419,19 @@ public class SensingThreadsShell {
 		add.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (tableActuators.getSelectionIndex() > -1) {
-					TableItem itemADD = new TableItem(tableThreadActuators, SWT.NONE);
-					itemADD.setText(0, tableActuators.getItem(tableActuators.getSelectionIndex()).getText(0));
-					for (int i = 0; i < actuators.size(); i++) {
-						if (actuators.get(i).getName()
-								.equals(tableActuators.getItem(tableActuators.getSelectionIndex()).getText(0))
-								&& actuators.get(i).isPeriodic() == periodic) {
-							threadActuators.add(actuators.get(i));
-							actuators.remove(i);
+				if (tableSensors.getSelectionIndex() > -1) {
+					TableItem itemADD = new TableItem(tableThreadSensors, SWT.NONE);
+					itemADD.setText(0, tableSensors.getItem(tableSensors.getSelectionIndex()).getText(0));
+					for (int i = 0; i < sensors.size(); i++) {
+						if (sensors.get(i).getName()
+								.equals(tableSensors.getItem(tableSensors.getSelectionIndex()).getText(0))
+								&& sensors.get(i).isPeriodic() == periodic) {
+							threadSensors.add(sensors.get(i));
+							sensors.remove(i);
 						}
 					}
 
-					tableActuators.remove(tableActuators.getSelectionIndex());
+					tableSensors.remove(tableSensors.getSelectionIndex());
 				}
 			}
 
@@ -451,13 +445,13 @@ public class SensingThreadsShell {
 		return composite;
 	}
 
-	private void init(ArrayList<Actuator> inputs, ArrayList<ActuationFunction> iFunctions) {
+	private void init(ArrayList<Sensor> inputs, ArrayList<SensingFunction> iFunctions) {
 		if (inputs.size() > 0) {
 			for (int i = 0; i < inputs.size(); i++) {
 				if (inputs.get(i).isPeriodic() == periodic) {
-					TableItem item = new TableItem(tableActuators, SWT.NONE);
+					TableItem item = new TableItem(tableSensors, SWT.NONE);
 					item.setText(inputs.get(i).getName());
-					actuators.add(inputs.get(i));
+					sensors.add(inputs.get(i));
 				}
 			}
 		}
@@ -471,7 +465,7 @@ public class SensingThreadsShell {
 		}
 	}
 
-	private void init(ArrayList<Actuator> inputs, AADLThread thread, ArrayList<ActuationFunction> iFunctions) {
+	private void init(ArrayList<Sensor> inputs, AADLThread thread, ArrayList<SensingFunction> iFunctions) {
 		init(inputs, iFunctions);
 		name.setText(thread.getName());
 		for (int i = 0; i < cTemplate.getItemCount(); i++) {
@@ -485,16 +479,16 @@ public class SensingThreadsShell {
 
 		sPriority.setSelection(thread.getPriority());
 
-		for (int i = 0; i < thread.getActuators().size(); i++) {
-			TableItem item = new TableItem(tableThreadActuators, SWT.NONE);
-			item.setText(0, thread.getActuators().get(i).getName());
-			threadActuators.add(thread.getActuators().get(i));
+		for (int i = 0; i < thread.getSensors().size(); i++) {
+			TableItem item = new TableItem(tableThreadSensors, SWT.NONE);
+			item.setText(0, thread.getSensors().get(i).getName());
+			threadSensors.add(thread.getSensors().get(i));
 		}
 		
-		for (int i = 0; i < thread.getFunctions().size(); i++) {
+		for (int i = 0; i < thread.getSenFunctions().size(); i++) {
 			TableItem item = new TableItem(tableThreadFunctions, SWT.NONE);
-			item.setText(0, thread.getFunctions().get(i).getName());
-			threadFunctions.add(thread.getFunctions().get(i));
+			item.setText(0, thread.getSenFunctions().get(i).getName());
+			threadFunctions.add(thread.getSenFunctions().get(i));
 		}
 		
 		edit = true;
@@ -516,19 +510,19 @@ public class SensingThreadsShell {
 		return txtTemplate;
 	}
 
-	public ArrayList<Actuator> getActuators() {
-		return actuators;
+	public ArrayList<Sensor> getSensors() {
+		return sensors;
 	}
 
-	public ArrayList<Actuator> getThreadActuators() {
-		return threadActuators;
+	public ArrayList<Sensor> getThreadSensors() {
+		return threadSensors;
 	}
 
-	public ArrayList<ActuationFunction> getFunctions() {
+	public ArrayList<SensingFunction> getFunctions() {
 		return functions;
 	}
 
-	public ArrayList<ActuationFunction> getThreadFunctions() {
+	public ArrayList<SensingFunction> getThreadFunctions() {
 		return threadFunctions;
 	}
 

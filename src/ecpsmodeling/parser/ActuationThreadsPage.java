@@ -267,8 +267,8 @@ public class ActuationThreadsPage extends WizardPage {
 		actFunctionsList = new ArrayList<>();
 
 		setControl(container);
-		// setPageComplete(false);
-		setPageComplete(true);
+		setPageComplete(false);
+		//setPageComplete(true);
 	}
 
 	private void addPeriodicThread(Display display) {
@@ -336,7 +336,7 @@ public class ActuationThreadsPage extends WizardPage {
 		aux.setActuators(threadActuators);
 		aux.setPriority(priority);
 		aux.setTemplate(sTemplate);
-		aux.setFunctions(threadFunctions);
+		aux.setActFunctions(threadFunctions);
 
 		if (bperiodic) {
 			treeItem = new TreeItem(periodicTable, SWT.NONE);
@@ -426,7 +426,7 @@ public class ActuationThreadsPage extends WizardPage {
 		thread.setActuators(threadActuators);
 		thread.setPriority(priority);
 		thread.setTemplate(geTemplate);
-		thread.setFunctions(threadFunctions);
+		thread.setActFunctions(threadFunctions);
 
 		if (bperiodic) {
 			treeItem = periodicTable.getSelection();

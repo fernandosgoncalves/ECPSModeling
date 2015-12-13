@@ -3,9 +3,13 @@ package ecpsmodeling.parser;
 import java.util.ArrayList;
 
 public class AADLThread {
-	protected ArrayList<ActuationFunction> functions;
+	protected ArrayList<ActuationFunction> actFunctions;
+	
+	protected ArrayList<SensingFunction> senFunctions;
 	
 	protected ArrayList<Actuator> actuators;
+	
+	protected ArrayList<Sensor> sensors;
 		
 	protected ArrayList<String> inputs;
 	protected ArrayList<String> outputs;
@@ -20,8 +24,10 @@ public class AADLThread {
 	protected String tamplate;
 		
 	AADLThread(){
-		functions = new ArrayList<>();
+		actFunctions = new ArrayList<>();
+		senFunctions = new ArrayList<>();
 		actuators = new ArrayList<>();
+		sensors = new ArrayList<>();
 		outputs = new ArrayList<>();		
 		inputs = new ArrayList<>();
 	}
@@ -82,12 +88,12 @@ public class AADLThread {
 		this.period = period;
 	}
 
-	public ArrayList<ActuationFunction> getFunctions() {
-		return functions;
+	public ArrayList<ActuationFunction> getActFunctions() {
+		return actFunctions;
 	}
 
-	public void setFunctions(ArrayList<ActuationFunction> functions) {
-		this.functions = functions;
+	public void setActFunctions(ArrayList<ActuationFunction> actFunctions) {
+		this.actFunctions = actFunctions;
 	}
 
 	public ArrayList<Actuator> getActuators() {
@@ -96,6 +102,22 @@ public class AADLThread {
 
 	public void setActuators(ArrayList<Actuator> actuators) {
 		this.actuators = actuators;
+	}
+	
+	public ArrayList<SensingFunction> getSenFunctions() {
+		return senFunctions;
+	}
+
+	public void setSenFunctions(ArrayList<SensingFunction> senFunctions) {
+		this.senFunctions = senFunctions;
+	}
+
+	public ArrayList<Sensor> getSensors() {
+		return sensors;
+	}
+
+	public void setSensors(ArrayList<Sensor> sensors) {
+		this.sensors = sensors;
 	}
 	
 	public void setTemplate(String template){

@@ -30,9 +30,9 @@ import java.util.ArrayList;
 import org.eclipse.swt.SWT;
 
 public class SensingThreadsPage extends WizardPage {
-	protected ArrayList<ActuationFunction> actFunctionsList;
+	protected ArrayList<SensingFunction> senFunctionsList;
 	
-	protected ArrayList<Actuator> actuatorsList;
+	protected ArrayList<Sensor> sensorsList;
 	
 	protected ArrayList<AADLThread> threads;
 
@@ -52,9 +52,9 @@ public class SensingThreadsPage extends WizardPage {
 	protected Button btAddSporadicThread;
 
 	public SensingThreadsPage() {
-		super("Actuators Threads Specification");
-		setTitle("Actuators Threads Specification");
-		setDescription("Organize the System Threads that Manage the Actuators:");
+		super("Sensing Threads Specification");
+		setTitle("Sensing Threads Specification");
+		setDescription("Organize the system threads that manage the system sensors:");
 	}
 
 	@Override
@@ -96,7 +96,7 @@ public class SensingThreadsPage extends WizardPage {
 		column2.setWidth(70);
 
 		final TreeColumn column3 = new TreeColumn(periodicTable, SWT.NONE);
-		column3.setText("Actuators");
+		column3.setText("Sensors");
 		column3.setWidth(100);
 
 		final TreeColumn column4 = new TreeColumn(periodicTable, SWT.NONE);
@@ -195,7 +195,7 @@ public class SensingThreadsPage extends WizardPage {
 		scolumn2.setWidth(70);
 
 		final TreeColumn scolumn3 = new TreeColumn(sporadicTable, SWT.NONE);
-		scolumn3.setText("Actuators");
+		scolumn3.setText("Sensors");
 		scolumn3.setWidth(100);
 
 		final TreeColumn scolumn4 = new TreeColumn(sporadicTable, SWT.NONE);
@@ -263,23 +263,21 @@ public class SensingThreadsPage extends WizardPage {
 		btRemoveSporadicThread.setEnabled(false);
 
 		threads = new ArrayList<>();
-		actuatorsList = new ArrayList<>();
-		actFunctionsList = new ArrayList<>();
+		sensorsList = new ArrayList<>();
+		senFunctionsList = new ArrayList<>();
 
 		setControl(container);
-		// setPageComplete(false);
-		setPageComplete(true);
+		setPageComplete(false);
 	}
 
 	private void addPeriodicThread(Display display) {
-		ActuationThreadsShell add = new ActuationThreadsShell(display, actuatorsList, "Add Periodic Thread", true,
-				actFunctionsList);
+		SensingThreadsShell add = new SensingThreadsShell(display, sensorsList, "Add Periodic Thread", true, senFunctionsList);
 
 		if (add.isConfirm()) {
-			updateActuatorsList(add.getActuators(), true);
+			updateActuatorsList(add.getSensors(), true);
 			updateFunctionList(add.getThreadFunctions());
 
-			addThread(add.getName(), add.getPeriod(), add.getPriority(), add.getThreadActuators(), add.geTemplate(),
+			addThread(add.getName(), add.getPeriod(), add.getPriority(), add.getThreadSensors(), add.geTemplate(),
 					true, add.getThreadFunctions());
 		}
 
@@ -288,15 +286,15 @@ public class SensingThreadsPage extends WizardPage {
 	}
 
 	protected void addSporadicThread(Display display) {
-		ActuationThreadsShell addSporadic = new ActuationThreadsShell(display, actuatorsList, "Add Sporadic Thread",
-				false, actFunctionsList);
+		SensingThreadsShell addSporadic = new SensingThreadsShell(display, sensorsList, "Add Sporadic Thread",
+				false, senFunctionsList);
 
 		if (addSporadic.isConfirm()) {
-			updateActuatorsList(addSporadic.getActuators(), false);
+			updateActuatorsList(addSporadic.getSensors(), false);
 			updateFunctionList(addSporadic.getThreadFunctions());
 
 			addThread(addSporadic.getName(), addSporadic.getPeriod(), addSporadic.getPriority(),
-					addSporadic.getThreadActuators(), addSporadic.geTemplate(), false,
+					addSporadic.getThreadSensors(), addSporadic.geTemplate(), false,
 					addSporadic.getThreadFunctions());
 		}
 
@@ -304,19 +302,19 @@ public class SensingThreadsPage extends WizardPage {
 
 	}
 
-	private void updateActuatorsList(ArrayList<Actuator> actuators, boolean bperiodic) {
-		actuatorsList.removeIf(p -> p.isPeriodic() == bperiodic);
+	private void updateActuatorsList(ArrayList<Sensor> sensors, boolean bperiodic) {
+		sensorsList.removeIf(p -> p.isPeriodic() == bperiodic);
 
-		for (int i = 0; i < actuators.size(); i++) {
-			actuatorsList.add(actuators.get(i));
+		for (int i = 0; i < sensors.size(); i++) {
+			sensorsList.add(sensors.get(i));
 		}
 	}
 
-	private void updateFunctionList(ArrayList<ActuationFunction> iFunctions) {
+	private void updateFunctionList(ArrayList<SensingFunction> iFunctions) {
 		for(int i = 0; i < iFunctions.size(); i++){
-			for(int x = 0; x < actFunctionsList.size(); x++){
-				if(iFunctions.get(i).getName().equals(actFunctionsList.get(x).getName()) && actFunctionsList.get(x).getIndex() == iFunctions.get(i).getIndex()){
-					actFunctionsList.remove(x);
+			for(int x = 0; x < senFunctionsList.size(); x++){
+				if(iFunctions.get(i).getName().equals(senFunctionsList.get(x).getName()) && senFunctionsList.get(x).getIndex() == iFunctions.get(i).getIndex()){
+					senFunctionsList.remove(x);
 					continue;
 				}
 			}
@@ -324,8 +322,8 @@ public class SensingThreadsPage extends WizardPage {
 	}
 	
 	
-	private void addThread(String name, int period, int priority, ArrayList<Actuator> threadActuators, String sTemplate,
-			boolean bperiodic, ArrayList<ActuationFunction> threadFunctions) {
+	private void addThread(String name, int period, int priority, ArrayList<Sensor> threadSensors, String sTemplate,
+			boolean bperiodic, ArrayList<SensingFunction> threadFunctions) {
 		AADLThread aux = new AADLThread();
 		TreeItem treeItem;
 		TreeItem subitem;
@@ -333,10 +331,10 @@ public class SensingThreadsPage extends WizardPage {
 		aux.setName(name);
 		aux.setPeriod(period);
 		aux.setPeriodic(bperiodic);
-		aux.setActuators(threadActuators);
+		aux.setSensors(threadSensors);
 		aux.setPriority(priority);
 		aux.setTemplate(sTemplate);
-		aux.setFunctions(threadFunctions);
+		aux.setSenFunctions(threadFunctions);
 
 		if (bperiodic) {
 			treeItem = new TreeItem(periodicTable, SWT.NONE);
@@ -352,21 +350,21 @@ public class SensingThreadsPage extends WizardPage {
 		treeItem.setText(1, String.valueOf(period));
 		treeItem.setText(2, String.valueOf(priority));
 
-		if (threadActuators.size() >= threadFunctions.size()) {
-			for (int i = 0; i < threadActuators.size(); i++) {
+		if (threadSensors.size() >= threadFunctions.size()) {
+			for (int i = 0; i < threadSensors.size(); i++) {
 				subitem = new TreeItem(treeItem, SWT.NONE);
 				if (i < threadFunctions.size()) {
-					subitem.setText(3, threadActuators.get(i).getName());
+					subitem.setText(3, threadSensors.get(i).getName());
 					subitem.setText(4, threadFunctions.get(i).getName());
 				} else {
-					subitem.setText(3, threadActuators.get(i).getName());
+					subitem.setText(3, threadSensors.get(i).getName());
 				}
 			}
 		} else {
 			for (int i = 0; i < threadFunctions.size(); i++) {
 				subitem = new TreeItem(treeItem, SWT.NONE);
-				if (i < threadActuators.size()) {
-					subitem.setText(3, threadActuators.get(i).getName());
+				if (i < threadSensors.size()) {
+					subitem.setText(3, threadSensors.get(i).getName());
 					subitem.setText(4, threadFunctions.get(i).getName());
 				} else {
 					subitem.setText(4, threadFunctions.get(i).getName());
@@ -380,14 +378,13 @@ public class SensingThreadsPage extends WizardPage {
 	public void editPeriodicThread(Display display) {
 		AADLThread thread = getPeriodicThread(periodicTable.getSelection()[0].getText(0));
 
-		ActuationThreadsShell edit = new ActuationThreadsShell(display, actuatorsList, thread, "Edit Periodic Thread",
-				true, actFunctionsList);
+		SensingThreadsShell edit = new SensingThreadsShell(display, sensorsList, thread, "Edit Periodic Thread", true, senFunctionsList);
 
 		if (edit.isConfirm()) {
-			updateActuatorsList(edit.getActuators(), true);
+			updateActuatorsList(edit.getSensors(), true);
 			updateFunctionList(edit.getThreadFunctions());
 
-			editThread(edit.getName(), edit.geTemplate(), edit.getThreadActuators(), true, thread, edit.getPeriod(),
+			editThread(edit.getName(), edit.geTemplate(), edit.getThreadSensors(), true, thread, edit.getPeriod(),
 					edit.getPriority(), edit.getThreadFunctions());
 
 			checkSpecified();
@@ -397,22 +394,22 @@ public class SensingThreadsPage extends WizardPage {
 	protected void editSporadicThread(Display display) {
 		AADLThread thread = getSporadicThread(sporadicTable.getSelection()[0].getText(0));
 
-		ActuationThreadsShell editSporadic = new ActuationThreadsShell(display, actuatorsList, thread, "Edit Sporadic Thread",
-				false, actFunctionsList);
+		SensingThreadsShell editSporadic = new SensingThreadsShell(display, sensorsList, thread, "Edit Sporadic Thread",
+				false, senFunctionsList);
 
 		if (editSporadic.isConfirm()) {
-			updateActuatorsList(editSporadic.getActuators(), false);
+			updateActuatorsList(editSporadic.getSensors(), false);
 			updateFunctionList(editSporadic.getThreadFunctions());
 			
-			editThread(editSporadic.getName(), editSporadic.geTemplate(), editSporadic.getThreadActuators(), false, thread, editSporadic.getPeriod(),
+			editThread(editSporadic.getName(), editSporadic.geTemplate(), editSporadic.getThreadSensors(), false, thread, editSporadic.getPeriod(),
 					editSporadic.getPriority(), editSporadic.getThreadFunctions());
 
 			checkSpecified();
 		}
 	}
 
-	private void editThread(String name, String geTemplate, ArrayList<Actuator> threadActuators, boolean bperiodic,
-			AADLThread thread, int period, int priority, ArrayList<ActuationFunction> threadFunctions) {
+	private void editThread(String name, String geTemplate, ArrayList<Sensor> threadSensors, boolean bperiodic,
+			AADLThread thread, int period, int priority, ArrayList<SensingFunction> threadFunctions) {
 		TreeItem[] treeItem;
 		TreeItem newTreeItem;
 		TreeItem newSubItem;
@@ -423,10 +420,10 @@ public class SensingThreadsPage extends WizardPage {
 		thread.setName(name);
 		thread.setPeriod(period);
 		thread.setPeriodic(bperiodic);
-		thread.setActuators(threadActuators);
+		thread.setSensors(threadSensors);
 		thread.setPriority(priority);
 		thread.setTemplate(geTemplate);
-		thread.setFunctions(threadFunctions);
+		thread.setSenFunctions(threadFunctions);
 
 		if (bperiodic) {
 			treeItem = periodicTable.getSelection();
@@ -449,21 +446,21 @@ public class SensingThreadsPage extends WizardPage {
 		newTreeItem.setText(1, String.valueOf(period));
 		newTreeItem.setText(2, String.valueOf(priority));
 		
-		if (threadActuators.size() >= threadFunctions.size()) {
-			for (int i = 0; i < threadActuators.size(); i++) {
+		if (threadSensors.size() >= threadFunctions.size()) {
+			for (int i = 0; i < threadSensors.size(); i++) {
 				newSubItem = new TreeItem(newTreeItem, SWT.NONE);
 				if (i < threadFunctions.size()) {
-					newSubItem.setText(3, threadActuators.get(i).getName());
+					newSubItem.setText(3, threadSensors.get(i).getName());
 					newSubItem.setText(4, threadFunctions.get(i).getName());
 				} else {
-					newSubItem.setText(3, threadActuators.get(i).getName());
+					newSubItem.setText(3, threadSensors.get(i).getName());
 				}
 			}
 		} else {
 			for (int i = 0; i < threadFunctions.size(); i++) {
 				newSubItem = new TreeItem(newTreeItem, SWT.NONE);
-				if (i < threadActuators.size()) {
-					newSubItem.setText(3, threadActuators.get(i).getName());
+				if (i < threadSensors.size()) {
+					newSubItem.setText(3, threadSensors.get(i).getName());
 					newSubItem.setText(4, threadFunctions.get(i).getName());
 				} else {
 					newSubItem.setText(4, threadFunctions.get(i).getName());
@@ -496,20 +493,20 @@ public class SensingThreadsPage extends WizardPage {
 	 * Verify the input table and according the vector amount of each input port
 	 * the signals are inserted into the sensors list specification
 	 */
-	public void populateThreadsTable(ArrayList<Actuator> actuators, ArrayList<ActuationFunction> iActFuntion) {
+	public void populateThreadsTable(ArrayList<Sensor> sensors, ArrayList<SensingFunction> iSenFuntion) {
 		// If table have data clear it
 		if (periodicTable.getItemCount() > 0 || sporadicTable.getItemCount() > 0)
 			clearData();
 
-		actuatorsList.clear();
-		actFunctionsList.clear();
+		sensorsList.clear();
+		senFunctionsList.clear();
 
-		for (int i = 0; i < actuators.size(); i++) {
-			actuatorsList.add(actuators.get(i));
+		for (int i = 0; i < sensors.size(); i++) {
+			sensorsList.add(sensors.get(i));
 		}
 		
-		for (int i = 0; i < iActFuntion.size(); i++) {
-			actFunctionsList.add(iActFuntion.get(i));
+		for (int i = 0; i < iSenFuntion.size(); i++) {
+			senFunctionsList.add(iSenFuntion.get(i));
 		}
 
 		checkSpecified();
@@ -527,16 +524,16 @@ public class SensingThreadsPage extends WizardPage {
 		boolean checkSporadic = false;
 		boolean checkFunction = false;
 
-		if (actuatorsList.size() > 0) {
-			for (int i = 0; i < actuatorsList.size(); i++) {
-				if (actuatorsList.get(i).isPeriodic())
+		if (sensorsList.size() > 0) {
+			for (int i = 0; i < sensorsList.size(); i++) {
+				if (sensorsList.get(i).isPeriodic())
 					checkPeriodic = true;
 				else
 					checkSporadic = true;
 			}
 		}
 		
-		if(actFunctionsList.size() > 0)
+		if(senFunctionsList.size() > 0)
 			checkFunction = true;
 		
 		if (checkPeriodic || checkFunction)

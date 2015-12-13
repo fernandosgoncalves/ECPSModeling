@@ -491,10 +491,10 @@ public class ActuationThreadsShell {
 			threadActuators.add(thread.getActuators().get(i));
 		}
 		
-		for (int i = 0; i < thread.getFunctions().size(); i++) {
+		for (int i = 0; i < thread.getActFunctions().size(); i++) {
 			TableItem item = new TableItem(tableThreadFunctions, SWT.NONE);
-			item.setText(0, thread.getFunctions().get(i).getName());
-			threadFunctions.add(thread.getFunctions().get(i));
+			item.setText(0, thread.getActFunctions().get(i).getName());
+			threadFunctions.add(thread.getActFunctions().get(i));
 		}
 		
 		edit = true;
