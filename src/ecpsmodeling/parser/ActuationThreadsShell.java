@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import org.eclipse.swt.SWT;
 
 public class ActuationThreadsShell {
-	public static Integer WIDTH = 460;
+	public static Integer WIDTH = 480;
 	public static Integer HEIGHT = 520;
 
 	protected boolean periodic = false;
@@ -147,7 +147,7 @@ public class ActuationThreadsShell {
 	private void createControl() {
 		GridData gdLabel = new GridData();
 		gdLabel.horizontalSpan = 5;
-		gdLabel.widthHint = 325;
+		gdLabel.widthHint = 345;
 
 		lsname = new Label(shell, SWT.NONE);
 		lsname.setText("Thread:");
@@ -165,7 +165,7 @@ public class ActuationThreadsShell {
 		cTemplate.setLayoutData(gdLabel);
 
 		lsPeriodic = new Label(shell, SWT.NONE);
-		lsPeriodic.setText("Period (ms):");
+		lsPeriodic.setText("Periodic:");
 
 		btPeriodic = new Button(shell, SWT.CHECK);
 		GridData playout = new GridData();
@@ -174,7 +174,7 @@ public class ActuationThreadsShell {
 		btPeriodic.setEnabled(false);
 
 		lsPeriod = new Label(shell, SWT.NONE);
-		lsPeriod.setText("Period:");
+		lsPeriod.setText("Period (ms):");
 
 		sPeriod = new Spinner(shell, SWT.BORDER);
 		sPeriod.setMinimum(0);
@@ -192,7 +192,7 @@ public class ActuationThreadsShell {
 
 		GridData gdTabFolder = new GridData();
 		gdTabFolder.horizontalSpan = 6;
-		gdTabFolder.widthHint = 415;
+		gdTabFolder.widthHint = 435;
 		gdTabFolder.heightHint = 300;
 		tabFolder = new TabFolder(shell, SWT.NONE);
 		tabFolder.setLayoutData(gdTabFolder);
@@ -226,12 +226,6 @@ public class ActuationThreadsShell {
 
 				priority = sPriority.getSelection();
 				period = sPeriod.getSelection();
-
-				//System.out.println(threadActuators.size());
-				//System.out.println(actuators.size());
-				
-				//System.out.println(threadFunctions.size());
-				//System.out.println(functions.size());
 
 				shell.close();
 			}

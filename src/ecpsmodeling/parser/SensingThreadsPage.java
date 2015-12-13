@@ -31,9 +31,9 @@ import org.eclipse.swt.SWT;
 
 public class SensingThreadsPage extends WizardPage {
 	protected ArrayList<SensingFunction> senFunctionsList;
-	
+
 	protected ArrayList<Sensor> sensorsList;
-	
+
 	protected ArrayList<AADLThread> threads;
 
 	private Composite container;
@@ -201,7 +201,7 @@ public class SensingThreadsPage extends WizardPage {
 		final TreeColumn scolumn4 = new TreeColumn(sporadicTable, SWT.NONE);
 		scolumn4.setText("Functions");
 		scolumn4.setWidth(100);
-		
+
 		btAddSporadicThread = new Button(container, SWT.NONE);
 		btEditSporadicThread = new Button(container, SWT.NONE);
 		btRemoveSporadicThread = new Button(container, SWT.NONE);
@@ -271,14 +271,15 @@ public class SensingThreadsPage extends WizardPage {
 	}
 
 	private void addPeriodicThread(Display display) {
-		SensingThreadsShell add = new SensingThreadsShell(display, sensorsList, "Add Periodic Thread", true, senFunctionsList);
+		SensingThreadsShell add = new SensingThreadsShell(display, sensorsList, "Add Periodic Thread", true,
+				senFunctionsList);
 
 		if (add.isConfirm()) {
 			updateActuatorsList(add.getSensors(), true);
 			updateFunctionList(add.getThreadFunctions());
 
-			addThread(add.getName(), add.getPeriod(), add.getPriority(), add.getThreadSensors(), add.geTemplate(),
-					true, add.getThreadFunctions());
+			addThread(add.getName(), add.getPeriod(), add.getPriority(), add.getThreadSensors(), add.geTemplate(), true,
+					add.getThreadFunctions());
 		}
 
 		checkSpecified();
@@ -286,16 +287,15 @@ public class SensingThreadsPage extends WizardPage {
 	}
 
 	protected void addSporadicThread(Display display) {
-		SensingThreadsShell addSporadic = new SensingThreadsShell(display, sensorsList, "Add Sporadic Thread",
-				false, senFunctionsList);
+		SensingThreadsShell addSporadic = new SensingThreadsShell(display, sensorsList, "Add Sporadic Thread", false,
+				senFunctionsList);
 
 		if (addSporadic.isConfirm()) {
 			updateActuatorsList(addSporadic.getSensors(), false);
 			updateFunctionList(addSporadic.getThreadFunctions());
 
 			addThread(addSporadic.getName(), addSporadic.getPeriod(), addSporadic.getPriority(),
-					addSporadic.getThreadSensors(), addSporadic.geTemplate(), false,
-					addSporadic.getThreadFunctions());
+					addSporadic.getThreadSensors(), addSporadic.geTemplate(), false, addSporadic.getThreadFunctions());
 		}
 
 		checkSpecified();
@@ -311,17 +311,17 @@ public class SensingThreadsPage extends WizardPage {
 	}
 
 	private void updateFunctionList(ArrayList<SensingFunction> iFunctions) {
-		for(int i = 0; i < iFunctions.size(); i++){
-			for(int x = 0; x < senFunctionsList.size(); x++){
-				if(iFunctions.get(i).getName().equals(senFunctionsList.get(x).getName()) && senFunctionsList.get(x).getIndex() == iFunctions.get(i).getIndex()){
+		for (int i = 0; i < iFunctions.size(); i++) {
+			for (int x = 0; x < senFunctionsList.size(); x++) {
+				if (iFunctions.get(i).getName().equals(senFunctionsList.get(x).getName())
+						&& senFunctionsList.get(x).getIndex() == iFunctions.get(i).getIndex()) {
 					senFunctionsList.remove(x);
 					continue;
 				}
 			}
 		}
 	}
-	
-	
+
 	private void addThread(String name, int period, int priority, ArrayList<Sensor> threadSensors, String sTemplate,
 			boolean bperiodic, ArrayList<SensingFunction> threadFunctions) {
 		AADLThread aux = new AADLThread();
@@ -376,18 +376,21 @@ public class SensingThreadsPage extends WizardPage {
 
 	// Edit the properties of the specified sensor
 	public void editPeriodicThread(Display display) {
-		AADLThread thread = getPeriodicThread(periodicTable.getSelection()[0].getText(0));
+		if (periodicTable.getSelectionCount() > 0) {
+			AADLThread thread = getPeriodicThread(periodicTable.getSelection()[0].getText(0));
 
-		SensingThreadsShell edit = new SensingThreadsShell(display, sensorsList, thread, "Edit Periodic Thread", true, senFunctionsList);
+			SensingThreadsShell edit = new SensingThreadsShell(display, sensorsList, thread, "Edit Periodic Thread",
+					true, senFunctionsList);
 
-		if (edit.isConfirm()) {
-			updateActuatorsList(edit.getSensors(), true);
-			updateFunctionList(edit.getThreadFunctions());
+			if (edit.isConfirm()) {
+				updateActuatorsList(edit.getSensors(), true);
+				updateFunctionList(edit.getThreadFunctions());
 
-			editThread(edit.getName(), edit.geTemplate(), edit.getThreadSensors(), true, thread, edit.getPeriod(),
-					edit.getPriority(), edit.getThreadFunctions());
+				editThread(edit.getName(), edit.geTemplate(), edit.getThreadSensors(), true, thread, edit.getPeriod(),
+						edit.getPriority(), edit.getThreadFunctions());
 
-			checkSpecified();
+				checkSpecified();
+			}
 		}
 	}
 
@@ -400,9 +403,9 @@ public class SensingThreadsPage extends WizardPage {
 		if (editSporadic.isConfirm()) {
 			updateActuatorsList(editSporadic.getSensors(), false);
 			updateFunctionList(editSporadic.getThreadFunctions());
-			
-			editThread(editSporadic.getName(), editSporadic.geTemplate(), editSporadic.getThreadSensors(), false, thread, editSporadic.getPeriod(),
-					editSporadic.getPriority(), editSporadic.getThreadFunctions());
+
+			editThread(editSporadic.getName(), editSporadic.geTemplate(), editSporadic.getThreadSensors(), false,
+					thread, editSporadic.getPeriod(), editSporadic.getPriority(), editSporadic.getThreadFunctions());
 
 			checkSpecified();
 		}
@@ -445,7 +448,7 @@ public class SensingThreadsPage extends WizardPage {
 		newTreeItem.setText(0, name);
 		newTreeItem.setText(1, String.valueOf(period));
 		newTreeItem.setText(2, String.valueOf(priority));
-		
+
 		if (threadSensors.size() >= threadFunctions.size()) {
 			for (int i = 0; i < threadSensors.size(); i++) {
 				newSubItem = new TreeItem(newTreeItem, SWT.NONE);
@@ -501,10 +504,13 @@ public class SensingThreadsPage extends WizardPage {
 		sensorsList.clear();
 		senFunctionsList.clear();
 
+//		System.out.println(sensors.size());
+//		System.out.println("-----------------------------");
+
 		for (int i = 0; i < sensors.size(); i++) {
 			sensorsList.add(sensors.get(i));
 		}
-		
+
 		for (int i = 0; i < iSenFuntion.size(); i++) {
 			senFunctionsList.add(iSenFuntion.get(i));
 		}
@@ -532,10 +538,10 @@ public class SensingThreadsPage extends WizardPage {
 					checkSporadic = true;
 			}
 		}
-		
-		if(senFunctionsList.size() > 0)
+
+		if (senFunctionsList.size() > 0)
 			checkFunction = true;
-		
+
 		if (checkPeriodic || checkFunction)
 			btAddPeriodicThread.setEnabled(true);
 		else
@@ -545,8 +551,7 @@ public class SensingThreadsPage extends WizardPage {
 			btAddSporadicThread.setEnabled(true);
 		else
 			btAddSporadicThread.setEnabled(false);
-		
-		
+
 		if (!checkPeriodic && !checkSporadic && !checkFunction) {
 			setPageComplete(true);
 			btAddSporadicThread.setEnabled(false);

@@ -111,13 +111,13 @@ public class ECPSModeling extends Wizard implements IImportWizard {
 			case POSTREADING:
 				// // Perform the instructions to populate the table with the
 				// list of system sensors
-				sensorsPage.populateSensorsTable(outputsPage.getTable(), postReadingPage.getSenSubsystems());
+				sensorsPage.populateSensorsTable(outputsPage.getTable(), postReadingPage.getSenFunctions());
 				break;
 			case SENSPECIFICATION:
 				if(subsysPage.getOutputModel().equals(AADLMODEL))
 					// This function reads the specified actuators and functions and populate the
 					// list periodic and sporadic sensors and functions					
-					sensingThreadsPage.populateThreadsTable(actuatorsPage.getActuators(), prewritingPage.getActFunctions());
+					sensingThreadsPage.populateThreadsTable(sensorsPage.getSensors(), postReadingPage.getSenFunctions());
 				else
 					//If the output model is the Simulink model, the threads specification it is not performed
 					sensingThreadsPage.nextStep();
@@ -157,7 +157,7 @@ public class ECPSModeling extends Wizard implements IImportWizard {
 		try {
 			// Chamada da função de transformação de sensores e atuadores
 			mdl2Aadl.sensingActuationTransformation(prewritingPage.getActFunctions(), actuatorsPage.getActuators(),
-					postReadingPage.getSenSubsystems(), sensorsPage.getSensors(),
+					postReadingPage.getSenFunctions(), sensorsPage.getSensors(),
 					mdl2Aadl.aadl.getSubSystem().searchSubSystem(
 							subsysPage.table.getItem(subsysPage.table.getSelectionIndex()).getText(0)));
 			// Geração do arquivo AADL de saída

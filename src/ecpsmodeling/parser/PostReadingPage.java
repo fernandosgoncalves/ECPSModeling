@@ -299,7 +299,7 @@ public class PostReadingPage extends WizardPage {
 		}
 	}
 
-	public ArrayList<SensingFunction> getSenSubsystems() {
+	public ArrayList<SensingFunction> getSenFunctions() {
 		return senFunctions;
 	}
 }

@@ -166,6 +166,7 @@ public class SensorsPage extends WizardPage {
 			auxSensor.setName(edit.getSensor());
 			auxSensor.setProtocol(edit.getProtocol());
 			auxSensor.setPriority(Integer.valueOf(edit.getPriority()));
+			auxSensor.setPeriodic(edit.getPeriodic());
 			auxSensor.setPeriod(Integer.valueOf(edit.getPeriod()));
 			auxSensor.outputs.add(edit.getSignal());
 
