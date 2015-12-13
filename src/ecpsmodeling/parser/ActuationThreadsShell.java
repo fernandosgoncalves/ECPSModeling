@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Text;
 import java.util.ArrayList;
 import org.eclipse.swt.SWT;
 
-public class ActuationThreadShell {
+public class ActuationThreadsShell {
 	public static Integer WIDTH = 460;
 	public static Integer HEIGHT = 520;
 
@@ -69,7 +69,7 @@ public class ActuationThreadShell {
 
 	Shell shell;
 
-	public ActuationThreadShell(Display display, ArrayList<Actuator> iinputs, String title, Boolean bperiodic,
+	public ActuationThreadsShell(Display display, ArrayList<Actuator> iinputs, String title, Boolean bperiodic,
 			ArrayList<ActuationFunction> iFunctions) {
 		createShell(display, title);
 
@@ -95,7 +95,7 @@ public class ActuationThreadShell {
 		}
 	}
 
-	public ActuationThreadShell(Display display, ArrayList<Actuator> iinputs, AADLThread thread, String title,
+	public ActuationThreadsShell(Display display, ArrayList<Actuator> iinputs, AADLThread thread, String title,
 			Boolean bperiodic, ArrayList<ActuationFunction> iActFunctionsList) {
 		createShell(display, title);
 

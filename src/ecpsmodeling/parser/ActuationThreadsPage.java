@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.Tree;
 import java.util.ArrayList;
 import org.eclipse.swt.SWT;
 
-public class ActuatorsThreadsPage extends WizardPage {
+public class ActuationThreadsPage extends WizardPage {
 	protected ArrayList<ActuationFunction> actFunctionsList;
 	
 	protected ArrayList<Actuator> actuatorsList;
@@ -51,9 +51,9 @@ public class ActuatorsThreadsPage extends WizardPage {
 	protected Button btAddPeriodicThread;
 	protected Button btAddSporadicThread;
 
-	public ActuatorsThreadsPage() {
-		super("Actuators Threads Specification");
-		setTitle("Actuators Threads Specification");
+	public ActuationThreadsPage() {
+		super("Actuation Threads Specification");
+		setTitle("Actuation Threads Specification");
 		setDescription("Organize the System Threads that Manage the Actuators:");
 	}
 
@@ -272,7 +272,7 @@ public class ActuatorsThreadsPage extends WizardPage {
 	}
 
 	private void addPeriodicThread(Display display) {
-		ActuationThreadShell add = new ActuationThreadShell(display, actuatorsList, "Add Periodic Thread", true,
+		ActuationThreadsShell add = new ActuationThreadsShell(display, actuatorsList, "Add Periodic Thread", true,
 				actFunctionsList);
 
 		if (add.isConfirm()) {
@@ -288,7 +288,7 @@ public class ActuatorsThreadsPage extends WizardPage {
 	}
 
 	protected void addSporadicThread(Display display) {
-		ActuationThreadShell addSporadic = new ActuationThreadShell(display, actuatorsList, "Add Sporadic Thread",
+		ActuationThreadsShell addSporadic = new ActuationThreadsShell(display, actuatorsList, "Add Sporadic Thread",
 				false, actFunctionsList);
 
 		if (addSporadic.isConfirm()) {
@@ -380,7 +380,7 @@ public class ActuatorsThreadsPage extends WizardPage {
 	public void editPeriodicThread(Display display) {
 		AADLThread thread = getPeriodicThread(periodicTable.getSelection()[0].getText(0));
 
-		ActuationThreadShell edit = new ActuationThreadShell(display, actuatorsList, thread, "Edit Periodic Thread",
+		ActuationThreadsShell edit = new ActuationThreadsShell(display, actuatorsList, thread, "Edit Periodic Thread",
 				true, actFunctionsList);
 
 		if (edit.isConfirm()) {
@@ -397,7 +397,7 @@ public class ActuatorsThreadsPage extends WizardPage {
 	protected void editSporadicThread(Display display) {
 		AADLThread thread = getSporadicThread(sporadicTable.getSelection()[0].getText(0));
 
-		ActuationThreadShell editSporadic = new ActuationThreadShell(display, actuatorsList, thread, "Edit Sporadic Thread",
+		ActuationThreadsShell editSporadic = new ActuationThreadsShell(display, actuatorsList, thread, "Edit Sporadic Thread",
 				false, actFunctionsList);
 
 		if (editSporadic.isConfirm()) {

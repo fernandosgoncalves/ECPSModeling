@@ -149,7 +149,7 @@ public class ActuatorsPage extends WizardPage {
 
 	//Edit the properties of the specified actuator
 	public void editActuatorProperties(Display display) {
-		EditActuatorShell edit = new EditActuatorShell(table.getItem(table.getSelectionIndex()), display);
+		ActuatorsPropertiesShell edit = new ActuatorsPropertiesShell(table.getItem(table.getSelectionIndex()), display);
 		
 		if (edit.isConfirm()) {
 			Actuator auxActuator = actuators.get(table.getSelectionIndex());

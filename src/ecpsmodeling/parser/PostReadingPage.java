@@ -178,7 +178,7 @@ public class PostReadingPage extends WizardPage {
 	}
 
 	public void addFunction(Display display) {
-		SenFunctionShell add = new SenFunctionShell(display, outputs);
+		SensingFunctionShell add = new SensingFunctionShell(display, outputs);
 		if (add.isConfirm()) {
 			outputs = add.getOutputs();
 			addFunction(add.getName(), add.getInputs(), add.getFunction(), add.geTemplate());
@@ -292,7 +292,7 @@ public class PostReadingPage extends WizardPage {
 
 	public void editFunctionProperties(Display display) {
 		SensingFunction aux = getItemByName(table.getSelection()[0].getText(0));
-		SenFunctionShell edit = new SenFunctionShell(display, outputs, aux, aux.getTemplate());
+		SensingFunctionShell edit = new SensingFunctionShell(display, outputs, aux, aux.getTemplate());
 		if (edit.isConfirm()) {
 			outputs = edit.getOutputs();
 			editFunction(edit.getName(), edit.getInputs(), edit.getFunction(), aux, edit.geTemplate());

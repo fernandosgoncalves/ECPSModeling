@@ -16,7 +16,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 
-public class EditSensorShell {
+public class SensorsPropertiesShell {
 	protected boolean confirm = false;
 	
 	final Shell shell;
@@ -48,7 +48,7 @@ public class EditSensorShell {
 	protected Button cancel;
 	protected Button ok;
 		
-	public EditSensorShell(TableItem item, Display display) {
+	public SensorsPropertiesShell(TableItem item, Display display) {
 		shell = new Shell(display, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL | SWT.RESIZE | SWT.BORDER | SWT.CLOSE);
 
 		GridLayout layout = new GridLayout();		
@@ -135,7 +135,7 @@ public class EditSensorShell {
 		});		
 		
 		lperiod = new Label(shell, SWT.NONE);
-		lperiod.setText("Period:");
+		lperiod.setText("Period (ms):");
 		
 		period = new Spinner(shell, SWT.BORDER);
 		period.setLayoutData(ilayout);

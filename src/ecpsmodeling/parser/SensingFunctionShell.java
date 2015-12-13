@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Text;
 import java.util.ArrayList;
 import org.eclipse.swt.SWT;
 
-public class SenFunctionShell {
+public class SensingFunctionShell {
 	public static Integer WIDTH = 440;
 	public static Integer HEIGHT = 480;
 	
@@ -55,7 +55,7 @@ public class SenFunctionShell {
 
 	final Shell shell;
 
-	public SenFunctionShell(Display display, ArrayList<String> iinputs) {
+	public SensingFunctionShell(Display display, ArrayList<String> iinputs) {
 		shell = new Shell(display,
 				SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL | SWT.RESIZE | SWT.BORDER | SWT.CLOSE | SWT.CENTER);
 
@@ -94,7 +94,7 @@ public class SenFunctionShell {
 		}
 	}
 
-	public SenFunctionShell(Display display, ArrayList<String> iinputs, SensingFunction sensing, String template) {
+	public SensingFunctionShell(Display display, ArrayList<String> iinputs, SensingFunction sensing, String template) {
 		shell = new Shell(display,
 				SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL | SWT.RESIZE | SWT.BORDER | SWT.CLOSE | SWT.CENTER);
 

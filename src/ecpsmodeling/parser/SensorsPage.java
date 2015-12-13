@@ -83,18 +83,18 @@ public class SensorsPage extends WizardPage {
 
 		final TableColumn column2 = new TableColumn(table, SWT.NONE);
 		column2.setText("Protocol");
-		column2.setWidth(70);
+		column2.setWidth(65);
 		
 		final TableColumn column3 = new TableColumn(table, SWT.NONE);
 		column3.setText("Priority");
-		column3.setWidth(70);
+		column3.setWidth(65);
 
 		final TableColumn column4 = new TableColumn(table, SWT.NONE);
 		column4.setText("Periodic");
-		column4.setWidth(70);
+		column4.setWidth(65);
 
 		final TableColumn column5 = new TableColumn(table, SWT.NONE);
-		column5.setText("Period");
+		column5.setText("Period (ms)");
 		column5.setWidth(70);
 
 		
@@ -150,7 +150,7 @@ public class SensorsPage extends WizardPage {
 
 	// Edit the properties of the specified sensor
 	public void editSensorProperties(Display display) {
-		EditSensorShell edit = new EditSensorShell(table.getItem(table.getSelectionIndex()), display);
+		SensorsPropertiesShell edit = new SensorsPropertiesShell(table.getItem(table.getSelectionIndex()), display);
 
 		if (edit.isConfirm()) {
 			Sensor auxSensor = sensors.get(table.getSelectionIndex());

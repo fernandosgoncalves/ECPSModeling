@@ -65,11 +65,11 @@ public class OutputsPage extends WizardPage {
 
 		final TableColumn column = new TableColumn(table, SWT.NONE);
 		column.setText("Input");
-		column.setWidth(170);
+		column.setWidth(160);
 
 		final TableColumn column2 = new TableColumn(table, SWT.NONE);
 		column2.setText("Vector");
-		column2.setWidth(65);
+		column2.setWidth(60);
 
 		final TableColumn column3 = new TableColumn(table, SWT.NONE);
 		column3.setText("Inputs Size");
@@ -77,7 +77,7 @@ public class OutputsPage extends WizardPage {
 
 		final TableColumn column4 = new TableColumn(table, SWT.NONE);
 		column4.setText("Post-reading");
-		column4.setWidth(85);
+		column4.setWidth(90);
 		
 		final TableColumn column5 = new TableColumn(table, SWT.NONE);
 		column5.setText("Sensor");

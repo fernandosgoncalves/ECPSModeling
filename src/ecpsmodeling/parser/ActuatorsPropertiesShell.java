@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.SWT;
 
-public class EditActuatorShell {
+public class ActuatorsPropertiesShell {
 	protected boolean confirm = false;
 	
 	final Shell shell;
@@ -48,7 +48,7 @@ public class EditActuatorShell {
 	protected Button cancel;
 	protected Button ok;
 		
-	public EditActuatorShell(TableItem item, Display display) {
+	public ActuatorsPropertiesShell(TableItem item, Display display) {
 		shell = new Shell(display, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL | SWT.RESIZE | SWT.BORDER | SWT.CLOSE | SWT.CENTER);
 
 		GridLayout layout = new GridLayout();		
