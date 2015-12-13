@@ -230,8 +230,8 @@ public class ActuationThreadShell {
 				//System.out.println(threadActuators.size());
 				//System.out.println(actuators.size());
 				
-				System.out.println(threadFunctions.size());
-				System.out.println(functions.size());
+				//System.out.println(threadFunctions.size());
+				//System.out.println(functions.size());
 
 				shell.close();
 			}

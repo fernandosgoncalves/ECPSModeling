@@ -85,15 +85,15 @@ public class ActuatorsThreadsPage extends WizardPage {
 
 		final TreeColumn column = new TreeColumn(periodicTable, SWT.LEFT);
 		column.setText("Thread");
-		column.setWidth(150);
+		column.setWidth(140);
 
 		final TreeColumn column1 = new TreeColumn(periodicTable, SWT.NONE);
 		column1.setText("Period (ms)");
-		column1.setWidth(70);
+		column1.setWidth(80);
 
 		final TreeColumn column2 = new TreeColumn(periodicTable, SWT.NONE);
 		column2.setText("Priority");
-		column2.setWidth(80);
+		column2.setWidth(70);
 
 		final TreeColumn column3 = new TreeColumn(periodicTable, SWT.NONE);
 		column3.setText("Actuators");
@@ -184,15 +184,15 @@ public class ActuatorsThreadsPage extends WizardPage {
 
 		final TreeColumn scolumn = new TreeColumn(sporadicTable, SWT.LEFT);
 		scolumn.setText("Thread");
-		scolumn.setWidth(150);
+		scolumn.setWidth(140);
 
 		final TreeColumn scolumn1 = new TreeColumn(sporadicTable, SWT.NONE);
-		scolumn1.setText("Period");
-		scolumn1.setWidth(70);
+		scolumn1.setText("Period (ms)");
+		scolumn1.setWidth(80);
 
 		final TreeColumn scolumn2 = new TreeColumn(sporadicTable, SWT.NONE);
 		scolumn2.setText("Priority");
-		scolumn2.setWidth(80);
+		scolumn2.setWidth(70);
 
 		final TreeColumn scolumn3 = new TreeColumn(sporadicTable, SWT.NONE);
 		scolumn3.setText("Actuators");
@@ -277,7 +277,7 @@ public class ActuatorsThreadsPage extends WizardPage {
 
 		if (add.isConfirm()) {
 			updateActuatorsList(add.getActuators(), true);
-			updateFunctionList(add.getFunctions());
+			updateFunctionList(add.getThreadFunctions());
 
 			addThread(add.getName(), add.getPeriod(), add.getPriority(), add.getThreadActuators(), add.geTemplate(),
 					true, add.getThreadFunctions());
@@ -293,7 +293,7 @@ public class ActuatorsThreadsPage extends WizardPage {
 
 		if (addSporadic.isConfirm()) {
 			updateActuatorsList(addSporadic.getActuators(), false);
-			updateFunctionList(addSporadic.getFunctions());
+			updateFunctionList(addSporadic.getThreadFunctions());
 
 			addThread(addSporadic.getName(), addSporadic.getPeriod(), addSporadic.getPriority(),
 					addSporadic.getThreadActuators(), addSporadic.geTemplate(), false,
@@ -313,9 +313,13 @@ public class ActuatorsThreadsPage extends WizardPage {
 	}
 
 	private void updateFunctionList(ArrayList<ActuationFunction> iFunctions) {
-		actFunctionsList.clear();
-		for (int i = 0; i < iFunctions.size(); i++) {
-			actFunctionsList.add(iFunctions.get(i));
+		for(int i = 0; i < iFunctions.size(); i++){
+			for(int x = 0; x < actFunctionsList.size(); x++){
+				if(iFunctions.get(i).getName().equals(actFunctionsList.get(x).getName()) && actFunctionsList.get(x).getIndex() == iFunctions.get(i).getIndex()){
+					actFunctionsList.remove(x);
+					continue;
+				}
+			}
 		}
 	}
 	
@@ -332,7 +336,7 @@ public class ActuatorsThreadsPage extends WizardPage {
 		aux.setActuators(threadActuators);
 		aux.setPriority(priority);
 		aux.setTemplate(sTemplate);
-		// aux.setFunctions(threadFunctions);
+		aux.setFunctions(threadFunctions);
 
 		if (bperiodic) {
 			treeItem = new TreeItem(periodicTable, SWT.NONE);
@@ -381,7 +385,7 @@ public class ActuatorsThreadsPage extends WizardPage {
 
 		if (edit.isConfirm()) {
 			updateActuatorsList(edit.getActuators(), true);
-			updateFunctionList(edit.getFunctions());
+			updateFunctionList(edit.getThreadFunctions());
 
 			editThread(edit.getName(), edit.geTemplate(), edit.getThreadActuators(), true, thread, edit.getPeriod(),
 					edit.getPriority(), edit.getThreadFunctions());
@@ -398,7 +402,7 @@ public class ActuatorsThreadsPage extends WizardPage {
 
 		if (editSporadic.isConfirm()) {
 			updateActuatorsList(editSporadic.getActuators(), false);
-			updateFunctionList(editSporadic.getFunctions());
+			updateFunctionList(editSporadic.getThreadFunctions());
 			
 			editThread(editSporadic.getName(), editSporadic.geTemplate(), editSporadic.getThreadActuators(), false, thread, editSporadic.getPeriod(),
 					editSporadic.getPriority(), editSporadic.getThreadFunctions());
@@ -422,7 +426,7 @@ public class ActuatorsThreadsPage extends WizardPage {
 		thread.setActuators(threadActuators);
 		thread.setPriority(priority);
 		thread.setTemplate(geTemplate);
-		// aux.setFunctions(threadFunctions);
+		thread.setFunctions(threadFunctions);
 
 		if (bperiodic) {
 			treeItem = periodicTable.getSelection();
@@ -530,22 +534,22 @@ public class ActuatorsThreadsPage extends WizardPage {
 				else
 					checkSporadic = true;
 			}
-
-			if (checkPeriodic)
-				btAddPeriodicThread.setEnabled(true);
-			else
-				btAddPeriodicThread.setEnabled(false);
-
-			if (checkSporadic)
-				btAddSporadicThread.setEnabled(true);
-			else
-				btAddSporadicThread.setEnabled(false);
 		}
 		
-		if(actFunctionsList.size()> 0){
+		if(actFunctionsList.size() > 0)
 			checkFunction = true;
-		}
+		
+		if (checkPeriodic || checkFunction)
+			btAddPeriodicThread.setEnabled(true);
+		else
+			btAddPeriodicThread.setEnabled(false);
 
+		if (checkSporadic || checkFunction)
+			btAddSporadicThread.setEnabled(true);
+		else
+			btAddSporadicThread.setEnabled(false);
+		
+		
 		if (!checkPeriodic && !checkSporadic && !checkFunction) {
 			setPageComplete(true);
 			btAddSporadicThread.setEnabled(false);
