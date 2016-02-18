@@ -28,11 +28,11 @@ import java.io.InputStream;
 import org.eclipse.swt.SWT;
 import java.io.File;
 
-public class ECPSModelingPage extends WizardNewFileCreationPage {
+public class MainPage extends WizardNewFileCreationPage {
 
 	protected FileFieldEditor editor;
 
-	public ECPSModelingPage(String pageName, IStructuredSelection selection) {
+	public MainPage(String pageName, IStructuredSelection selection) {
 		super(pageName, selection);
 		setTitle(pageName); // NON-NLS-1
 		setDescription("Import a file from the local file system into the workspace"); // NON-NLS-1
@@ -61,14 +61,13 @@ public class ECPSModelingPage extends WizardNewFileCreationPage {
 																						// //NON-NLS-2
 		editor.getTextControl(fileSelectionArea).addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				IPath path = new Path(ECPSModelingPage.this.editor.getStringValue());
+				IPath path = new Path(MainPage.this.editor.getStringValue());
 				setFileName(path.lastSegment());
 			}
 		});
 		String[] extensions = new String[] { "*.mdl" }; // NON-NLS-1
 		editor.setFileExtensions(extensions);
 		fileSelectionArea.moveAbove(null);
-
 	}
 
 	/*
@@ -86,8 +85,10 @@ public class ECPSModelingPage extends WizardNewFileCreationPage {
 	 * org.eclipse.ui.dialogs.WizardNewFileCreationPage#getInitialContents()
 	 */
 	protected InputStream getInitialContents() {
+		//System.out.println("InitialContents");
 		try {
 			return new FileInputStream(new File(editor.getStringValue()));
+			//return null;
 		} catch (FileNotFoundException e) {
 			return null;
 		}
@@ -109,7 +110,6 @@ public class ECPSModelingPage extends WizardNewFileCreationPage {
 	 * org.eclipse.ui.dialogs.WizardNewFileCreationPage#validateLinkedResource()
 	 */
 	protected IStatus validateLinkedResource() {
-		return new Status(IStatus.OK, "ECPSModeling", IStatus.OK, "", null); // NON-NLS-1
-																				// //NON-NLS-2
+		return new Status(IStatus.OK, "ECPSModeling", IStatus.OK, "", null); // NON-NLS-1 //NON-NLS-2
 	}
 }

@@ -1,12 +1,12 @@
 package ecpsmodeling.parser;
 
+import java.io.FileNotFoundException;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.Arrays;
 import java.util.List;
 
@@ -245,7 +245,7 @@ public class Mdl2Aadl {
 		 * subsystems.get(i).parent.get(j).value); } System.out.println("  ---"
 		 * ); } System.out.println("---");
 		 */
-		System.out.println(subsystems.size());
+		// System.out.println(subsystems.size());
 		for (int i = 0; i < subsystems.size(); i++) {
 			// se for uma constante não lista no aadl
 			if (subsystems.get(i).parent.getByName("Name").get(0).value.contains("Constant")) {
@@ -277,7 +277,7 @@ public class Mdl2Aadl {
 				// System.out.println(subsystems.get(i).parent.get(1).value);
 			}
 			if (subsystems.get(i).parent.getByName("SFBlockType", ParentArrayList.NO_CHILD).size() > 0) {
-				System.out.println(subsystems.get(i).parent.get(1).value);
+				// System.out.println(subsystems.get(i).parent.get(1).value);
 				/*
 				 * for (int j = 0; j < subsystems.get(i).parent.size(); j++) {
 				 * System.out.println(subsystems.get(i).parent.get(j).name +
@@ -702,5 +702,156 @@ public class Mdl2Aadl {
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
 		}
+	}
+
+	protected void sensingActuationTransformation(ArrayList<ActuationFunction> actSubsystems, ArrayList<Actuator> actuators,
+			ArrayList<SensingFunction> senSubsystems, ArrayList<Sensor> sensors, SubSystem subsystem) {
+		ArrayList<String> inPorts;
+		ArrayList<String> outPorts;
+		SubSystem processAct;
+		SubSystem processSen;
+		SubSystem device;
+		SubSystem thread;
+
+		inPorts = new ArrayList<>();
+		outPorts = new ArrayList<>();
+
+		// Add Actuators Devices
+		for (int i = 0; i < actuators.size(); i++) {
+			device = new SubSystem(actuators.get(i).getName(), aadl, subsystem.getParent());
+			device.setMark("device");
+			for (int z = 0; z < actuators.get(i).getInputs().size(); z++) {
+				device.addInPort(subsystem.getParent().getFullName(), actuators.get(i).getInputs().get(z), "Port",
+						"int32", subsystem.getParent().getLastSubSystem());
+				inPorts.add(actuators.get(i).getInputs().get(z));
+			}
+
+			for (int y = 0; y < actuators.get(i).getOutputs().size(); y++) {
+				device.addOutPort(subsystem.getParent().getFullName(), actuators.get(i).getOutputs().get(y), "Port",
+						"int32", subsystem.getParent().getLastSubSystem());
+				outPorts.add(actuators.get(i).getOutputs().get(y));
+			}
+
+			aadl.getSubSystem().searchSubSystem(subsystem.getParent().getName()).addSubSystem(device);
+		}
+
+		// Add Actuation process
+		processAct = new SubSystem("Actuation", aadl, subsystem.getParent());
+		processAct.setMark("process");
+		for (int x = 0; x < inPorts.size(); x++) {
+			processAct.addOutPort(subsystem.getParent().getFullName(), inPorts.get(x), "Port", "int32",
+					subsystem.getParent().getLastSubSystem());
+		}
+
+		for (int y = 0; y < outPorts.size(); y++) {
+			processAct.addInPort(subsystem.getParent().getFullName(), outPorts.get(y), "Port", "int32",
+					subsystem.getParent().getLastSubSystem());
+		}
+
+		// Add Actuators process lines
+		// Connecting the system actuators with the actuation process
+		for (int i = 0; i < actuators.size(); i++) {
+			if (!actuators.get(i).getInputs().isEmpty()) {
+				System.out.println("Inputs not empty");
+				for (int x = 0; x < actuators.get(i).getInputs().size(); x++) {
+					System.out.println("srcSystem: " + processAct.getName() + " srcPort: "
+							+ actuators.get(i).getInputs().get(x) + "	dstSystem: " + actuators.get(i).getName()
+							+ " dstPort: " + actuators.get(i).getInputs().get(x));
+					aadl.getSubSystem().searchSubSystem(subsystem.getParent().getName()).addLine(processAct.getName(),
+							actuators.get(i).getInputs().get(x), actuators.get(i).getName(),
+							actuators.get(i).getInputs().get(x));
+				}
+			}
+			if (!actuators.get(i).getOutputs().isEmpty()) {
+				System.out.println("Outputs not empty");
+				for (int y = 0; y < actuators.get(i).getOutputs().size(); y++) {
+					System.out.println("Inputs not empty");
+					System.out.println("srcSystem: " + actuators.get(i).getName() + " srcPort: "
+							+ actuators.get(i).getOutputs().get(y) + "	dstSystem: " + processAct.getName()
+							+ " dstPort: " + actuators.get(i).getOutputs().get(y));
+					aadl.getSubSystem().searchSubSystem(subsystem.getParent().getName()).addLine(
+							actuators.get(i).getName(), actuators.get(i).getOutputs().get(y), processAct.getName(),
+							actuators.get(i).getOutputs().get(y));
+				}
+
+			}
+		}
+
+//		aadl.getSubSystem().searchSubSystem(subsystem.getParent().getName()).addLine(srcSystem, srcPort, dstSystem,				dstPort);
+
+		// Add Actuation threads
+		for (int i = 0; i < actSubsystems.size(); i++) {
+			thread = new SubSystem(actSubsystems.get(i).getName(), aadl, processAct);
+			thread.setMark("thread");
+			for (int x = 0; x < actSubsystems.get(i).getInputs().size(); x++) {
+				thread.addInPort(processAct.getName(), actSubsystems.get(i).getInputs().get(x), "Port", "int32",
+						processAct);
+			}
+
+			for (int x = 0; x < actSubsystems.get(i).getOutputs().size(); x++) {
+				thread.addOutPort(processAct.getName(), actSubsystems.get(i).getOutputs().get(x), "Port", "int32",
+						processAct);
+			}
+			processAct.addSubSystem(thread);
+		}
+
+		aadl.getSubSystem().searchSubSystem(subsystem.getParent().getName()).addSubSystem(processAct);
+
+		inPorts = new ArrayList<>();
+		outPorts = new ArrayList<>();
+
+		// Add Sensors Devices
+		for (int i = 0; i < sensors.size(); i++) {
+			device = new SubSystem(sensors.get(i).getName(), aadl, subsystem.getParent());
+			device.setMark("device");
+			for (int z = 0; z < sensors.get(i).getInputs().size(); z++) {
+				device.addInPort(subsystem.getParent().getFullName(), sensors.get(i).getInputs().get(z), "Port",
+						"int32", subsystem.getParent().getLastSubSystem());
+				outPorts.add(sensors.get(i).getInputs().get(z));
+			}
+
+			for (int y = 0; y < sensors.get(i).getOutputs().size(); y++) {
+				device.addOutPort(subsystem.getParent().getFullName(), sensors.get(i).getOutputs().get(y), "Port",
+						"int32", subsystem.getParent().getLastSubSystem());
+				inPorts.add(sensors.get(i).getOutputs().get(y));
+			}
+
+			aadl.getSubSystem().searchSubSystem(subsystem.getParent().getName()).addSubSystem(device);
+		}
+
+		// Add Sensing process
+		processSen = new SubSystem("Sensing", aadl, subsystem.getParent());
+		processSen.setMark("process");
+		for (int x = 0; x < inPorts.size(); x++) {
+			processSen.addOutPort(subsystem.getParent().getFullName(), inPorts.get(x), "Port", "int32",
+					subsystem.getParent().getLastSubSystem());
+		}
+
+		for (int y = 0; y < outPorts.size(); y++) {
+			processAct.addInPort(subsystem.getParent().getFullName(), outPorts.get(y), "Port", "int32",
+					subsystem.getParent().getLastSubSystem());
+		}
+
+		// Add Sensing threads
+		for (int i = 0; i < senSubsystems.size(); i++) {
+			thread = new SubSystem(senSubsystems.get(i).getName(), aadl, processSen);
+			thread.setMark("thread");
+			for (int x = 0; x < senSubsystems.get(i).getInputs().size(); x++) {
+				thread.addInPort(processSen.getName(), senSubsystems.get(i).getInputs().get(x) + "data", "Port",
+						"int32", processSen);
+			}
+
+			for (int x = 0; x < senSubsystems.get(i).getOutputs().size(); x++) {
+				thread.addOutPort(processSen.getName(), senSubsystems.get(i).getOutputs().get(x) + "data", "Port",
+						"int32", processSen);
+			}
+			processSen.addSubSystem(thread);
+		}
+
+		aadl.getSubSystem().searchSubSystem(subsystem.getParent().getName()).addSubSystem(processSen);
+
+		// Manage conections of target subsystem
+
+		// Remove Subsystem
 	}
 }

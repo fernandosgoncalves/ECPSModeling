@@ -195,8 +195,36 @@ public class SubSystem {
 		return this.outPorts;
 	}
 
+	public Port getOutPort(int position) {
+		// se for uma posição valida retorna o system
+		if (this.outPorts.size() > position)
+			return this.outPorts.get(position);
+		return null;
+	}
+
+	/*
+	 * FG: Return the amount of output ports
+	 */
+	public int getOutPortsCount() {
+		return this.outPorts.size();
+	}
+
 	public ArrayList<Port> getInPorts() {
 		return this.inPorts;
+	}
+
+	/*
+	 * FG: Return the amount of input ports
+	 */
+	public int getInPortsCount() {
+		return this.inPorts.size();
+	}
+
+	public Port getInPort(int position) {
+		// se for uma posição valida retorna o system
+		if (this.inPorts.size() > position)
+			return this.inPorts.get(position);
+		return null;
 	}
 
 	public Port findOutPort(String system, String port) {
@@ -322,10 +350,20 @@ public class SubSystem {
 		return this.lines;
 	}
 
+	/*
+	 * FG: Updated the search function in order to verify also the child node of
+	 * each subsystem
+	 */
 	public SubSystem searchSubSystem(String name) {
 		for (int i = 0; i < this.getSubSystemsCount(); i++) {
-			if (this.getSubSystem(i).name.equals(name))
+			if (this.getSubSystem(i).name.equals(name)) {
+				// System.out.println(this.getSubSystem(i).name);
 				return this.getSubSystem(i);
+			} else {
+				if (this.getSubSystem(i).getSubSystemsCount() > 0) {
+					return this.getSubSystem(i).searchSubSystem(name);
+				}
+			}
 		}
 		return null;
 	}

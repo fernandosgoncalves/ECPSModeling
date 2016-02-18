@@ -32,7 +32,7 @@ public class AadlFile {
 		else
 			this.rootSubsystem = new SubSystem(name, this, null);
 	}
-
+	
 	public SubSystem getSubSystem() {
 		return this.rootSubsystem;
 	}
