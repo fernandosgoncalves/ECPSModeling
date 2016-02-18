@@ -5,11 +5,11 @@ import java.util.ArrayList;
 public class AADLThread {
 	protected ArrayList<SystemFunction> actFunctions;
 	
-	protected ArrayList<SensingFunction> senFunctions;
+	protected ArrayList<SystemFunction> senFunctions;
 	
 	protected ArrayList<Device> actuators;
 	
-	protected ArrayList<Sensor> sensors;
+	protected ArrayList<Device> sensors;
 		
 	protected ArrayList<String> inputs;
 	protected ArrayList<String> outputs;
@@ -104,19 +104,19 @@ public class AADLThread {
 		this.actuators = actuators;
 	}
 	
-	public ArrayList<SensingFunction> getSenFunctions() {
+	public ArrayList<SystemFunction> getSenFunctions() {
 		return senFunctions;
 	}
 
-	public void setSenFunctions(ArrayList<SensingFunction> senFunctions) {
+	public void setSenFunctions(ArrayList<SystemFunction> senFunctions) {
 		this.senFunctions = senFunctions;
 	}
 
-	public ArrayList<Sensor> getSensors() {
+	public ArrayList<Device> getSensors() {
 		return sensors;
 	}
 
-	public void setSensors(ArrayList<Sensor> sensors) {
+	public void setSensors(ArrayList<Device> sensors) {
 		this.sensors = sensors;
 	}
 	
