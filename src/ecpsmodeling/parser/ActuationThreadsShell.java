@@ -31,11 +31,11 @@ public class ActuationThreadsShell {
 	protected boolean confirm = false;
 	protected boolean edit = false;
 
-	protected ArrayList<Actuator> threadActuators;
-	protected ArrayList<Actuator> actuators;
+	protected ArrayList<Device> threadActuators;
+	protected ArrayList<Device> actuators;
 
-	protected ArrayList<ActuationFunction> functions;
-	protected ArrayList<ActuationFunction> threadFunctions;
+	protected ArrayList<SystemFunction> functions;
+	protected ArrayList<SystemFunction> threadFunctions;
 
 	protected TabFolder tabFolder;
 
@@ -69,18 +69,18 @@ public class ActuationThreadsShell {
 
 	Shell shell;
 
-	public ActuationThreadsShell(Display display, ArrayList<Actuator> iinputs, String title, Boolean bperiodic,
-			ArrayList<ActuationFunction> iFunctions) {
+	public ActuationThreadsShell(Display display, ArrayList<Device> iinputs, String title, Boolean bperiodic,
+			ArrayList<SystemFunction> iFunctions) {
 		createShell(display, title);
 
 		periodic = bperiodic;
 
 		createControl();
 
-		threadActuators = new ArrayList<Actuator>();
-		threadFunctions = new ArrayList<ActuationFunction>();
-		actuators = new ArrayList<Actuator>();
-		functions = new ArrayList<ActuationFunction>();
+		threadActuators = new ArrayList<Device>();
+		threadFunctions = new ArrayList<SystemFunction>();
+		actuators = new ArrayList<Device>();
+		functions = new ArrayList<SystemFunction>();
 
 		init(iinputs, iFunctions);
 
@@ -95,18 +95,18 @@ public class ActuationThreadsShell {
 		}
 	}
 
-	public ActuationThreadsShell(Display display, ArrayList<Actuator> iinputs, AADLThread thread, String title,
-			Boolean bperiodic, ArrayList<ActuationFunction> iActFunctionsList) {
+	public ActuationThreadsShell(Display display, ArrayList<Device> iinputs, AADLThread thread, String title,
+			Boolean bperiodic, ArrayList<SystemFunction> iActFunctionsList) {
 		createShell(display, title);
 
 		periodic = bperiodic;
 
 		createControl();
 
-		threadActuators = new ArrayList<Actuator>();
-		threadFunctions = new ArrayList<ActuationFunction>();
-		actuators = new ArrayList<Actuator>();
-		functions = new ArrayList<ActuationFunction>();
+		threadActuators = new ArrayList<Device>();
+		threadFunctions = new ArrayList<SystemFunction>();
+		actuators = new ArrayList<Device>();
+		functions = new ArrayList<SystemFunction>();
 
 		init(iinputs, thread, iActFunctionsList);
 
@@ -215,7 +215,6 @@ public class ActuationThreadsShell {
 		ok.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				// int i;
 				confirm = true;
 
 				txtName = name.getText();
@@ -445,7 +444,7 @@ public class ActuationThreadsShell {
 		return composite;
 	}
 
-	private void init(ArrayList<Actuator> inputs, ArrayList<ActuationFunction> iFunctions) {
+	private void init(ArrayList<Device> inputs, ArrayList<SystemFunction> iFunctions) {
 		if (inputs.size() > 0) {
 			for (int i = 0; i < inputs.size(); i++) {
 				if (inputs.get(i).isPeriodic() == periodic) {
@@ -465,7 +464,7 @@ public class ActuationThreadsShell {
 		}
 	}
 
-	private void init(ArrayList<Actuator> inputs, AADLThread thread, ArrayList<ActuationFunction> iFunctions) {
+	private void init(ArrayList<Device> inputs, AADLThread thread, ArrayList<SystemFunction> iFunctions) {
 		init(inputs, iFunctions);
 		name.setText(thread.getName());
 		for (int i = 0; i < cTemplate.getItemCount(); i++) {
@@ -510,19 +509,19 @@ public class ActuationThreadsShell {
 		return txtTemplate;
 	}
 
-	public ArrayList<Actuator> getActuators() {
+	public ArrayList<Device> getActuators() {
 		return actuators;
 	}
 
-	public ArrayList<Actuator> getThreadActuators() {
+	public ArrayList<Device> getThreadActuators() {
 		return threadActuators;
 	}
 
-	public ArrayList<ActuationFunction> getFunctions() {
+	public ArrayList<SystemFunction> getFunctions() {
 		return functions;
 	}
 
-	public ArrayList<ActuationFunction> getThreadFunctions() {
+	public ArrayList<SystemFunction> getThreadFunctions() {
 		return threadFunctions;
 	}
 

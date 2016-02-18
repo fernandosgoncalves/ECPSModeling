@@ -29,12 +29,15 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.SWT;
 import java.util.ArrayList;
 
-public class PreWritingPage extends WizardPage {
+public class PreProcessingPage extends WizardPage {
+	protected static final int ACTUATION = 1;
+	
 	private Composite container;
 
 	protected Tree table;
 
-	protected ArrayList<ActuationFunction> actFunctions;
+	protected ArrayList<SystemFunction> actFunctions;
+	//protected ArrayList<ActuationFunction> actFunctions;
 	protected ArrayList<String> inputs;
 
 	protected Label information;
@@ -43,10 +46,10 @@ public class PreWritingPage extends WizardPage {
 	protected Button btEditFunction;
 	protected Button btAddFunction;
 
-	public PreWritingPage() {
-		super("Prewriting Specification");
-		setTitle("Prewriting Specification");
-		setDescription("Detail the system functions:");
+	public PreProcessingPage() {
+		super("Pre-processing Specification");
+		setTitle("Pre-processing Specification");
+		setDescription("Detail the pre-processing system functions:");
 	}
 
 	@Override
@@ -65,7 +68,7 @@ public class PreWritingPage extends WizardPage {
 		GridData ilayout = new GridData();
 		ilayout.horizontalSpan = 3;
 		information.setLayoutData(ilayout);
-		information.setText("Analyze the input ports of the mathematical model:");
+		information.setText("Define the required pre-processing functions:");
 
 		// ---------------------- Table ---------------------------
 		table = new Tree(container, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
@@ -186,7 +189,7 @@ public class PreWritingPage extends WizardPage {
 	}
 
 	public void addFunction(String name, ArrayList<String> inputs, ArrayList<String> outputs, String template) {
-		ActuationFunction aux = new ActuationFunction();
+		SystemFunction aux = new SystemFunction(ACTUATION);
 		TreeItem treeItem = new TreeItem(table, SWT.NONE);
 		TreeItem subitem;
 		aux.setName(name);
@@ -234,7 +237,7 @@ public class PreWritingPage extends WizardPage {
 		}
 	}
 
-	public ActuationFunction getItemByName(String name){
+	public SystemFunction getItemByName(String name){
 		if(!actFunctions.isEmpty()){
 			for(int i=0; i < actFunctions.size(); i++){
 				if(actFunctions.get(i).getName().equals(name))
@@ -244,7 +247,7 @@ public class PreWritingPage extends WizardPage {
 		return null;
 	}
 	
-	public void editFunction(String name, ArrayList<String> inputs, ArrayList<String> outputs, ActuationFunction item, String template) {
+	public void editFunction(String name, ArrayList<String> inputs, ArrayList<String> outputs, SystemFunction item, String template) {
 		TreeItem[] treeItem = table.getSelection();
 		for(int i = 0; i < treeItem.length; i++){
 			treeItem[i].dispose();
@@ -291,7 +294,7 @@ public class PreWritingPage extends WizardPage {
 	}
 	
 	public void editFunctionProperties(Display display) {
-		ActuationFunction aux = getItemByName(table.getSelection()[0].getText(0));
+		SystemFunction aux = getItemByName(table.getSelection()[0].getText(0));
 		ActuationFunctionShell edit = new ActuationFunctionShell(display, inputs, aux);
 		if (edit.isConfirm()) {
 			inputs = edit.getInputs();
@@ -299,7 +302,7 @@ public class PreWritingPage extends WizardPage {
 		}
 	}
 	
-	public ArrayList<ActuationFunction> getActFunctions(){
+	public ArrayList<SystemFunction> getActFunctions(){
 		return actFunctions;
 	}
 }

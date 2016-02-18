@@ -3,11 +3,11 @@ package ecpsmodeling.parser;
 import java.util.ArrayList;
 
 public class AADLThread {
-	protected ArrayList<ActuationFunction> actFunctions;
+	protected ArrayList<SystemFunction> actFunctions;
 	
 	protected ArrayList<SensingFunction> senFunctions;
 	
-	protected ArrayList<Actuator> actuators;
+	protected ArrayList<Device> actuators;
 	
 	protected ArrayList<Sensor> sensors;
 		
@@ -88,19 +88,19 @@ public class AADLThread {
 		this.period = period;
 	}
 
-	public ArrayList<ActuationFunction> getActFunctions() {
+	public ArrayList<SystemFunction> getActFunctions() {
 		return actFunctions;
 	}
 
-	public void setActFunctions(ArrayList<ActuationFunction> actFunctions) {
+	public void setActFunctions(ArrayList<SystemFunction> actFunctions) {
 		this.actFunctions = actFunctions;
 	}
 
-	public ArrayList<Actuator> getActuators() {
+	public ArrayList<Device> getActuators() {
 		return actuators;
 	}
 
-	public void setActuators(ArrayList<Actuator> actuators) {
+	public void setActuators(ArrayList<Device> actuators) {
 		this.actuators = actuators;
 	}
 	

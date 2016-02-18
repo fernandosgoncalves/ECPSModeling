@@ -7,9 +7,10 @@ public class AadlFile {
 			+ "    Data_Model::Data_Representation => Integer;\n" + "  end integer;\n\n" + "end Base_Types_Simulink;";
 
 	public String programsSimulink = "PACKAGE programs_simulink\npublic\n\n";
-	private String packageName;
-
+	
 	private SubSystem rootSubsystem;
+	
+	private String packageName;
 
 	public AadlFile() {
 		rootSubsystem = new SubSystem("", this, null);
