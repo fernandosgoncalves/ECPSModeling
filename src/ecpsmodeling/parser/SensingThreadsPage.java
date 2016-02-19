@@ -276,7 +276,6 @@ public class SensingThreadsPage extends WizardPage {
 
 		if (add.isConfirm()) {
 			updateActuatorsList(add.getSensors(), true);
-			updateFunctionList(add.getFunctions());
 
 			addThread(add.getName(), add.getPeriod(), add.getPriority(), add.getThreadSensors(), add.geTemplate(), true,
 					add.getThreadFunctions());
@@ -292,7 +291,6 @@ public class SensingThreadsPage extends WizardPage {
 
 		if (addSporadic.isConfirm()) {
 			updateActuatorsList(addSporadic.getSensors(), false);
-			updateFunctionList(addSporadic.getFunctions());
 
 			addThread(addSporadic.getName(), addSporadic.getPeriod(), addSporadic.getPriority(),
 					addSporadic.getThreadSensors(), addSporadic.geTemplate(), false, addSporadic.getThreadFunctions());
@@ -310,14 +308,14 @@ public class SensingThreadsPage extends WizardPage {
 		}
 	}
 
-	private void updateFunctionList(ArrayList<SystemFunction> iFunctions) {
+	/*private void updateFunctionList(ArrayList<SystemFunction> iFunctions) {
 		//REVER ESTA FUNÇÃO NÃO ESTA FUNCIONANDO COMO DEVERIA
 		senFunctionsList.clear();
 		
 		for (int i = 0; i < iFunctions.size(); i++) {
 			senFunctionsList.add(iFunctions.get(i));
 		}
-	}
+	}*/
 
 	private void addThread(String name, int period, int priority, ArrayList<Device> threadSensors, String sTemplate,
 			boolean bperiodic, ArrayList<SystemFunction> threadFunctions) {
@@ -381,7 +379,6 @@ public class SensingThreadsPage extends WizardPage {
 
 			if (edit.isConfirm()) {
 				updateActuatorsList(edit.getSensors(), true);
-				updateFunctionList(edit.getThreadFunctions());
 
 				editThread(edit.getName(), edit.geTemplate(), edit.getThreadSensors(), true, thread, edit.getPeriod(),
 						edit.getPriority(), edit.getThreadFunctions());
@@ -399,7 +396,6 @@ public class SensingThreadsPage extends WizardPage {
 
 		if (editSporadic.isConfirm()) {
 			updateActuatorsList(editSporadic.getSensors(), false);
-			updateFunctionList(editSporadic.getThreadFunctions());
 
 			editThread(editSporadic.getName(), editSporadic.geTemplate(), editSporadic.getThreadSensors(), false,
 					thread, editSporadic.getPeriod(), editSporadic.getPriority(), editSporadic.getThreadFunctions());

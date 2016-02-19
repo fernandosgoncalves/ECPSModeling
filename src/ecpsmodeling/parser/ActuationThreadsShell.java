@@ -80,7 +80,7 @@ public class ActuationThreadsShell {
 		threadActuators = new ArrayList<Device>();
 		threadFunctions = new ArrayList<SystemFunction>();
 		actuators = new ArrayList<Device>();
-		functions = new ArrayList<SystemFunction>();
+		//functions = new ArrayList<SystemFunction>();
 
 		init(iinputs, iFunctions);
 
@@ -106,7 +106,7 @@ public class ActuationThreadsShell {
 		threadActuators = new ArrayList<Device>();
 		threadFunctions = new ArrayList<SystemFunction>();
 		actuators = new ArrayList<Device>();
-		functions = new ArrayList<SystemFunction>();
+		//functions = new ArrayList<SystemFunction>();
 
 		init(iinputs, thread, iActFunctionsList);
 
@@ -219,7 +219,7 @@ public class ActuationThreadsShell {
 
 				txtName = name.getText();
 
-				functions.clear();
+				//functions.clear();
 
 				txtTemplate = cTemplate.getText();
 
@@ -456,10 +456,10 @@ public class ActuationThreadsShell {
 		}
 
 		if (iFunctions.size() > 0) {
+			functions = iFunctions;			
 			for (int i = 0; i < iFunctions.size(); i++) {
 				TableItem item = new TableItem(tableFunctions, SWT.NONE);
 				item.setText(iFunctions.get(i).getName());
-				functions.add(iFunctions.get(i));
 			}
 		}
 	}
@@ -517,14 +517,9 @@ public class ActuationThreadsShell {
 		return threadActuators;
 	}
 
-	public ArrayList<SystemFunction> getFunctions() {
-		return functions;
-	}
-
 	public ArrayList<SystemFunction> getThreadFunctions() {
 		return threadFunctions;
 	}
-
 	
 	public int getPriority() {
 		return priority;

@@ -31,12 +31,12 @@ public class SensingThreadsShell {
 	protected boolean confirm = false;
 	protected boolean edit = false;
 
-	protected ArrayList<Device> threadSensors;
-	protected ArrayList<Device> sensors;
-
 	protected ArrayList<SystemFunction> functions;
 	protected ArrayList<SystemFunction> threadFunctions;
 
+	protected ArrayList<Device> threadSensors;
+	protected ArrayList<Device> sensors;
+	
 	protected TabFolder tabFolder;
 
 	protected Table tableThreadFunctions;
@@ -80,7 +80,6 @@ public class SensingThreadsShell {
 		threadSensors = new ArrayList<>();
 		threadFunctions = new ArrayList<>();
 		sensors = new ArrayList<>();
-		functions = new ArrayList<>();
 
 		init(iinputs, iFunctions);
 
@@ -106,7 +105,6 @@ public class SensingThreadsShell {
 		threadSensors = new ArrayList<>();
 		threadFunctions = new ArrayList<>();
 		sensors = new ArrayList<>();
-		functions = new ArrayList<>();
 
 		init(iinputs, thread, iSenFunctionsList);
 
@@ -219,8 +217,6 @@ public class SensingThreadsShell {
 				confirm = true;
 
 				txtName = name.getText();
-
-				functions.clear();
 
 				txtTemplate = cTemplate.getText();
 
@@ -457,10 +453,10 @@ public class SensingThreadsShell {
 		}
 
 		if (iFunctions.size() > 0) {
+			functions = iFunctions;
 			for (int i = 0; i < iFunctions.size(); i++) {
 				TableItem item = new TableItem(tableFunctions, SWT.NONE);
 				item.setText(iFunctions.get(i).getName());
-				functions.add(iFunctions.get(i));
 			}
 		}
 	}
@@ -516,10 +512,6 @@ public class SensingThreadsShell {
 
 	public ArrayList<Device> getThreadSensors() {
 		return threadSensors;
-	}
-
-	public ArrayList<SystemFunction> getFunctions() {
-		return functions;
 	}
 
 	public ArrayList<SystemFunction> getThreadFunctions() {

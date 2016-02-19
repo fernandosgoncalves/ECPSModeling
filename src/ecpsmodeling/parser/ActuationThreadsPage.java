@@ -277,7 +277,7 @@ public class ActuationThreadsPage extends WizardPage {
 
 		if (add.isConfirm()) {
 			updateActuatorsList(add.getActuators(), true);
-			updateFunctionList(add.getThreadFunctions());
+			//updateFunctionList(add.getThreadFunctions());
 
 			addThread(add.getName(), add.getPeriod(), add.getPriority(), add.getThreadActuators(), add.geTemplate(),
 					true, add.getThreadFunctions());
@@ -293,7 +293,7 @@ public class ActuationThreadsPage extends WizardPage {
 
 		if (addSporadic.isConfirm()) {
 			updateActuatorsList(addSporadic.getActuators(), false);
-			updateFunctionList(addSporadic.getThreadFunctions());
+			//updateFunctionList(addSporadic.getThreadFunctions());
 
 			addThread(addSporadic.getName(), addSporadic.getPeriod(), addSporadic.getPriority(),
 					addSporadic.getThreadActuators(), addSporadic.geTemplate(), false,
@@ -312,7 +312,7 @@ public class ActuationThreadsPage extends WizardPage {
 		}
 	}
 
-	private void updateFunctionList(ArrayList<SystemFunction> iFunctions) {
+	/*private void updateFunctionList(ArrayList<SystemFunction> iFunctions) {
 		for(int i = 0; i < iFunctions.size(); i++){
 			for(int x = 0; x < actFunctionsList.size(); x++){
 				if(iFunctions.get(i).getName().equals(actFunctionsList.get(x).getName()) && actFunctionsList.get(x).getIndex() == iFunctions.get(i).getIndex()){
@@ -321,7 +321,7 @@ public class ActuationThreadsPage extends WizardPage {
 				}
 			}
 		}
-	}
+	}*/
 	
 	
 	private void addThread(String name, int period, int priority, ArrayList<Device> threadActuators, String sTemplate,
@@ -385,7 +385,6 @@ public class ActuationThreadsPage extends WizardPage {
 
 		if (edit.isConfirm()) {
 			updateActuatorsList(edit.getActuators(), true);
-			updateFunctionList(edit.getThreadFunctions());
 
 			editThread(edit.getName(), edit.geTemplate(), edit.getThreadActuators(), true, thread, edit.getPeriod(),
 					edit.getPriority(), edit.getThreadFunctions());
@@ -402,7 +401,6 @@ public class ActuationThreadsPage extends WizardPage {
 
 		if (editSporadic.isConfirm()) {
 			updateActuatorsList(editSporadic.getActuators(), false);
-			updateFunctionList(editSporadic.getThreadFunctions());
 			
 			editThread(editSporadic.getName(), editSporadic.geTemplate(), editSporadic.getThreadActuators(), false, thread, editSporadic.getPeriod(),
 					editSporadic.getPriority(), editSporadic.getThreadFunctions());
