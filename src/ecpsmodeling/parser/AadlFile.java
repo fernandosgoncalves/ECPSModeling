@@ -93,30 +93,38 @@ public class AadlFile {
 		aadl += "END " + rootSubsystem.getName() + ";\n\n";
 		aadl += "SYSTEM IMPLEMENTATION " + rootSubsystem.getName() + ".impl\n";
 		aadl += "SUBCOMPONENTS\n";
-		for (int i = 0; i < rootSubsystem.getSubSystemsCount(); i++) {
-			aadl += "  " + rootSubsystem.getSubSystem(i).getFullName() + ": " + rootSubsystem.getSubSystem(i).getMark()
-					+ " " + rootSubsystem.getSubSystem(i).getFullName() + ".impl;\n";
+		if(rootSubsystem.getSubSystemsCount() == 0)
+			aadl += "  none;\n";
+		else{
+			for (int i = 0; i < rootSubsystem.getSubSystemsCount(); i++) {
+				aadl += "  " + rootSubsystem.getSubSystem(i).getFullName() + ": " + rootSubsystem.getSubSystem(i).getMark()
+						+ " " + rootSubsystem.getSubSystem(i).getFullName() + ".impl;\n";
+			}
 		}
 		aadl += "CONNECTIONS\n";
-		int c = 1;
-		for (int i = 0; i < rootSubsystem.getAllLines().size(); i++) {
-			Port outPort = rootSubsystem.findOutPort(rootSubsystem.getAllLines().get(i).getSrcSystem(),
-					rootSubsystem.getAllLines().get(i).getSrcPort());
-			if (outPort != null)
-				aadl += "    C" + c + ": PORT "
-						+ rootSubsystem.getFullName(rootSubsystem.getAllLines().get(i).getSrcSystem()) + "."
-						+ outPort.getName() + " -> ";
-			else
-				aadl += "    C" + c + ": PORT "
-						+ rootSubsystem.getFullName(rootSubsystem.getAllLines().get(i).getSrcSystem()) + " -> ";
-			Port inPort = rootSubsystem.findInPort(rootSubsystem.getAllLines().get(i).getDestSystem(),
-					rootSubsystem.getAllLines().get(i).getDestPort());
-			if (inPort != null)
-				aadl += rootSubsystem.getFullName(rootSubsystem.getAllLines().get(i).getDestSystem()) + "."
-						+ inPort.getName() + ";\n";
-			else
-				aadl += rootSubsystem.getFullName(rootSubsystem.getAllLines().get(i).getDestSystem()) + ";\n";
-			c++;
+		if(rootSubsystem.getAllLines().size() == 0)
+			aadl += "  none;\n";
+		else{
+			int c = 1;
+			for (int i = 0; i < rootSubsystem.getAllLines().size(); i++) {
+				Port outPort = rootSubsystem.findOutPort(rootSubsystem.getAllLines().get(i).getSrcSystem(),
+						rootSubsystem.getAllLines().get(i).getSrcPort());
+				if (outPort != null)
+					aadl += "    C" + c + ": PORT "
+							+ rootSubsystem.getFullName(rootSubsystem.getAllLines().get(i).getSrcSystem()) + "."
+							+ outPort.getName() + " -> ";
+				else
+					aadl += "    C" + c + ": PORT "
+							+ rootSubsystem.getFullName(rootSubsystem.getAllLines().get(i).getSrcSystem()) + " -> ";
+				Port inPort = rootSubsystem.findInPort(rootSubsystem.getAllLines().get(i).getDestSystem(),
+						rootSubsystem.getAllLines().get(i).getDestPort());
+				if (inPort != null)
+					aadl += rootSubsystem.getFullName(rootSubsystem.getAllLines().get(i).getDestSystem()) + "."
+							+ inPort.getName() + ";\n";
+				else
+					aadl += rootSubsystem.getFullName(rootSubsystem.getAllLines().get(i).getDestSystem()) + ";\n";
+				c++;
+			}
 		}
 		aadl += "END " + rootSubsystem.getName() + ".impl;\n\n";
 		for (int i = 0; i < rootSubsystem.getSubSystemsCount(); i++) {

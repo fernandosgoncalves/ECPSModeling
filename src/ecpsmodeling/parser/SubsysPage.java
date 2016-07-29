@@ -10,13 +10,13 @@
  *******************************************************************************/
 package ecpsmodeling.parser;
 
+import org.eclipse.jface.viewers.CellEditor.LayoutData;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.jface.viewers.CellEditor.LayoutData;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -69,13 +69,15 @@ public class SubsysPage extends WizardPage {
 		modelOutput = new Combo(container, SWT.NONE);
 		modelOutput.add("AADL Model");
 		modelOutput.add("Simulink Model");
-		modelOutput.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				if(table.getSelectionIndex() > 0)
-					setPageComplete(true);
-			}
-		});
+		modelOutput.setEnabled(false);
+		modelOutput.select(0);
+//		modelOutput.addModifyListener(new ModifyListener() {
+//			@Override
+//			public void modifyText(ModifyEvent e) {
+//				if(table.getSelectionIndex() > 0)
+//					setPageComplete(true);
+//			}
+//		});
 				
 		// ---------------------- Table ---------------------------
 		table = new Table(container, SWT.BORDER);
