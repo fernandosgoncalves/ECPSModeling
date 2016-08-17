@@ -82,9 +82,9 @@ public class ECPSModeling extends Wizard implements IImportWizard {
 				 * Selected the mathematical model sybsystem, this function read
 				 * their input ports and populate a list to analyze it.
 				 */
-				// if (subsysPage.table.getSelectionIndex() > 0)
-				// inputsPage.populateInputList(mdl2Aadl.aadl.getSubSystem().searchSubSystem(
-				// subsysPage.table.getItem(subsysPage.table.getSelectionIndex()).getText(0)));
+				if (subsysPage.table.getSelectionIndex() > 0)
+					inputsPage.populateInputList(mdl2Aadl.aadl.getSubSystem().searchSubSystem(
+							subsysPage.table.getItem(subsysPage.table.getSelectionIndex()).getText(0)));
 				break;
 			case ACTUATION:
 				/*
@@ -177,88 +177,21 @@ public class ECPSModeling extends Wizard implements IImportWizard {
 	}
 
 	/*
-	 * Search recursively and remove the selected device block
-	 */
-	private void removeSelectedDevice(ArrayList<SubSystem> subsystems, String selected) {
-		int t = 0;
-		while (t < subsystems.size()) {
-			if (subsystems.get(t).getName().equals(selected))
-				subsystems.remove(t);
-			else {
-				if (subsystems.get(t).getAllSubSystem().size() > 0)
-					removeSelectedDevice(subsystems.get(t).getAllSubSystem(), selected);
-				t++;
-			}
-		}
-	}
-
-	/*
-	 * Search recursively and remove the connected lines to the selected device
-	 * block
-	 */
-	private void removeDeviceLines(SubSystem subsystem, String selected) {
-		int w = 0;
-		while (w < subsystem.getAllLines().size()) {
-			if (subsystem.getAllLines().get(w).getSrcSystem().equals(selected)
-					|| subsystem.getAllLines().get(w).getDestSystem().equals(selected))
-				subsystem.getAllLines().remove(w);
-			else
-				w++;
-		}
-		if(subsystem.getAllSubSystem().size() > 0){
-			int t = 0;
-			while (t < subsystem.getAllSubSystem().size()){
-				removeDeviceLines(subsystem.getSubSystem(t),selected);
-				t++;
-			}
-		}
-	}
-
-	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.jface.wizard.Wizard#performFinish() Function performed
 	 * when the finish button is pressed
 	 */
 	public boolean performFinish() {
-		// System.out.println("FINISH PRESSED");
 		IFile file = mainPage.createNewFile();
 		try {
-			/*
-			 * Remove the selected subsystem that will be replaced by the
-			 * sensing and actuation subsystems
-			 */
-			removeSelectedDevice(mdl2Aadl.aadl.getSubSystem().getAllSubSystem(),
-					subsysPage.table.getItem(subsysPage.table.getSelectionIndex()).getText(0));
-
-			/*
-			 * Remove all the lines that are connected to the selected subsystem
-			 */
-			removeDeviceLines(mdl2Aadl.aadl.getSubSystem(),
-					subsysPage.table.getItem(subsysPage.table.getSelectionIndex()).getText(0));
-
-//			int w = 0;
-//			while (w < mdl2Aadl.aadl.getSubSystem().getAllLines().size()) {
-//				if (mdl2Aadl.aadl.getSubSystem().getAllLines().get(w).getSrcSystem()
-//						.equals(subsysPage.table.getItem(subsysPage.table.getSelectionIndex()).getText(0))
-//						|| mdl2Aadl.aadl.getSubSystem().getAllLines().get(w).getDestSystem()
-//								.equals(subsysPage.table.getItem(subsysPage.table.getSelectionIndex()).getText(0)))
-//					mdl2Aadl.aadl.getSubSystem().getAllLines().remove(w);
-//				else
-//					w++;
-//
-//			}
-
 			/*
 			 * Function that generate the system sensors and actuators on the
 			 * AADL Model
 			 */
-			// mdl2Aadl.sensingActuationTransformation(prewritingPage.getActFunctions(),
-			// actuatorsPage.getActuators(),
-			// postReadingPage.getSenFunctions(), sensorsPage.getSensors(),
-			// mdl2Aadl.aadl.getSubSystem().searchSubSystem(
-			// subsysPage.table.getItem(subsysPage.table.getSelectionIndex()).getText(0)));
-			// mdl2Aadl.aadl.getSubSystem()
+			mdl2Aadl.sensingActuationTransformation(actuatorsThreadsPage.getThreads(), sensingThreadsPage.getThreads(),
+					mdl2Aadl.aadl.getSubSystem().searchSubSystem(
+							subsysPage.table.getItem(subsysPage.table.getSelectionIndex()).getText(0)));
 
 			/* Generation of the AADL file */
 			mdl2Aadl.save(file.getRawLocation().removeLastSegments(1) + "/",
@@ -305,14 +238,14 @@ public class ECPSModeling extends Wizard implements IImportWizard {
 
 		addPage(mainPage);
 		addPage(subsysPage);
-		// addPage(inputsPage);
-		// addPage(prewritingPage);
-		// addPage(actuatorsPage);
-		// addPage(actuatorsThreadsPage);
-		// addPage(outputsPage);
-		// addPage(postReadingPage);
-		// addPage(sensorsPage);
-		// addPage(sensingThreadsPage);
+		addPage(inputsPage);
+		addPage(prewritingPage);
+		addPage(actuatorsPage);
+		addPage(actuatorsThreadsPage);
+		addPage(outputsPage);
+		addPage(postReadingPage);
+		addPage(sensorsPage);
+		addPage(sensingThreadsPage);
 		super.addPages();
 	}
 }
