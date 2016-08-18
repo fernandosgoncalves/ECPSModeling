@@ -359,10 +359,15 @@ public class SubSystem {
 	public SubSystem searchSubSystem(String name) {
 		SubSystem local;
 		local = null;
+		//System.out.println("Searching subsystem");
 		for (SubSystem child : this.getAllSubSystem()){
-			if (child.name.equals(name)) 
+			//System.out.println(child.name + " - " + name);			
+			if (child.name.equals(name)){
+				//System.out.println("Founded");
 				return child;
+			}
 			else {
+				//System.out.println("Sub: " + child.getSubSystemsCount());
 				if (child.getSubSystemsCount() > 0) {
 					local = child.searchSubSystem(name);
 					if(local != null)
