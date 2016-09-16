@@ -791,8 +791,7 @@ public class Mdl2Aadl {
 				number = out.getNumber();
 
 		for (Line connection : parent.getAllLines())
-			if (connection.getSrcSystem().equals(sysName)
-					&& connection.getSrcPort().equals(number))
+			if (connection.getSrcSystem().equals(sysName) && connection.getSrcPort().equals(number))
 				return connection.getDestPort();
 
 		return "-1";
@@ -821,65 +820,65 @@ public class Mdl2Aadl {
 		/*
 		 * Insert the actuation threads
 		 */
-		for (int i = 0; i < actThreads.size(); i++) {
-			thread = new SubSystem(actThreads.get(i).getName(), aadl, senactProcess);
+		for (AADLThread actuationT : actThreads) {
+			thread = new SubSystem(actuationT.getName(), aadl, senactProcess);
 			thread.setMark("thread");
 
 			/*
 			 * Insert the created actuation functions in the aadl file
 			 */
-			for (int x = 0; x < actThreads.get(i).getActFunctions().size(); x++) {
-				if (actThreads.get(i).getActFunctions().get(x).getType() == 1) {
+			for (SystemFunction actFunction : actuationT.getActFunctions()) {
+				if (actFunction.getType() == 1) {
 					/*
 					 * insert the function in ports on the threads
 					 */
-					for (int z = 0; z < actThreads.get(i).getActFunctions().get(x).getInputs().size(); z++) {
-						senactProcess.addInPort(senactProcess.getName(),
-								actThreads.get(i).getActFunctions().get(x).getInputs().get(z),
+					for (String actInput : actFunction.getInputs()) {
+						senactProcess.addInPort(senactProcess.getName(), actInput,
 								Integer.toString(senactProcess.getInPortsCount() + 1), "Port", "int32",
 								senactProcess.getParent());
-						thread.addInPort(thread.getName(),
-								actThreads.get(i).getActFunctions().get(x).getInputs().get(z),
-								Integer.toString(thread.getInPortsCount() + 1), "Port", "int32", thread.getParent());
+
+						thread.addInPort(thread.getName(), actInput, Integer.toString(thread.getInPortsCount() + 1),
+								"Port", "int32", thread.getParent());
 
 						/*
 						 * Insert the line from control process to sensing and
 						 * actuation process
 						 */
-						String inputName = actThreads.get(i).getActFunctions().get(x).getInputs().get(z).substring(0,
-								actThreads.get(i).getActFunctions().get(x).getInputs().get(z).length() - 1);
-						senactProcess.getParent().addLine(
-								searchSrcSystem(senactProcess.getParent(), subsystem.getName(), subsystem.getInPorts(),
-										inputName),
-								searchSrcPortNumber(senactProcess.getParent(), subsystem.getName(),
-										subsystem.getInPorts(), inputName),
-								senactProcess.getName(), Integer.toString(senactProcess.getInPortsCount()));
+						String inputName = actInput.substring(0, actInput.length() - 1);
+
+						if (!searchSrcSystem(senactProcess.getParent(), subsystem.getName(), subsystem.getInPorts(),
+								inputName).equals("")
+								&& !searchSrcPortNumber(senactProcess.getParent(), subsystem.getName(),
+										subsystem.getInPorts(), inputName).equals(""))
+							senactProcess.getParent().addLine(
+									searchSrcSystem(senactProcess.getParent(), subsystem.getName(),
+											subsystem.getInPorts(), inputName),
+									searchSrcPortNumber(senactProcess.getParent(), subsystem.getName(),
+											subsystem.getInPorts(), inputName),
+									senactProcess.getName(), Integer.toString(senactProcess.getInPortsCount()));
 						/*
 						 * Adding connections between process inputs and threads
 						 * inputs
 						 */
-						senactProcess.addLine(actThreads.get(i).getActFunctions().get(x).getInputs().get(z),
-								Integer.toString(senactProcess.getInPortsCount()), thread.getName(),
-								Integer.toString(thread.getInPortsCount()));
+						senactProcess.addLine(actInput, Integer.toString(senactProcess.getInPortsCount()),
+								thread.getName(), Integer.toString(thread.getInPortsCount()));
 					}
 
 					/*
 					 * insert the function out ports on the threads
 					 */
-					for (int z = 0; z < actThreads.get(i).getActFunctions().get(x).getOutputs().size(); z++) {
-						senactProcess.addOutPort(senactProcess.getName(),
-								actThreads.get(i).getActFunctions().get(x).getOutputs().get(z),
+					for (String actOutput : actuationT.getOutputs()) {
+						senactProcess.addOutPort(senactProcess.getName(), actOutput,
 								Integer.toString(senactProcess.getOutPortsCount() + 1), "Port", "int32",
 								senactProcess.getParent());
-						thread.addOutPort(thread.getName(),
-								actThreads.get(i).getActFunctions().get(x).getOutputs().get(z),
-								Integer.toString(thread.getOutPortsCount() + 1), "Port", "int32", thread.getParent());
+
+						thread.addOutPort(thread.getName(), actOutput, Integer.toString(thread.getOutPortsCount() + 1),
+								"Port", "int32", thread.getParent());
 
 						/*
 						 * Adding lines of thread from process
 						 */
-						senactProcess.addLine(thread.getName(), Integer.toString(thread.getOutPortsCount()),
-								actThreads.get(i).getActFunctions().get(x).getOutputs().get(z),
+						senactProcess.addLine(thread.getName(), Integer.toString(thread.getOutPortsCount()), actOutput,
 								Integer.toString(senactProcess.getOutPortsCount()));
 					}
 
@@ -899,26 +898,37 @@ public class Mdl2Aadl {
 			/*
 			 * Insert the system actuators
 			 */
-			for (int x = 0; x < actThreads.get(i).getActuators().size(); x++) {
+			for (Device actuator : actuationT.getActuators()) {
 				/*
 				 * Add Actuators Devices to the sensing and actuation processes
 				 */
-				device = new SubSystem(actThreads.get(i).getActuators().get(x).getName() + (x + 1), aadl,
-						subsystem.getParent());
+				device = new SubSystem(actuator.getName() + (actuator.getIndex() + 1), aadl, subsystem.getParent());
 				device.setMark("device");
-				device.addInPort(device.getName(), actThreads.get(i).getActuators().get(x).getInputs().get(0), "Port",
-						"int32", device.getParent());
+				device.addInPort(device.getName(), actuator.getInputs().get(0), "Port", "int32", device.getParent());
 
 				senactProcess.getParent().addSubSystem(device);
 
+				if (actuationT.getActFunctions().size() == 0) {
+					senactProcess.addOutPort(senactProcess.getName(), actuator.getInputs().get(0),
+							Integer.toString(senactProcess.getOutPortsCount() + 1), "Port", "int32",
+							senactProcess.getParent());
+
+					thread.addOutPort(thread.getName(), actuator.getInputs().get(0),
+							Integer.toString(thread.getOutPortsCount() + 1), "Port", "int32", thread.getParent());
+
+					/*
+					 * Adding lines of thread from process
+					 */
+					senactProcess.addLine(thread.getName(), Integer.toString(thread.getOutPortsCount()),
+							actuator.getInputs().get(0), Integer.toString(senactProcess.getOutPortsCount()));
+
+				}
 				/*
 				 * Adding lines of processes from devices
 				 */
-				if (!senactProcess.searchOutPort(actThreads.get(i).getActuators().get(x).getInputs().get(0))
-						.equals("-1"))
+				if (!senactProcess.searchOutPort(actuator.getInputs().get(0)).equals("-1"))
 					senactProcess.getParent().addLine(senactProcess.getName(),
-							senactProcess.searchOutPort(actThreads.get(i).getActuators().get(x).getInputs().get(0)),
-							device.getName(), "1");
+							senactProcess.searchOutPort(actuator.getInputs().get(0)), device.getName(), "1");
 			}
 
 			senactProcess.addSubSystem(thread);
@@ -928,11 +938,11 @@ public class Mdl2Aadl {
 		/*
 		 * Insert the sensing threads
 		 */
-		for (int i = 0; i < senThreads.size(); i++) {
-			thread = new SubSystem(senThreads.get(i).getName(), aadl, senactProcess);
+		for (AADLThread sensingT : senThreads) {
+			thread = new SubSystem(sensingT.getName(), aadl, senactProcess);
 			thread.setMark("thread");
 
-			for (Device sensor : senThreads.get(i).getSensors()) {
+			for (Device sensor : sensingT.getSensors()) {
 				/*
 				 * Add Actuators Devices to the sensing and actuation processes
 				 */
@@ -941,6 +951,48 @@ public class Mdl2Aadl {
 				device.addOutPort(device.getName(), sensor.getOutputs().get(0), "Port", "int32", device.getParent());
 
 				senactProcess.getParent().addSubSystem(device);
+
+				if (sensingT.getSenFunctions().size() == 0) {
+					senactProcess.addInPort(senactProcess.getName(), sensor.getOutputs().get(0),
+							Integer.toString(senactProcess.getInPortsCount() + 1), "Port", "int32",
+							senactProcess.getParent());
+
+					thread.addInPort(thread.getName(), sensor.getOutputs().get(0),
+							Integer.toString(thread.getInPortsCount() + 1), "Port", "int32", thread.getParent());
+
+					/*
+					 * Adding lines of process from thread
+					 */
+					senactProcess.addLine(sensor.getOutputs().get(0), Integer.toString(senactProcess.getInPortsCount()),
+							thread.getName(), Integer.toString(thread.getInPortsCount()));
+
+					/*
+					 * Inserting the output port to connect the sensing process
+					 * to the control process
+					 */
+					String outputName = sensor.getOutputs().get(0).substring(0,
+							sensor.getOutputs().get(0).length() - 1);
+					
+					senactProcess.addOutPort(senactProcess.getName(),
+							outputName,
+							Integer.toString(senactProcess.getOutPortsCount() + 1), "Port", "int32",
+							senactProcess.getParent());
+
+					thread.addOutPort(thread.getName(),
+							outputName,
+							Integer.toString(thread.getOutPortsCount() + 1), "Port", "int32", thread.getParent());
+
+					/*
+					 * Adding lines from sensing process to control process
+					 */
+					senactProcess.getParent().addLine(senactProcess.getName(),
+							Integer.toString(senactProcess.getOutPortsCount()),
+							searchDestSystem(senactProcess.getParent(), subsystem.getName(), subsystem.getOutPorts(),
+									outputName),
+							searchDestPortNumber(senactProcess.getParent(), subsystem.getName(),
+									subsystem.getOutPorts(), outputName));
+
+				}
 
 				/*
 				 * Adding lines of devices from processes
@@ -953,7 +1005,7 @@ public class Mdl2Aadl {
 			/*
 			 * Insert the created sensing functions in the aadl file
 			 */
-			for (SystemFunction sensing : senThreads.get(i).getSenFunctions()) {
+			for (SystemFunction sensing : sensingT.getSenFunctions()) {
 				if (sensing.getType() == 0) {
 					/*
 					 * insert the function in ports on the threads
@@ -972,10 +1024,12 @@ public class Mdl2Aadl {
 						 */
 						String subsystemName = searchSrcSystem(subsystem.getParent().getAllSubSystem(), input);
 
-						senactProcess.getParent()
-								.addLine(subsystemName, searchSrcPortNumber(
-										subsystem.getParent().searchSubSystem(subsystemName).getOutPorts(), input),
-								senactProcess.getName(), Integer.toString(senactProcess.getInPortsCount()));
+						if (!subsystemName.equals("")
+								&& (subsystem.getParent().searchSubSystem(subsystemName).getOutPorts() != null))
+							senactProcess.getParent().addLine(subsystemName,
+									searchSrcPortNumber(
+											subsystem.getParent().searchSubSystem(subsystemName).getOutPorts(), input),
+									senactProcess.getName(), Integer.toString(senactProcess.getInPortsCount()));
 
 						/*
 						 * Adding connections between process inputs and threads
