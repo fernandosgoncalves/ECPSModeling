@@ -33,7 +33,9 @@ import java.util.ArrayList;
 import org.eclipse.swt.SWT;
 
 public class ActuatorsPage extends WizardPage {
-	protected ArrayList<Actuator> actuators;	
+	protected static final int ACTUATION = 1;
+	
+	protected ArrayList<Device> actuators;	
 	
 	private Composite container;
 	
@@ -152,7 +154,7 @@ public class ActuatorsPage extends WizardPage {
 		ActuatorsPropertiesShell edit = new ActuatorsPropertiesShell(table.getItem(table.getSelectionIndex()), display);
 		
 		if (edit.isConfirm()) {
-			Actuator auxActuator = actuators.get(table.getSelectionIndex());
+			Device auxActuator = actuators.get(table.getSelectionIndex());
 			
 			TableItem aux = table.getItem(table.getSelectionIndex());
 			aux.setText(1, edit.getActuator());
@@ -179,12 +181,12 @@ public class ActuatorsPage extends WizardPage {
 	 * Verify the input table and according the vector amount of each input port
 	 * the signals are inserted into the sensors list specification
 	 */
-	public void populateActuatorsTable(Table inputTable, ArrayList<ActuationFunction> functions) {
+	public void populateActuatorsTable(Table inputTable, ArrayList<SystemFunction> functions) {
 		//If table have data clear it
 		if(table.getItemCount() > 0)
 			clearData();
 		
-		Actuator actuator;
+		Device actuator;
 		TableItem item;
 		
 		TableEditor teEditor;
@@ -239,7 +241,7 @@ public class ActuatorsPage extends WizardPage {
 		
 		//populate Array of actuators
 		for(int i = 0; i < table.getItemCount(); i++){
-			actuator = new Actuator();
+			actuator = new Device(ACTUATION);
 			actuator.setIndex(i);
 			actuator.inputs.add(table.getItem(i).getText(0));
 			if(table.getItem(i).getText(1).isEmpty())
@@ -276,7 +278,7 @@ public class ActuatorsPage extends WizardPage {
 			setPageComplete(false);
 	}
 	
-	protected ArrayList<Actuator> getActuators(){
+	protected ArrayList<Device> getActuators(){
 		//System.out.println(actuators.size());
 		return actuators;
 	}

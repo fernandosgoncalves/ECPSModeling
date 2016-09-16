@@ -33,7 +33,9 @@ import java.util.ArrayList;
 import org.eclipse.swt.SWT;
 
 public class SensorsPage extends WizardPage {
-	protected ArrayList<Sensor> sensors;
+	protected static final int SENSING = 0;
+	
+	protected ArrayList<Device> sensors;
 
 	private Composite container;
 
@@ -153,7 +155,7 @@ public class SensorsPage extends WizardPage {
 		SensorsPropertiesShell edit = new SensorsPropertiesShell(table.getItem(table.getSelectionIndex()), display);
 
 		if (edit.isConfirm()) {
-			Sensor auxSensor = sensors.get(table.getSelectionIndex());
+			Device auxSensor = sensors.get(table.getSelectionIndex());
 
 			TableItem aux = table.getItem(table.getSelectionIndex());
 			aux.setText(1, edit.getSensor());
@@ -180,12 +182,12 @@ public class SensorsPage extends WizardPage {
 	 * Verify the input table and according the vector amount of each input port
 	 * the signals are inserted into the sensors list specification
 	 */
-	public void populateSensorsTable(Table inputTable, ArrayList<SensingFunction> subsystems) {
+	public void populateSensorsTable(Table inputTable, ArrayList<SystemFunction> subsystems) {
 		// If table have data clear it
 		if (table.getItemCount() > 0)
 			clearData();
 
-		Sensor sensor;
+		Device sensor;
 		TableItem item;
 		
 		TableEditor teEditor;
@@ -240,7 +242,7 @@ public class SensorsPage extends WizardPage {
 
 		// populate Array of sensors
 		for (int i = 0; i < table.getItemCount(); i++) {
-			sensor = new Sensor();
+			sensor = new Device(SENSING);
 			sensor.setIndex(i);
 			sensor.outputs.add(table.getItem(i).getText(0));
 			if(table.getItem(i).getText(1).isEmpty())
@@ -276,7 +278,7 @@ public class SensorsPage extends WizardPage {
 			setPageComplete(false);
 	}
 	
-	protected ArrayList<Sensor> getSensors(){
+	protected ArrayList<Device> getSensors(){
 		return sensors;
 	}
 }

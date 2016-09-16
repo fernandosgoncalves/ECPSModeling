@@ -31,12 +31,12 @@ public class SensingThreadsShell {
 	protected boolean confirm = false;
 	protected boolean edit = false;
 
-	protected ArrayList<Sensor> threadSensors;
-	protected ArrayList<Sensor> sensors;
+	protected ArrayList<SystemFunction> functions;
+	protected ArrayList<SystemFunction> threadFunctions;
 
-	protected ArrayList<SensingFunction> functions;
-	protected ArrayList<SensingFunction> threadFunctions;
-
+	protected ArrayList<Device> threadSensors;
+	protected ArrayList<Device> sensors;
+	
 	protected TabFolder tabFolder;
 
 	protected Table tableThreadFunctions;
@@ -69,18 +69,17 @@ public class SensingThreadsShell {
 
 	Shell shell;
 
-	public SensingThreadsShell(Display display, ArrayList<Sensor> iinputs, String title, Boolean bperiodic,
-			ArrayList<SensingFunction> iFunctions) {
+	public SensingThreadsShell(Display display, ArrayList<Device> iinputs, String title, Boolean bperiodic,
+			ArrayList<SystemFunction> iFunctions) {
 		createShell(display, title);
 
 		periodic = bperiodic;
 
 		createControl();
 
-		threadSensors = new ArrayList<Sensor>();
-		threadFunctions = new ArrayList<SensingFunction>();
-		sensors = new ArrayList<Sensor>();
-		functions = new ArrayList<SensingFunction>();
+		threadSensors = new ArrayList<>();
+		threadFunctions = new ArrayList<>();
+		sensors = new ArrayList<>();
 
 		init(iinputs, iFunctions);
 
@@ -95,18 +94,17 @@ public class SensingThreadsShell {
 		}
 	}
 
-	public SensingThreadsShell(Display display, ArrayList<Sensor> iinputs, AADLThread thread, String title,
-			Boolean bperiodic, ArrayList<SensingFunction> iSenFunctionsList) {
+	public SensingThreadsShell(Display display, ArrayList<Device> iinputs, AADLThread thread, String title,
+			Boolean bperiodic, ArrayList<SystemFunction> iSenFunctionsList) {
 		createShell(display, title);
 
 		periodic = bperiodic;
 
 		createControl();
 
-		threadSensors = new ArrayList<Sensor>();
-		threadFunctions = new ArrayList<SensingFunction>();
-		sensors = new ArrayList<Sensor>();
-		functions = new ArrayList<SensingFunction>();
+		threadSensors = new ArrayList<>();
+		threadFunctions = new ArrayList<>();
+		sensors = new ArrayList<>();
 
 		init(iinputs, thread, iSenFunctionsList);
 
@@ -219,8 +217,6 @@ public class SensingThreadsShell {
 				confirm = true;
 
 				txtName = name.getText();
-
-				functions.clear();
 
 				txtTemplate = cTemplate.getText();
 
@@ -445,7 +441,7 @@ public class SensingThreadsShell {
 		return composite;
 	}
 
-	private void init(ArrayList<Sensor> inputs, ArrayList<SensingFunction> iFunctions) {
+	private void init(ArrayList<Device> inputs, ArrayList<SystemFunction> iFunctions) {
 		if (inputs.size() > 0) {
 			for (int i = 0; i < inputs.size(); i++) {
 				if (inputs.get(i).isPeriodic() == periodic) {
@@ -457,15 +453,15 @@ public class SensingThreadsShell {
 		}
 
 		if (iFunctions.size() > 0) {
+			functions = iFunctions;
 			for (int i = 0; i < iFunctions.size(); i++) {
 				TableItem item = new TableItem(tableFunctions, SWT.NONE);
 				item.setText(iFunctions.get(i).getName());
-				functions.add(iFunctions.get(i));
 			}
 		}
 	}
 
-	private void init(ArrayList<Sensor> inputs, AADLThread thread, ArrayList<SensingFunction> iFunctions) {
+	private void init(ArrayList<Device> inputs, AADLThread thread, ArrayList<SystemFunction> iFunctions) {
 		init(inputs, iFunctions);
 		name.setText(thread.getName());
 		for (int i = 0; i < cTemplate.getItemCount(); i++) {
@@ -510,19 +506,15 @@ public class SensingThreadsShell {
 		return txtTemplate;
 	}
 
-	public ArrayList<Sensor> getSensors() {
+	public ArrayList<Device> getSensors() {
 		return sensors;
 	}
 
-	public ArrayList<Sensor> getThreadSensors() {
+	public ArrayList<Device> getThreadSensors() {
 		return threadSensors;
 	}
 
-	public ArrayList<SensingFunction> getFunctions() {
-		return functions;
-	}
-
-	public ArrayList<SensingFunction> getThreadFunctions() {
+	public ArrayList<SystemFunction> getThreadFunctions() {
 		return threadFunctions;
 	}
 

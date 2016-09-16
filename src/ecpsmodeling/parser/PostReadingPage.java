@@ -30,11 +30,13 @@ import java.util.ArrayList;
 import org.eclipse.swt.SWT;
 
 public class PostReadingPage extends WizardPage {
+	protected static final int SENSING = 0;
+	
 	private Composite container;
 
 	protected Tree table;
 
-	protected ArrayList<SensingFunction> senFunctions;
+	protected ArrayList<SystemFunction> senFunctions;
 	protected ArrayList<String> outputs;
 
 	protected Label information;
@@ -186,7 +188,7 @@ public class PostReadingPage extends WizardPage {
 	}
 
 	public void addFunction(String name, ArrayList<String> inputs, ArrayList<String> outputs, String template) {
-		SensingFunction aux = new SensingFunction();
+		SystemFunction aux = new SystemFunction(SENSING);
 		TreeItem treeItem = new TreeItem(table, SWT.NONE);
 		TreeItem subitem;
 		aux.setName(name);
@@ -234,7 +236,7 @@ public class PostReadingPage extends WizardPage {
 		}
 	}
 
-	public SensingFunction getItemByName(String name) {
+	public SystemFunction getItemByName(String name) {
 		if (!senFunctions.isEmpty()) {
 			for (int i = 0; i < senFunctions.size(); i++) {
 				if (senFunctions.get(i).getName().equals(name))
@@ -244,7 +246,7 @@ public class PostReadingPage extends WizardPage {
 		return null;
 	}
 
-	public void editFunction(String name, ArrayList<String> inputs, ArrayList<String> outputs, SensingFunction item, String template) {
+	public void editFunction(String name, ArrayList<String> inputs, ArrayList<String> outputs, SystemFunction item, String template) {
 		TreeItem[] treeItem = table.getSelection();
 		for (int i = 0; i < treeItem.length; i++) {
 			treeItem[i].dispose();
@@ -291,7 +293,7 @@ public class PostReadingPage extends WizardPage {
 	}
 
 	public void editFunctionProperties(Display display) {
-		SensingFunction aux = getItemByName(table.getSelection()[0].getText(0));
+		SystemFunction aux = getItemByName(table.getSelection()[0].getText(0));
 		SensingFunctionShell edit = new SensingFunctionShell(display, outputs, aux, aux.getTemplate());
 		if (edit.isConfirm()) {
 			outputs = edit.getOutputs();
@@ -299,7 +301,7 @@ public class PostReadingPage extends WizardPage {
 		}
 	}
 
-	public ArrayList<SensingFunction> getSenFunctions() {
+	public ArrayList<SystemFunction> getSenFunctions() {
 		return senFunctions;
 	}
 }

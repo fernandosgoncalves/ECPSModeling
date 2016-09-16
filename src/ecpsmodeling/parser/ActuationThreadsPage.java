@@ -30,9 +30,9 @@ import java.util.ArrayList;
 import org.eclipse.swt.SWT;
 
 public class ActuationThreadsPage extends WizardPage {
-	protected ArrayList<ActuationFunction> actFunctionsList;
+	protected ArrayList<SystemFunction> actFunctionsList;
 	
-	protected ArrayList<Actuator> actuatorsList;
+	protected ArrayList<Device> actuatorsList;
 	
 	protected ArrayList<AADLThread> threads;
 
@@ -277,7 +277,7 @@ public class ActuationThreadsPage extends WizardPage {
 
 		if (add.isConfirm()) {
 			updateActuatorsList(add.getActuators(), true);
-			updateFunctionList(add.getThreadFunctions());
+			//updateFunctionList(add.getThreadFunctions());
 
 			addThread(add.getName(), add.getPeriod(), add.getPriority(), add.getThreadActuators(), add.geTemplate(),
 					true, add.getThreadFunctions());
@@ -293,7 +293,7 @@ public class ActuationThreadsPage extends WizardPage {
 
 		if (addSporadic.isConfirm()) {
 			updateActuatorsList(addSporadic.getActuators(), false);
-			updateFunctionList(addSporadic.getThreadFunctions());
+			//updateFunctionList(addSporadic.getThreadFunctions());
 
 			addThread(addSporadic.getName(), addSporadic.getPeriod(), addSporadic.getPriority(),
 					addSporadic.getThreadActuators(), addSporadic.geTemplate(), false,
@@ -304,7 +304,7 @@ public class ActuationThreadsPage extends WizardPage {
 
 	}
 
-	private void updateActuatorsList(ArrayList<Actuator> actuators, boolean bperiodic) {
+	private void updateActuatorsList(ArrayList<Device> actuators, boolean bperiodic) {
 		actuatorsList.removeIf(p -> p.isPeriodic() == bperiodic);
 
 		for (int i = 0; i < actuators.size(); i++) {
@@ -312,7 +312,7 @@ public class ActuationThreadsPage extends WizardPage {
 		}
 	}
 
-	private void updateFunctionList(ArrayList<ActuationFunction> iFunctions) {
+	/*private void updateFunctionList(ArrayList<SystemFunction> iFunctions) {
 		for(int i = 0; i < iFunctions.size(); i++){
 			for(int x = 0; x < actFunctionsList.size(); x++){
 				if(iFunctions.get(i).getName().equals(actFunctionsList.get(x).getName()) && actFunctionsList.get(x).getIndex() == iFunctions.get(i).getIndex()){
@@ -321,11 +321,11 @@ public class ActuationThreadsPage extends WizardPage {
 				}
 			}
 		}
-	}
+	}*/
 	
 	
-	private void addThread(String name, int period, int priority, ArrayList<Actuator> threadActuators, String sTemplate,
-			boolean bperiodic, ArrayList<ActuationFunction> threadFunctions) {
+	private void addThread(String name, int period, int priority, ArrayList<Device> threadActuators, String sTemplate,
+			boolean bperiodic, ArrayList<SystemFunction> threadFunctions) {
 		AADLThread aux = new AADLThread();
 		TreeItem treeItem;
 		TreeItem subitem;
@@ -385,7 +385,6 @@ public class ActuationThreadsPage extends WizardPage {
 
 		if (edit.isConfirm()) {
 			updateActuatorsList(edit.getActuators(), true);
-			updateFunctionList(edit.getThreadFunctions());
 
 			editThread(edit.getName(), edit.geTemplate(), edit.getThreadActuators(), true, thread, edit.getPeriod(),
 					edit.getPriority(), edit.getThreadFunctions());
@@ -402,7 +401,6 @@ public class ActuationThreadsPage extends WizardPage {
 
 		if (editSporadic.isConfirm()) {
 			updateActuatorsList(editSporadic.getActuators(), false);
-			updateFunctionList(editSporadic.getThreadFunctions());
 			
 			editThread(editSporadic.getName(), editSporadic.geTemplate(), editSporadic.getThreadActuators(), false, thread, editSporadic.getPeriod(),
 					editSporadic.getPriority(), editSporadic.getThreadFunctions());
@@ -411,8 +409,8 @@ public class ActuationThreadsPage extends WizardPage {
 		}
 	}
 
-	private void editThread(String name, String geTemplate, ArrayList<Actuator> threadActuators, boolean bperiodic,
-			AADLThread thread, int period, int priority, ArrayList<ActuationFunction> threadFunctions) {
+	private void editThread(String name, String geTemplate, ArrayList<Device> threadActuators, boolean bperiodic,
+			AADLThread thread, int period, int priority, ArrayList<SystemFunction> threadFunctions) {
 		TreeItem[] treeItem;
 		TreeItem newTreeItem;
 		TreeItem newSubItem;
@@ -496,7 +494,7 @@ public class ActuationThreadsPage extends WizardPage {
 	 * Verify the input table and according the vector amount of each input port
 	 * the signals are inserted into the sensors list specification
 	 */
-	public void populateThreadsTable(ArrayList<Actuator> actuators, ArrayList<ActuationFunction> iActFuntion) {
+	public void populateThreadsTable(ArrayList<Device> actuators, ArrayList<SystemFunction> iActFuntion) {
 		// If table have data clear it
 		if (periodicTable.getItemCount() > 0 || sporadicTable.getItemCount() > 0)
 			clearData();

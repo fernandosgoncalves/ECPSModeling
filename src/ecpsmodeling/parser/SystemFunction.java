@@ -2,22 +2,33 @@ package ecpsmodeling.parser;
 
 import java.util.ArrayList;
 
-public class ActuationFunction {
+public class SystemFunction {
 	protected ArrayList<String> inputs;
 	protected ArrayList<String> outputs;
-	
-	protected String template; 
-	
+
+	protected String template;
+
+	protected int type; // 0 - sensing 1 - actuation
 	protected int sampling;
 	protected int index;
-	
+
 	protected String name;
 
-	ActuationFunction(){
+	SystemFunction(int type) {
 		inputs = new ArrayList<>();
 		outputs = new ArrayList<>();
+
+		this.type = type;
 	}
-	
+
+	public int getType() {
+		return type;
+	}
+
+	public void setType(int type) {
+		this.type = type;
+	}
+
 	public ArrayList<String> getInputs() {
 		return inputs;
 	}
@@ -57,7 +68,7 @@ public class ActuationFunction {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	public String getTemplate() {
 		return template;
 	}

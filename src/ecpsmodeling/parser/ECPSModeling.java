@@ -15,6 +15,9 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.wizard.IWizardPage;
+
+import java.util.ArrayList;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IImportWizard;
@@ -29,20 +32,19 @@ public class ECPSModeling extends Wizard implements IImportWizard {
 	protected static final String SENSINGTHREADS = "Sensing Threads Specification";
 	protected static final String SIMULINKMODEL = "Simulink Model";
 	protected static final String POSTREADING = "Post-reading Specification";
-	protected static final String PREWRITING = "Prewriting Specification";
+	protected static final String PREWRITING = "Pre-processing Specification";
 	protected static final String SAMODELING = "Sensing and Actuation Modeling";
 	protected static final String ACTUATION = "Actuation Analyze";
 	protected static final String MAIN_PAGE = "ECPSModeling Import File";
 	protected static final String AADLMODEL = "AADL Model";
 	protected static final String SENSING = "Sensing Analyze";
 	protected static final String MAIN = "ECPSModeling Import File";
-	
-		
+
 	// Objects of the system pages
 	ActuationThreadsPage actuatorsThreadsPage;
 	SensingThreadsPage sensingThreadsPage;
 	PostReadingPage postReadingPage;
-	PreWritingPage prewritingPage;
+	PreProcessingPage prewritingPage;
 	ActuatorsPage actuatorsPage;
 	OutputsPage outputsPage;
 	SensorsPage sensorsPage;
@@ -66,60 +68,89 @@ public class ECPSModeling extends Wizard implements IImportWizard {
 	 */
 	@Override
 	public IWizardPage getNextPage(IWizardPage page) {
+		/*
+		 * Override the function getNextPage in order to provide the wizard
+		 * manipulation between their pages
+		 */
 		if (page.isPageComplete()) {
 			switch (page.getName()) {
 			case MAIN:
 				performMainPage();
 				break;
 			case SAMODELING:
-				// Selected the mathematical model sybsystem, this function read
-				// their input ports and populate a list to analyze it.
+				/*
+				 * Selected the mathematical model sybsystem, this function read
+				 * their input ports and populate a list to analyze it.
+				 */
 				if (subsysPage.table.getSelectionIndex() > 0)
 					inputsPage.populateInputList(mdl2Aadl.aadl.getSubSystem().searchSubSystem(
 							subsysPage.table.getItem(subsysPage.table.getSelectionIndex()).getText(0)));
 				break;
 			case ACTUATION:
-				// Perform the instruction to populate the table with the output
-				// ports of the selected subsystem
+				/*
+				 * Perform the instructions to populate the table with the
+				 * output ports of the selected subsystem
+				 */
 				prewritingPage.populateSignals(inputsPage.getTable());
 				break;
 			case PREWRITING:
-				// Perform the instructions to populate the table with the list
-				// of system actuator
+				/*
+				 * Perform the instructions to populate the table with the list
+				 * of system actuator
+				 */
 				actuatorsPage.populateActuatorsTable(inputsPage.getTable(), prewritingPage.getActFunctions());
 				break;
 			case ACTSPECIFICATION:
-				if(subsysPage.getOutputModel().equals(AADLMODEL))
-					// This function reads the specified actuators and populate the
-					// list periodic and sporadic actuators
-					actuatorsThreadsPage.populateThreadsTable(actuatorsPage.getActuators(), prewritingPage.getActFunctions());
+				if (subsysPage.getOutputModel().equals(AADLMODEL))
+					/*
+					 * This function reads the specified actuators and populate
+					 * the list with a periodic and sporadic actuators
+					 */
+					actuatorsThreadsPage.populateThreadsTable(actuatorsPage.getActuators(),
+							prewritingPage.getActFunctions());
 				else
-					//If the output model is the Simulink model, the threads specification it is not performed 
+					/*
+					 * If the output model is the Simulink model, the threads
+					 * specification it is not performed
+					 */
 					actuatorsThreadsPage.nextStep();
 				break;
 			case ACTUATIORNTHREADS:
-				// This function reads the output ports and populate the list to
-				// analyze this information
+				/*
+				 * This function reads the output ports and populate the list to
+				 * analyze this information
+				 */
 				outputsPage.populateOutputList(mdl2Aadl.aadl.getSubSystem()
 						.searchSubSystem(subsysPage.table.getItem(subsysPage.table.getSelectionIndex()).getText(0)));
 				break;
 			case SENSING:
-				// // Perform the instruction to populate the table with the
-				// input ports of the selected subsystem
+				/*
+				 * Perform the instruction to populate the table with the input
+				 * ports of the selected subsystem
+				 */
 				postReadingPage.populateSignals(outputsPage.getTable());
 				break;
 			case POSTREADING:
-				// // Perform the instructions to populate the table with the
-				// list of system sensors
+				/*
+				 * Perform the instructions to populate the table with the list
+				 * of system sensors
+				 */
 				sensorsPage.populateSensorsTable(outputsPage.getTable(), postReadingPage.getSenFunctions());
 				break;
 			case SENSPECIFICATION:
-				if(subsysPage.getOutputModel().equals(AADLMODEL))
-					// This function reads the specified actuators and functions and populate the
-					// list periodic and sporadic sensors and functions					
-					sensingThreadsPage.populateThreadsTable(sensorsPage.getSensors(), postReadingPage.getSenFunctions());
+				if (subsysPage.getOutputModel().equals(AADLMODEL))
+					/*
+					 * This function reads the specified actuators and functions
+					 * and populate the list of periodic and sporadic sensors
+					 * and functions
+					 */
+					sensingThreadsPage.populateThreadsTable(sensorsPage.getSensors(),
+							postReadingPage.getSenFunctions());
 				else
-					//If the output model is the Simulink model, the threads specification it is not performed
+					/*
+					 * If the output model is the Simulink model, the threads
+					 * specification it is not performed
+					 */
 					sensingThreadsPage.nextStep();
 				break;
 			}
@@ -152,15 +183,17 @@ public class ECPSModeling extends Wizard implements IImportWizard {
 	 * when the finish button is pressed
 	 */
 	public boolean performFinish() {
-		// System.out.println("FINISH PRESSED");
 		IFile file = mainPage.createNewFile();
 		try {
-			// Chamada da função de transformação de sensores e atuadores
-			mdl2Aadl.sensingActuationTransformation(prewritingPage.getActFunctions(), actuatorsPage.getActuators(),
-					postReadingPage.getSenFunctions(), sensorsPage.getSensors(),
+			/*
+			 * Function that generate the system sensors and actuators on the
+			 * AADL Model
+			 */
+			mdl2Aadl.sensingActuationTransformation(actuatorsThreadsPage.getThreads(), sensingThreadsPage.getThreads(),
 					mdl2Aadl.aadl.getSubSystem().searchSubSystem(
 							subsysPage.table.getItem(subsysPage.table.getSelectionIndex()).getText(0)));
-			// Geração do arquivo AADL de saída
+
+			/* Generation of the AADL file */
 			mdl2Aadl.save(file.getRawLocation().removeLastSegments(1) + "/",
 					file.getRawLocation().lastSegment().substring(0, file.getRawLocation().lastSegment().length() - 4)
 							+ ".aadl");
@@ -192,10 +225,11 @@ public class ECPSModeling extends Wizard implements IImportWizard {
 	 * process pages
 	 */
 	public void addPages() {
+		/* Adtition of the process pages in the process wizard */
 		actuatorsThreadsPage = new ActuationThreadsPage();
 		sensingThreadsPage = new SensingThreadsPage();
 		postReadingPage = new PostReadingPage();
-		prewritingPage = new PreWritingPage();
+		prewritingPage = new PreProcessingPage();
 		actuatorsPage = new ActuatorsPage();
 		outputsPage = new OutputsPage();
 		sensorsPage = new SensorsPage();

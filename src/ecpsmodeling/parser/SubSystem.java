@@ -241,7 +241,9 @@ public class SubSystem {
 	}
 
 	public Port findOutPort(String portName) {
+		//System.out.println(outPorts.size());
 		for (int i = 0; i < outPorts.size(); i++) {
+			//System.out.println(portName + " - " + outPorts.get(i).getName());
 			if (portName.equals(outPorts.get(i).getName())) {
 				return outPorts.get(i);
 			}
@@ -355,19 +357,27 @@ public class SubSystem {
 	 * each subsystem
 	 */
 	public SubSystem searchSubSystem(String name) {
-		for (int i = 0; i < this.getSubSystemsCount(); i++) {
-			if (this.getSubSystem(i).name.equals(name)) {
-				// System.out.println(this.getSubSystem(i).name);
-				return this.getSubSystem(i);
-			} else {
-				if (this.getSubSystem(i).getSubSystemsCount() > 0) {
-					return this.getSubSystem(i).searchSubSystem(name);
+		SubSystem local;
+		local = null;
+		//System.out.println("Searching subsystem");
+		for (SubSystem child : this.getAllSubSystem()){
+			//System.out.println(child.name + " - " + name);			
+			if (child.name.equals(name)){
+				//System.out.println("Founded");
+				return child;
+			}
+			else {
+				//System.out.println("Sub: " + child.getSubSystemsCount());
+				if (child.getSubSystemsCount() > 0) {
+					local = child.searchSubSystem(name);
+					if(local != null)
+						return local; 
 				}
 			}
 		}
-		return null;
+		return local;
 	}
-
+	
 	public String toString() {
 		String ret = "";
 		if (this.getMark().equals("")) {
@@ -377,25 +387,31 @@ public class SubSystem {
 		if (!this.getMark().equals(MARK_MODES)) {
 			ret += this.getMark() + " " + this.getFullName() + "\n";
 			ret += "  FEATURES\n";
-			// lista os outports
-			for (int j = 0; j < this.getOutPorts().size(); j++) {
-				// se for data não tem tipo de valor
-				if (this.getOutPorts().get(j).getType().equals(Port.DATA))
-					ret += "    " + this.getOutPorts().get(j).getName() + ": OUT " + this.getOutPorts().get(j).getType()
-							+ ";\n";
-				else
-					ret += "    " + this.getOutPorts().get(j).getName() + ": OUT " + this.getOutPorts().get(j).getType()
-							+ " PORT Base_Types_Simulink::" + this.getOutPorts().get(j).getDataType() + ";\n";
-			}
-			// lista os inports
-			for (int j = 0; j < this.getInPorts().size(); j++) {
-				// se for data não tem tipo de valor
-				if (this.getInPorts().get(j).getType().equals(Port.DATA))
-					ret += "    " + this.getInPorts().get(j).getName() + ": OUT " + this.getInPorts().get(j).getType()
-							+ ";\n";
-				else
-					ret += "    " + this.getInPorts().get(j).getName() + ": IN " + this.getInPorts().get(j).getType()
-							+ " PORT Base_Types_Simulink::" + this.getInPorts().get(j).getDataType() + ";\n";
+			if (this.getOutPorts().size() == 0 && this.getInPorts().size() == 0)
+				ret += "    none;\n";
+			else {
+				// lista os outports
+				for (int j = 0; j < this.getOutPorts().size(); j++) {
+					// se for data não tem tipo de valor
+					if (this.getOutPorts().get(j).getType().equals(Port.DATA))
+						ret += "    " + this.getOutPorts().get(j).getName() + ": OUT "
+								+ this.getOutPorts().get(j).getType() + ";\n";
+					else
+						ret += "    " + this.getOutPorts().get(j).getName() + ": OUT "
+								+ this.getOutPorts().get(j).getType() + " PORT Base_Types_Simulink::"
+								+ this.getOutPorts().get(j).getDataType() + ";\n";
+				}
+				// lista os inports
+				for (int j = 0; j < this.getInPorts().size(); j++) {
+					// se for data não tem tipo de valor
+					if (this.getInPorts().get(j).getType().equals(Port.DATA))
+						ret += "    " + this.getInPorts().get(j).getName() + ": OUT "
+								+ this.getInPorts().get(j).getType() + ";\n";
+					else
+						ret += "    " + this.getInPorts().get(j).getName() + ": IN "
+								+ this.getInPorts().get(j).getType() + " PORT Base_Types_Simulink::"
+								+ this.getInPorts().get(j).getDataType() + ";\n";
+				}
 			}
 			ret += "END " + this.getFullName() + ";\n\n";
 			ret += this.getMark() + " IMPLEMENTATION " + this.getFullName() + ".impl\n";
@@ -471,11 +487,17 @@ public class SubSystem {
 					}
 					if (this.getAllLines().size() > 0)
 						ret += "  CONNECTIONS\n";
+//					System.out.println("Connections " + this.getFullName());
 					int c = 1;
 					for (int i = 0; i < this.getAllLines().size(); i++) {
+//						System.out.println("C" + c);
 						// variaveis auxiliares para
 						boolean canWrite = true;
 						String connection = "";
+//						System.out.println(this.getAllLines().get(i).getSrcSystem() + " - "
+//								+ this.getAllLines().get(i).getSrcPort() + " - "
+//								+ this.getAllLines().get(i).getDestSystem() + " - "
+//								+ this.getAllLines().get(i).getDestPort());
 						Port outPort = this.findOutPort(this.getAllLines().get(i).getSrcSystem(),
 								this.getAllLines().get(i).getSrcPort());
 						if (this.getSubSystemMark(this.getAllLines().get(i).getSrcSystem()).equals(MARK_MODES)) {
@@ -505,6 +527,7 @@ public class SubSystem {
 							connection += this.getFullName(this.getAllLines().get(i).getDestSystem()) + "."
 									+ inPort.getName() + ";\n";
 						} else {
+//							System.out.println(this.getAllLines().get(i).getDestSystem());
 							if (this.findOutPort(this.getAllLines().get(i).getDestSystem()) != null) {
 								connection += this.getFullName(this.getAllLines().get(i).getDestSystem()) + ";\n";
 							} else {
@@ -515,6 +538,17 @@ public class SubSystem {
 						if (canWrite) {
 							ret += connection;
 						}
+						
+//						if(inPort != null)
+//							System.out.println("InPort " + inPort.getName());
+//						else
+//							System.out.println("InPort " + inPort);
+//						if(outPort != null)
+//							System.out.println("OutPort " + outPort.getName());
+//						else
+//							System.out.println("OutPort " + outPort);
+							
+//						System.out.println(connection);
 						c++;
 					}
 					if (!this.getMark().equals(MARK_DEVICE)) {
@@ -652,5 +686,21 @@ public class SubSystem {
 			}
 		}
 		return ret;
+	}
+
+	public String searchOutPort(String name) {
+		for (int i = 0; i < outPorts.size(); i++)
+			if (outPorts.get(i).getName().equals(name))
+				return outPorts.get(i).getNumber();
+
+		return "-1";
+	}
+
+	public String searchInPort(String name) {
+		for (int i = 0; i < inPorts.size(); i++)
+			if (inPorts.get(i).getName().equals(name))
+				return inPorts.get(i).getNumber();
+
+		return "-1";
 	}
 }

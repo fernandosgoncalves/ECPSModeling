@@ -2,26 +2,38 @@ package ecpsmodeling.parser;
 
 import java.util.ArrayList;
 
-public class Actuator {
+public class Device {
 	protected ArrayList<String> inputs;
 	protected ArrayList<String> outputs;
-	
+
 	protected boolean periodic;
-	
+
+	protected int type; // 0 - sensor 1 - Actuator
+
 	protected int sampling;
 	protected int priority;
 	protected int period;
 	protected int index;
-	
+
 	protected String protocol;
 	protected String signal;
 	protected String name;
-	
-	Actuator(){
+
+	Device(int type) {
 		inputs = new ArrayList<>();
 		outputs = new ArrayList<>();
+
+		this.type = type;
 	}
-	
+
+	public int getType() {
+		return type;
+	}
+
+	public void setType(int type) {
+		this.type = type;
+	}
+
 	public ArrayList<String> getInputs() {
 		return inputs;
 	}
@@ -37,7 +49,7 @@ public class Actuator {
 	public void setOutputs(ArrayList<String> outputs) {
 		this.outputs = outputs;
 	}
-	
+
 	public int getSampling() {
 		return sampling;
 	}
@@ -61,7 +73,7 @@ public class Actuator {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	public int getPriority() {
 		return priority;
 	}
@@ -101,6 +113,5 @@ public class Actuator {
 	public void setSignal(String signal) {
 		this.signal = signal;
 	}
-	
-	
+
 }

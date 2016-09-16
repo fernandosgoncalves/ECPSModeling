@@ -30,9 +30,9 @@ import java.util.ArrayList;
 import org.eclipse.swt.SWT;
 
 public class SensingThreadsPage extends WizardPage {
-	protected ArrayList<SensingFunction> senFunctionsList;
+	protected ArrayList<SystemFunction> senFunctionsList;
 
-	protected ArrayList<Sensor> sensorsList;
+	protected ArrayList<Device> sensorsList;
 
 	protected ArrayList<AADLThread> threads;
 
@@ -276,7 +276,6 @@ public class SensingThreadsPage extends WizardPage {
 
 		if (add.isConfirm()) {
 			updateActuatorsList(add.getSensors(), true);
-			updateFunctionList(add.getThreadFunctions());
 
 			addThread(add.getName(), add.getPeriod(), add.getPriority(), add.getThreadSensors(), add.geTemplate(), true,
 					add.getThreadFunctions());
@@ -292,7 +291,6 @@ public class SensingThreadsPage extends WizardPage {
 
 		if (addSporadic.isConfirm()) {
 			updateActuatorsList(addSporadic.getSensors(), false);
-			updateFunctionList(addSporadic.getThreadFunctions());
 
 			addThread(addSporadic.getName(), addSporadic.getPeriod(), addSporadic.getPriority(),
 					addSporadic.getThreadSensors(), addSporadic.geTemplate(), false, addSporadic.getThreadFunctions());
@@ -302,7 +300,7 @@ public class SensingThreadsPage extends WizardPage {
 
 	}
 
-	private void updateActuatorsList(ArrayList<Sensor> sensors, boolean bperiodic) {
+	private void updateActuatorsList(ArrayList<Device> sensors, boolean bperiodic) {
 		sensorsList.removeIf(p -> p.isPeriodic() == bperiodic);
 
 		for (int i = 0; i < sensors.size(); i++) {
@@ -310,20 +308,17 @@ public class SensingThreadsPage extends WizardPage {
 		}
 	}
 
-	private void updateFunctionList(ArrayList<SensingFunction> iFunctions) {
+	/*private void updateFunctionList(ArrayList<SystemFunction> iFunctions) {
+		//REVER ESTA FUNÇÃO NÃO ESTA FUNCIONANDO COMO DEVERIA
+		senFunctionsList.clear();
+		
 		for (int i = 0; i < iFunctions.size(); i++) {
-			for (int x = 0; x < senFunctionsList.size(); x++) {
-				if (iFunctions.get(i).getName().equals(senFunctionsList.get(x).getName())
-						&& senFunctionsList.get(x).getIndex() == iFunctions.get(i).getIndex()) {
-					senFunctionsList.remove(x);
-					continue;
-				}
-			}
+			senFunctionsList.add(iFunctions.get(i));
 		}
-	}
+	}*/
 
-	private void addThread(String name, int period, int priority, ArrayList<Sensor> threadSensors, String sTemplate,
-			boolean bperiodic, ArrayList<SensingFunction> threadFunctions) {
+	private void addThread(String name, int period, int priority, ArrayList<Device> threadSensors, String sTemplate,
+			boolean bperiodic, ArrayList<SystemFunction> threadFunctions) {
 		AADLThread aux = new AADLThread();
 		TreeItem treeItem;
 		TreeItem subitem;
@@ -384,7 +379,6 @@ public class SensingThreadsPage extends WizardPage {
 
 			if (edit.isConfirm()) {
 				updateActuatorsList(edit.getSensors(), true);
-				updateFunctionList(edit.getThreadFunctions());
 
 				editThread(edit.getName(), edit.geTemplate(), edit.getThreadSensors(), true, thread, edit.getPeriod(),
 						edit.getPriority(), edit.getThreadFunctions());
@@ -402,7 +396,6 @@ public class SensingThreadsPage extends WizardPage {
 
 		if (editSporadic.isConfirm()) {
 			updateActuatorsList(editSporadic.getSensors(), false);
-			updateFunctionList(editSporadic.getThreadFunctions());
 
 			editThread(editSporadic.getName(), editSporadic.geTemplate(), editSporadic.getThreadSensors(), false,
 					thread, editSporadic.getPeriod(), editSporadic.getPriority(), editSporadic.getThreadFunctions());
@@ -411,8 +404,8 @@ public class SensingThreadsPage extends WizardPage {
 		}
 	}
 
-	private void editThread(String name, String geTemplate, ArrayList<Sensor> threadSensors, boolean bperiodic,
-			AADLThread thread, int period, int priority, ArrayList<SensingFunction> threadFunctions) {
+	private void editThread(String name, String geTemplate, ArrayList<Device> threadSensors, boolean bperiodic,
+			AADLThread thread, int period, int priority, ArrayList<SystemFunction> threadFunctions) {
 		TreeItem[] treeItem;
 		TreeItem newTreeItem;
 		TreeItem newSubItem;
@@ -496,7 +489,7 @@ public class SensingThreadsPage extends WizardPage {
 	 * Verify the input table and according the vector amount of each input port
 	 * the signals are inserted into the sensors list specification
 	 */
-	public void populateThreadsTable(ArrayList<Sensor> sensors, ArrayList<SensingFunction> iSenFuntion) {
+	public void populateThreadsTable(ArrayList<Device> sensors, ArrayList<SystemFunction> iSenFuntion) {
 		// If table have data clear it
 		if (periodicTable.getItemCount() > 0 || sporadicTable.getItemCount() > 0)
 			clearData();

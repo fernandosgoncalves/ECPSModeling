@@ -3,13 +3,13 @@ package ecpsmodeling.parser;
 import java.util.ArrayList;
 
 public class AADLThread {
-	protected ArrayList<ActuationFunction> actFunctions;
+	protected ArrayList<SystemFunction> actFunctions;
 	
-	protected ArrayList<SensingFunction> senFunctions;
+	protected ArrayList<SystemFunction> senFunctions;
 	
-	protected ArrayList<Actuator> actuators;
+	protected ArrayList<Device> actuators;
 	
-	protected ArrayList<Sensor> sensors;
+	protected ArrayList<Device> sensors;
 		
 	protected ArrayList<String> inputs;
 	protected ArrayList<String> outputs;
@@ -88,35 +88,35 @@ public class AADLThread {
 		this.period = period;
 	}
 
-	public ArrayList<ActuationFunction> getActFunctions() {
+	public ArrayList<SystemFunction> getActFunctions() {
 		return actFunctions;
 	}
 
-	public void setActFunctions(ArrayList<ActuationFunction> actFunctions) {
+	public void setActFunctions(ArrayList<SystemFunction> actFunctions) {
 		this.actFunctions = actFunctions;
 	}
 
-	public ArrayList<Actuator> getActuators() {
+	public ArrayList<Device> getActuators() {
 		return actuators;
 	}
 
-	public void setActuators(ArrayList<Actuator> actuators) {
+	public void setActuators(ArrayList<Device> actuators) {
 		this.actuators = actuators;
 	}
 	
-	public ArrayList<SensingFunction> getSenFunctions() {
+	public ArrayList<SystemFunction> getSenFunctions() {
 		return senFunctions;
 	}
 
-	public void setSenFunctions(ArrayList<SensingFunction> senFunctions) {
+	public void setSenFunctions(ArrayList<SystemFunction> senFunctions) {
 		this.senFunctions = senFunctions;
 	}
 
-	public ArrayList<Sensor> getSensors() {
+	public ArrayList<Device> getSensors() {
 		return sensors;
 	}
 
-	public void setSensors(ArrayList<Sensor> sensors) {
+	public void setSensors(ArrayList<Device> sensors) {
 		this.sensors = sensors;
 	}
 	
